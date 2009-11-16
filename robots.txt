@@ -1,0 +1,8 @@
+User-agent: *
+Disallow: /app/
+Disallow: /format/
+Disallow: /xsl/
+Disallow: /plugins/
+Disallow: /template/
+Disallow: /script/
+Disallow: /stylesheets/
