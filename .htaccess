@@ -1,0 +1,10 @@
+# Re-Writes urls like this 
+# http://<your host>/<type>/http://<your page>
+
+RewriteEngine on
+
+RewriteRule ^([A-Za-z0-9-]+)/http://?(.*)$  index.php?type=$1&url=http://$2 [NC,NE]
+
+AddType application/x-javascript .js
+
+RewriteRule ^commands$  plugins/ubi-commands.js [NC]
