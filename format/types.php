@@ -27,12 +27,6 @@ header("Content-type: application/rss+xml");
 $xsl_filename = XSL."hAtom2RSS2.xsl";
 break;
 
-case 'hreview':
-header("Content-type: application/rdf+xml");
-header('Content-Disposition: attachment; filename="hReview.rdf"');
-$xsl_filename = XSL."hreview2rdfxml.xsl";
-break;
-
 case 'geo':
 header("Content-type: application/vnd.google-earth.kml+xml");
 header('Content-Disposition: attachment; filename="Geo.kml"');
