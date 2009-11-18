@@ -1,5 +1,5 @@
 <div class="butt">
-	<small>Subscribe to latest downloads feed:</small> <a rel="alternate" href="http://code.google.com/feeds/p/transformr/downloads/basic" title="Transformr Downloads Feed">
+	<small><a href="http://wiki.github.com/WebOrganics/TransFormr">Wiki</a> | <a href="http://github.com/WebOrganics/TransFormr">Source</a> | Updates feed:</small> <a rel="alternate" href="http://github.com/feeds/WebOrganics/commits/TransFormr/master" title="TransFormr Updates Feed">
 		<img alt="Atom Feed" src="images/Feeds_16x16.png"/>
 	</a>
 </div>
