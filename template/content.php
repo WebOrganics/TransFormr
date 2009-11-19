@@ -1,5 +1,5 @@
 <div class="butt">
-	<small><a href="http://wiki.github.com/WebOrganics/TransFormr">Wiki</a> | <a href="http://github.com/WebOrganics/TransFormr">Source</a> | Updates feed:</small> <a rel="alternate" href="http://github.com/feeds/WebOrganics/commits/TransFormr/master" title="TransFormr Updates Feed">
+	<small><a href="http://wiki.github.com/WebOrganics/TransFormr" rel="nofollow">Wiki</a> | <a href="http://github.com/WebOrganics/TransFormr" rel="nofollow">Source</a> | <a href="http://github.com/WebOrganics/TransFormr/issues" rel="nofollow">Issues</a> | Updates feed:</small> <a rel="alternate" href="http://github.com/feeds/WebOrganics/commits/TransFormr/master" title="TransFormr Updates Feed">
 		<img alt="Atom Feed" src="images/Feeds_16x16.png"/>
 	</a>
 </div>
