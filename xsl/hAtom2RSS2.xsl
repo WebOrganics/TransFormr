@@ -9,6 +9,8 @@
         
 <xsl:import href="uri.xsl" />
 
+<xsl:import href="url-encode.xsl" />
+
 <xsl:strip-space elements="*"/>
 
 <xsl:output method="xml" 
@@ -19,6 +21,13 @@
 <!-- base of the current HTML doc set by Processor-->
 <xsl:param name="base-uri" select="''"/>
 
+<!-- url encoded base of the current HTML doc set by Processor -->
+<xsl:param name="base-encoded">
+	<xsl:call-template name="url-encode">
+		<xsl:with-param name="str" select="$base-uri"/> 
+	</xsl:call-template>
+</xsl:param>
+
 <!-- title of the current HTML doc set by Processor ( for fragment parsing ) -->
 <xsl:param name="doc-title" select="''"/>
 
@@ -27,7 +36,7 @@
 </xsl:param>
 
 <xsl:param name="parser">
-	<xsl:text>http://transformr.co.uk/rss2/</xsl:text>
+	<xsl:text>http://transformr.co.uk/?type=rss2&amp;url=</xsl:text>
 </xsl:param>
 
 <xsl:template match="/">
@@ -47,7 +56,7 @@
 
 <rss version="2.0">
 <channel>
-<atom:link rel="self" href="{$parser}{$base-uri}" type="application/rss+xml" />
+<atom:link rel="self" href="{$parser}{$base-encoded}" type="application/rss+xml" />
 	<title>
     	<xsl:choose>
         	<xsl:when test=".//*[name() = 'title']">
