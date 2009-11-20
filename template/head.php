@@ -7,7 +7,7 @@
 <meta name="keywords" content="hCard Transformer,hAtom Transformer,hCalendar Transformer,Geo Transformer"/>
 <meta name="description" content="Transformr is a Microformats Transformer Toolkit"/>
 <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
-<link type="application/atom+xml" title="Downloads for project transformr on Google Code" href="http://code.google.com/feeds/p/transformr/downloads/basic" rel="alternate"/>
+<link type="application/atom+xml" title="TransFormr Updates Feed" href="http://github.com/feeds/WebOrganics/commits/TransFormr/master" rel="alternate"/>
 <style media="all" type="text/css">
 	@import "stylesheets/user.css";
 	@import "stylesheets/ValidationTextField.css";
