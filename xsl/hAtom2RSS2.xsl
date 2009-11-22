@@ -2,6 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
 		xmlns:dc="http://purl.org/dc/elements/1.1/"
 		xmlns:atom="http://www.w3.org/2005/Atom"
+		xmlns:media="http://search.yahoo.com/mrss/"
 		xmlns:xhtml="http://www.w3.org/1999/xhtml"
  		xmlns:uri ="http://www.w3.org/2000/07/uri43/uri.xsl?template="
 		exclude-result-prefixes="xhtml uri"
@@ -32,7 +33,7 @@
 <xsl:param name="doc-title" select="''"/>
 
 <xsl:param name="generator">
-	<xsl:text>TransFormr Version 0.5</xsl:text>
+	<xsl:text>TransFormr Version 0.5.1</xsl:text>
 </xsl:param>
 
 <xsl:param name="parser">
@@ -44,8 +45,8 @@
 
 <xsl:param name="meta">
 	<xsl:choose>
-		<xsl:when test=".//*[contains(concat(' ',normalize-space(@name),' '),' description ')]">
-    		<xsl:value-of select=".//*[contains(concat(' ',normalize-space(@name),' '),' description ')]/@content" />
+		<xsl:when test="descendant::*[contains(concat(' ',normalize-space(@name),' '),' description ')]">
+    		<xsl:value-of select="descendant::*[contains(concat(' ',normalize-space(@name),' '),' description ')]/@content" />
     	</xsl:when>
     	<xsl:otherwise>
             <xsl:text>From: </xsl:text>
@@ -59,8 +60,8 @@
 <atom:link rel="self" href="{$parser}{$base-encoded}" type="application/rss+xml" />
 	<title>
     	<xsl:choose>
-        	<xsl:when test=".//*[name() = 'title']">
-            	<xsl:value-of select=".//*[name() = 'title']"/>
+        	<xsl:when test="descendant::*[name() = 'title']">
+            	<xsl:value-of select="descendant::*[name() = 'title']"/>
             </xsl:when>
             <xsl:otherwise>
             	<xsl:value-of select="$doc-title"/>
@@ -87,6 +88,7 @@
 	<xsl:call-template name="author-name"/>
 	<xsl:call-template name="entry-content"/>
 	<xsl:call-template name="keywords"/>
+	<xsl:call-template name="media"/>
 	<xsl:call-template name="media-enclosure"/>
 </xsl:template>
 
@@ -123,27 +125,14 @@
 <xsl:template name="permalink">
 <xsl:param name="bookmark" select="descendant::*[contains(concat(' ',normalize-space(@rel),' '),' bookmark ')]"/>
 	<xsl:if test="$bookmark">
-		<xsl:choose>
-			<xsl:when test="substring-before($bookmark/@href,':') = 'http'" >
-				<xsl:element name='guid'>
-					<xsl:attribute name="isPermaLink">
-						<xsl:text>true</xsl:text>
-					</xsl:attribute>
-					<xsl:value-of select="$bookmark/@href"/>
-				</xsl:element>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:element name='guid'>
-					<xsl:attribute name="isPermaLink">
-						<xsl:text>true</xsl:text>
-					</xsl:attribute>
-						<xsl:call-template name="uri:expand">
-							<xsl:with-param name="base" select="$base-uri"/>
-							<xsl:with-param name="there" select="$bookmark/@href"/>
-						</xsl:call-template>
-				</xsl:element>
-			</xsl:otherwise>
-		</xsl:choose>
+		<xsl:element name='guid'>
+			<xsl:attribute name="isPermaLink">
+				<xsl:text>true</xsl:text>
+			</xsl:attribute>
+			<xsl:call-template name="extract-resource">
+				<xsl:with-param name="resource" select="$bookmark/@href"/>
+			</xsl:call-template>
+		</xsl:element>
 	</xsl:if>
 </xsl:template>
 
@@ -198,12 +187,129 @@
 </xsl:template>
 
 
+<!-- Start hMedia to MRSS extensions for RSS2 -->
+<xsl:template name="media">
+<xsl:param name="hmedia" select="descendant-or-self::*[contains(concat(' ',normalize-space(@class),' '),' hmedia ')]"/>
+<xsl:param name="enc" select="descendant::*[contains(concat(' ',normalize-space(@rel),' '),' enclosure ')]"/>
+	<xsl:if test="$hmedia and $enc">
+	    <xsl:for-each select="$hmedia">
+			<xsl:call-template name="media-attributes">
+				<xsl:with-param name="url" select="$enc"/>
+			</xsl:call-template>
+		</xsl:for-each>
+	</xsl:if>
+</xsl:template>
+
+<xsl:template name="media-attributes">
+<xsl:param name="url"/>
+	<xsl:element name='media:content'>
+		<xsl:attribute name="url">
+			<xsl:call-template name="extract-resource">
+				<xsl:with-param name="resource" select="$url/@href" />
+			</xsl:call-template>
+		</xsl:attribute>
+		<xsl:attribute name="type">
+			<xsl:choose>
+				<xsl:when test="substring-before(normalize-space($url/@type),';length=')" >
+					<xsl:value-of select="substring-before(normalize-space($url/@type),';length=')" />
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$url/@type" />
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:attribute>
+		<xsl:if test="substring-after(normalize-space($url/@type),';length=')">
+			<xsl:attribute name="fileSize">
+				<xsl:value-of select="substring-after(normalize-space($url/@type),';length=')" />
+			</xsl:attribute>
+		</xsl:if>
+		<xsl:call-template name="media-name"/>
+		<xsl:call-template name="media-contributor"/>
+		<xsl:call-template name="media-img"/>		
+		<xsl:call-template name="media-player"/>
+	</xsl:element>
+</xsl:template>
+
+<xsl:template name="media-name">
+<xsl:param name="media-title" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' fn ')
+									  and not(ancestor::*[contains(concat(' ',normalize-space(@class),' '),' contributor ')])
+									  and not(ancestor::*[contains(concat(' ',normalize-space(@class),' '),' author ')])]"/>
+	<xsl:if test="$media-title">
+		<xsl:element name='media:title'>
+			<xsl:value-of select="$media-title"/>
+		</xsl:element>
+	</xsl:if>
+</xsl:template>
+
+<xsl:template name="media-contributor">
+<xsl:param name="contributor" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' contributor ')]"/>
+	<xsl:for-each select="$contributor">
+		<xsl:element name='media:credit'>
+			<xsl:choose>
+				<xsl:when test="descendant::*[contains(concat(' ',normalize-space(@class),' '),' fn ')]" >
+					<xsl:value-of select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' fn ')]" />
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="."/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:element>
+	</xsl:for-each>
+</xsl:template>
+
+<xsl:template name="media-img">
+<xsl:param name="photo" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' photo ')]"/>
+	<xsl:if test="$photo">
+		<xsl:element name='media:thumbnail'>
+			<xsl:attribute name="url">
+				<xsl:call-template name="extract-resource">
+					<xsl:with-param name="resource" select="$photo/@src" />
+				</xsl:call-template>
+			</xsl:attribute>
+				<xsl:if test="$photo/@width">
+					<xsl:attribute name="width"><xsl:value-of select="$photo/@width" /></xsl:attribute>
+				</xsl:if>
+				<xsl:if test="$photo/@height">
+					<xsl:attribute name="height"><xsl:value-of select="$photo/@height" /></xsl:attribute>
+				</xsl:if>
+		</xsl:element>
+	</xsl:if>
+</xsl:template>
+
+
+<xsl:template name="media-player">
+<xsl:param name="video" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' player ')]"/>
+	<xsl:if test="$video">
+		<xsl:element name='media:player'>
+			<xsl:attribute name="url">
+				<xsl:call-template name="extract-resource">
+					<xsl:with-param name="resource" select="$video/@data|$video/@src|$video/@value" />
+				</xsl:call-template>
+			</xsl:attribute>
+				<xsl:if test="$video/@width">
+					<xsl:attribute name="width"><xsl:value-of select="$video/@width" /></xsl:attribute>
+				</xsl:if>
+				<xsl:if test="$video/@height">
+					<xsl:attribute name="height"><xsl:value-of select="$video/@height" /></xsl:attribute>
+				</xsl:if>
+		</xsl:element>
+	</xsl:if>
+</xsl:template>
+
+<!-- /End hMedia to MRSS extensions -->
+
+
+<!-- rel-enclosure extension -->
 <xsl:template name="media-enclosure">
 <xsl:param name="enclosure" select="descendant::*[contains(concat(' ',normalize-space(@rel),' '),' enclosure ')]"/>
 	<xsl:if test="$enclosure">
 	    <xsl:for-each select="$enclosure">
 		<xsl:element name='enclosure'>
-			<xsl:attribute name="url"><xsl:value-of select="@href" /></xsl:attribute>
+			<xsl:attribute name="url">
+				<xsl:call-template name="extract-resource">
+					<xsl:with-param name="resource" select="@href" />
+				</xsl:call-template>
+			</xsl:attribute>
 			<xsl:attribute name="type">
 			<xsl:choose>
 				<xsl:when test="substring-before(normalize-space(@type),';length=')" >
@@ -227,6 +333,23 @@
 		</xsl:element>
 		</xsl:for-each>
 	</xsl:if>
+</xsl:template>
+
+
+<!-- extract @href, @src and @data  -->
+<xsl:template name="extract-resource">
+<xsl:param name="resource"/>
+		<xsl:choose>
+			<xsl:when test="substring-before($resource,':') = 'http'" >
+				<xsl:value-of select="$resource"/>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:call-template name="uri:expand">
+					<xsl:with-param name="base" select="$base-uri"/>
+					<xsl:with-param name="there" select="$resource"/>
+				</xsl:call-template>
+			</xsl:otherwise>
+		</xsl:choose>
 </xsl:template>
 
 <!-- 
