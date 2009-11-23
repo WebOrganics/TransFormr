@@ -11,7 +11,7 @@
 <form enctype="multipart/form-data" action="" method="get">
 <fieldset>
 <legend>Transform a url</legend>
-<p><label for="type">Microformat type: <select tabindex="1" id="type" name="type">
+<p><label for="type">Microformat type: <select tabindex="1" id="type" name="type" onblur="bookmarkUrl();" onclick="bookmarkUrl();">
 <optgroup label="Default">
 	<option selected="selected" value="detect">Detect all</option>
 </optgroup>
@@ -28,13 +28,13 @@
 	<option value="rss2">hAtom2RSS2</option>
 	<option value="rdfa2rdfxml">RDFa2RDF</option>
 	<option value="haudio-rss2">hAudio2RSS2</option>
-	<option value="hfoaf">hFOAF</option>	
-    <option value="mrss">hAtom+hMedia2MRSS</option>
+	<option value="hfoaf">hFOAF</option>
 </optgroup>
 </select></label> 
 <span id="urlfield">
 	<label for="url">Url: <input tabindex="2" id="url" type="text" name="url" /></label>
 </span>
 <label for="submit"><button tabindex="3" id="submit" type="submit">Submit</button></label></p>
+<p>Drag this <span id="bookmark"></span> to your favorites.</p>
 </fieldset>
 </form>
