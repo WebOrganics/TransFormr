@@ -35,6 +35,6 @@
 	<label for="url">Url: <input tabindex="2" id="url" type="text" name="url" /></label>
 </span>
 <label for="submit"><button tabindex="3" id="submit" type="submit">Submit</button></label></p>
-<p>Drag this <span id="bookmark"></span> to your favorites.</p>
+<p>Drag this <span id="bookmark"><a href="javascript:void(location.href='http://transformr.co.uk/?type=detect&amp;url='+escape(location.href))">detect bookmarklet</a></span> to your favorites.</p>
 </fieldset>
 </form>
