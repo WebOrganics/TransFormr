@@ -1,5 +1,5 @@
 <?php
-// TransFormr Version: 0.5, Updated: Monday, 16th November 2009
+// TransFormr Version: 0.5.1, Updated: Monday, 16th November 2009
 // Contact: Martin McEvoy info@weborganics.co.uk
 
 class Transformr
@@ -46,6 +46,12 @@ class Transformr
 	public static function transform($url, $xsl_filename)
 	{
 	if( strrchr($url, 'http://') ) {
+		
+		// disable same host requests
+		if ($url == PATH) {
+			header("Location: ".PATH);
+			exit;
+		}
 		
 		$html = file_get_contents($url, FALSE, NULL, 0, 2097152);
 		
