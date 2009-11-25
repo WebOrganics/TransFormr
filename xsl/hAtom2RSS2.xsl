@@ -92,6 +92,7 @@
 	<xsl:call-template name="media-enclosure"/>
 </xsl:template>
 
+<!-- entry-title -->
 <xsl:template name="title">
 <xsl:param name="entry-title" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' entry-title ')]"/>
 	<xsl:if test="$entry-title">
@@ -101,6 +102,7 @@
 	</xsl:if>
 </xsl:template>
 
+<!-- updated or published -->
 <xsl:template name="pubdate">
 <xsl:param name="updated" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' updated ')]"/>
 <xsl:param name="published" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' published ')]"/>
@@ -122,6 +124,7 @@
 	</xsl:if>
 </xsl:template>
 
+<!-- bookmark -->
 <xsl:template name="permalink">
 <xsl:param name="bookmark" select="descendant::*[contains(concat(' ',normalize-space(@rel),' '),' bookmark ')]"/>
 	<xsl:if test="$bookmark">
@@ -136,6 +139,7 @@
 	</xsl:if>
 </xsl:template>
 
+<!-- author -->
 <xsl:template name="author-name">
 <xsl:param name="name" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' author ')]"/>
 	<xsl:if test="$name">
@@ -145,33 +149,35 @@
 	</xsl:if>
 </xsl:template>
 
-
+<!-- entry-summary -->
 <xsl:template name="entry-summary">
 <xsl:param name="summary" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' entry-summary ')]"/>
 	<xsl:if test="$summary">
 		<xsl:element name='description'>
 			<xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
           		<xsl:for-each select="$summary">
-					<xsl:apply-templates mode="sanitize-html" />
+					<xsl:apply-templates mode="safe-html" />
           		</xsl:for-each>
 			<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
 		</xsl:element>
 	</xsl:if>
 </xsl:template>
 
+<!-- entry-content -->
 <xsl:template name="entry-content">
 <xsl:param name="content" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' entry-content ')]"/>
 	<xsl:if test="$content">
 		<xsl:element name='description'>
 			<xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
           		<xsl:for-each select="$content">
-					<xsl:apply-templates mode="sanitize-html" />
+					<xsl:apply-templates mode="safe-html" />
           		</xsl:for-each>
 			<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
 		</xsl:element>
 	</xsl:if>
 </xsl:template>
 
+<!-- tag -->
 <xsl:template name="keywords">
 <xsl:variable name="tag" select="descendant::*[contains(concat(' ',normalize-space(@rel),' '),' tag ')]"/>
 	<xsl:if test="$tag">
@@ -354,30 +360,25 @@
 
 <!-- 
 
- Sanitize HTML output Re-Used from hAtom2Atom.xsl by Luke Arno, Robert Bachmann and Benjamin Carlyle.
+ Safe HTML output Re-Used from hAtom2Atom.xsl by Luke Arno, Robert Bachmann and Benjamin Carlyle. 
+ 
+ Updated by Martin McEvoy to match both XHTML and HTML elements. 
  
  The list of acceptable elements was taken from Mark Pilgrim's Universal Feed Parser.
  
 -->
 
-<xsl:template mode="sanitize-html" 
-              match="xhtml:a|xhtml:abbr|xhtml:acronym|xhtml:address|xhtml:area|
-xhtml:b|xhtml:big|xhtml:blockquote|xhtml:br|xhtml:button|
-xhtml:caption|xhtml:center|xhtml:cite|xhtml:code|xhtml:col|xhtml:colgroup|
-xhtml:dd|xhtml:del|xhtml:dfn|xhtml:dir|xhtml:div|xhtml:dl|xhtml:dt|
-xhtml:em|
-xhtml:fieldset|xhtml:font|xhtml:form|
-xhtml:h1|xhtml:h2|xhtml:h3|xhtml:h4|xhtml:h5|xhtml:h6|xhtml:hr|
-xhtml:i|xhtml:img|xhtml:input|xhtml:ins|
-xhtml:kbd|
-xhtml:label|xhtml:legend|xhtml:li|
-xhtml:map|xhtml:menu|
-xhtml:ol|xhtml:optgroup|xhtml:option|
-xhtml:p|xhtml:pre|xhtml:q|xhtml:s|
-xhtml:samp|xhtml:select|xhtml:small|xhtml:span|xhtml:strike|xhtml:strong|xhtml:sub|xhtml:sup|
-xhtml:table|xhtml:tbody|xhtml:td|xhtml:textarea|xhtml:tfoot|xhtml:th|xhtml:thead|xhtml:tr|xhtml:tt|
-xhtml:u|xhtml:ul|
-xhtml:var|@*">  
+<xsl:template mode="safe-html" 
+              match="xhtml:a|xhtml:abbr|xhtml:acronym|xhtml:address|xhtml:area|xhtml:b|xhtml:big|xhtml:blockquote|xhtml:br|xhtml:button|
+					 xhtml:caption|xhtml:center|xhtml:cite|xhtml:code|xhtml:col|xhtml:colgroup|xhtml:dd|xhtml:del|xhtml:dfn|xhtml:dir|
+                     xhtml:div|xhtml:dl|xhtml:dt|xhtml:em|xhtml:fieldset|xhtml:font|xhtml:form|xhtml:h1|xhtml:h2|xhtml:h3|xhtml:h4|xhtml:h5|
+                     xhtml:h6|xhtml:hr|xhtml:i|xhtml:img|xhtml:input|xhtml:ins|xhtml:kbd|xhtml:label|xhtml:legend|xhtml:li|xhtml:map|xhtml:menu|
+                     xhtml:ol|xhtml:optgroup|xhtml:option|xhtml:p|xhtml:pre|xhtml:q|xhtml:s|xhtml:samp|xhtml:select|xhtml:small|xhtml:span|
+                     xhtml:strike|xhtml:strong|xhtml:sub|xhtml:sup|xhtml:table|xhtml:tbody|xhtml:td|xhtml:textarea|xhtml:tfoot|xhtml:th|
+                     xhtml:thead|xhtml:tr|xhtml:tt|xhtml:u|xhtml:ul|xhtml:var|a|abbr|acronym|address|area|b|big|blockquote|br|button|caption|
+                     center|cite|code|col|colgroup|dd|del|dfn|dir|div|dl|dt|em|fieldset|font|form|h1|h2|h3|h4|h5|h6|hr|i|img|input|ins|kbd|
+                     label|legend|li|map|menu|ol|optgroup|option|p|pre|q|s|samp|select|small|span|strike|strong|sub|sup|table|tbody|td|
+                     textarea|tfoot|th|thead|tr|tt|u|ul|var|@*">  
 
 	<xsl:copy>
 	<!--
@@ -385,40 +386,25 @@ xhtml:var|@*">
 	 The list of acceptable attributes was taken from Mark Pilgrim's Universal Feed Parser.
 	 (xml:lang and xml:base were added)
 	-->
-		<xsl:for-each select="@abbr|@accept|@accept-charset|@accesskey|@action|@align|@alt|@axis|@border|
-@cellpadding|@cellspacing|@char|@charoff|@charset|@checked|@cite|@class|@clear|
-@cols|@colspan|@color|@compact|@coords|
-@datetime|@dir|@disabled|@enctype|
-@for|@frame|
-@headers|@height|@href|@hreflang|@hspace|
-@id|@ismap|
-@label|@lang|@longdesc|
-@maxlength|@media|@method|@multiple|
-@name|
-@nohref|@noshade|@nowrap|
-@prompt|
-@readonly|@rel|@rev|
-@rows|@rowspan|@rules|
-@scope|@selected|@shape|@size|
-@span|@src|@start|@summary|
-@tabindex|@target|@title|@type|
-@usemap|
-@valign|@value|@vspace|
-@width|
-@xml:lang|@xml:base">
+		<xsl:for-each select="@abbr|@accept|@accept-charset|@accesskey|@action|@align|@alt|@axis|@border|@cellpadding|@cellspacing|
+       						  @char|@charoff|@charset|@checked|@cite|@class|@clear|@cols|@colspan|@color|@compact|@coords|@datetime|
+                              @dir|@disabled|@enctype|@for|@frame|@headers|@height|@href|@hreflang|@hspace|@id|@ismap|@label|@lang|
+                              @longdesc|@maxlength|@media|@method|@multiple|@name|@nohref|@noshade|@nowrap|@prompt|@readonly|@rel|@rev|
+							  @rows|@rowspan|@rules|@scope|@selected|@shape|@size|@span|@src|@start|@summary|@tabindex|@target|@title|@type|
+                              @usemap|@valign|@value|@vspace|@width|@xml:lang|@xml:base">
 			<xsl:copy />
 		</xsl:for-each>
-		<xsl:apply-templates mode="sanitize-html" />
+		<xsl:apply-templates mode="safe-html" />
 	</xsl:copy>
 
 </xsl:template>
 
-<xsl:template mode="sanitize-html" match="text()">
+<xsl:template mode="safe-html" match="text()">
 	<xsl:copy />
 </xsl:template>
 
 <!-- Inhibt all other elements -->
-<xsl:template mode="sanitize-html" match="*" />
+<xsl:template mode="safe-html" match="*" />
 
 <!-- strip text -->
 <xsl:template match="text()|*"></xsl:template>

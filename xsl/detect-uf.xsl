@@ -80,7 +80,7 @@
    <xsl:value-of select="$title"/>
  </h2>
 <div class="entry-content" style="margin-left:0px;text-align:left;">
-<p>Canonical:
+<p>Source:
   <a rel="canonical" href="{$base-uri}">
     <xsl:value-of select="$base-uri"/>
   </a>
