@@ -194,6 +194,8 @@
 
 
 <!-- Start hMedia to MRSS extensions for RSS2 -->
+
+<!-- match hmedia and enclosure -->
 <xsl:template name="media">
 <xsl:param name="hmedia" select="descendant-or-self::*[contains(concat(' ',normalize-space(@class),' '),' hmedia ')]"/>
 <xsl:param name="enc" select="descendant::*[contains(concat(' ',normalize-space(@rel),' '),' enclosure ')]"/>
@@ -206,6 +208,7 @@
 	</xsl:if>
 </xsl:template>
 
+<!-- hmedia enclosure -->
 <xsl:template name="media-attributes">
 <xsl:param name="url"/>
 	<xsl:element name='media:content'>
@@ -236,6 +239,7 @@
 	</xsl:element>
 </xsl:template>
 
+<!-- hmedia fn -->
 <xsl:template name="media-name">
 <xsl:param name="media-title" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' fn ')
 									  and not(ancestor::*[contains(concat(' ',normalize-space(@class),' '),' contributor ')])
@@ -247,6 +251,7 @@
 	</xsl:if>
 </xsl:template>
 
+<!-- hmedia contributor -->
 <xsl:template name="media-contributor">
 <xsl:param name="contributor" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' contributor ')]"/>
 	<xsl:for-each select="$contributor">
@@ -263,6 +268,7 @@
 	</xsl:for-each>
 </xsl:template>
 
+<!-- hmedia photo -->
 <xsl:template name="media-img">
 <xsl:param name="photo" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' photo ')]"/>
 	<xsl:if test="$photo">
@@ -282,7 +288,7 @@
 	</xsl:if>
 </xsl:template>
 
-
+<!-- hmedia player -->
 <xsl:template name="media-player">
 <xsl:param name="video" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' player ')]"/>
 	<xsl:if test="$video">
