@@ -357,7 +357,16 @@
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:call-template name="uri:expand">
-					<xsl:with-param name="base" select="$base-uri"/>
+					<xsl:with-param name="base">
+						<xsl:choose>
+							<xsl:when test="substring-before($base-uri,'#')">
+								<xsl:value-of select="substring-before($base-uri,'#')"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:value-of select="$base-uri"/>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:with-param>
 					<xsl:with-param name="there" select="$resource"/>
 				</xsl:call-template>
 			</xsl:otherwise>
