@@ -1,5 +1,5 @@
 <?php
-// TransFormr Version: 0.5.1, Updated: Monday, 16th November 2009
+// TransFormr Version: 0.5.2, Updated: Sunday, 29th November 2009
 // Contact: Martin McEvoy info@weborganics.co.uk
 
 class Transformr
@@ -12,7 +12,7 @@ class Transformr
 	$INSTALLATION_PATH = $_PATH
 		? substr( dirname($_SERVER['SCRIPT_NAME']), 0, -strlen($_PATH) )
 		: dirname($_SERVER['SCRIPT_NAME']);
-	if ($INSTALLATION_PATH == "/") 
+	if ($INSTALLATION_PATH == "/" || $INSTALLATION_PATH == "\\") 
 		return "http://".$_SERVER['HTTP_HOST']."/";
 	else 
 		return "http://".$_SERVER['HTTP_HOST'].$INSTALLATION_PATH."/";
@@ -37,8 +37,8 @@ class Transformr
 	define('FORMAT',  'format/');
 	define('TEMPLATE',  'template/');
 	define('XSL',  'xsl/');
-	define('VERSION',  '0.5.1');
-	define('UPDATED',  'Monday, 16th November 2009');
+	define('VERSION',  '0.5.2');
+	define('UPDATED',  'Sunday, 29th November 2009');
 	header("X-Application: Transformr ".VERSION );
 	ini_set('display_errors', 0); // set this to 1 to debug errors
 	}
@@ -120,7 +120,21 @@ class Transformr
 		$xslt->importStyleSheet(DomDocument::load($xsl_filename));
 		
 		print $xslt->transformToXML(DomDocument::loadXML($doc));
-	} 
+	}
+
+	elseif ($url == 'referer' && getenv("HTTP_REFERER") != '') {
+	
+	$referer = getenv("HTTP_REFERER");
+		self::transform($referer, $xsl_filename);	
+	}
+	
+	elseif (getenv("HTTP_REFERER") != '' && $url !='') {
+	
+	$referer = getenv("HTTP_REFERER");
+	
+		self::transform($referer.'#'.$url, $xsl_filename);	
+	}
+	
 	else {
 		header("Location: ".PATH."?error=noURL");
 		exit;

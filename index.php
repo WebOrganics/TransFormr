@@ -12,5 +12,5 @@ $transformer->init();
 require_once(FORMAT."types.php");
 
  //* Transform url
-$transformer->transform(URL, $xsl_filename);
+$transformer->transform($url, $xsl_filename);
 ?>
