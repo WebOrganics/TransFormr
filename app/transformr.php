@@ -61,6 +61,8 @@ class Transformr
 		
 		$dom = new DOMDocument('1.0');
 		
+		$xmlNs = 'http://www.w3.org/1999/xhtml';
+		
 		$dom->preserveWhiteSpace = true;
 		
 		if (!@$dom->loadXML($html)) {
@@ -68,8 +70,6 @@ class Transformr
 			$htmlDoctype = '/<!DOCTYPE(.*)>/sU';
 			
 			$withStrict = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
-			
-			$xmlNs = 'http://www.w3.org/1999/xhtml';
 			
 			$html = preg_replace ($htmlDoctype, $withStrict, $html);
 			
@@ -89,8 +89,12 @@ class Transformr
 			$dom->relaxNGValidateSource(self::schema());
 			
 			$element = $dom->getElementById($frag_id);
-
-			$doc = $dom->saveXML($element); 	
+			
+			$element->setAttribute('xmlns', $xmlNs);
+			
+			$dom->loadXML($element);
+			
+			$doc = $dom->saveXML($element);
 		} 
 		else {
 			$doc = $dom->saveXML();
