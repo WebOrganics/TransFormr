@@ -50,6 +50,7 @@ I'm not an XSLT expert, so there are no guarantees to quality of this code!
 <xsl:param name="Source" ><xsl:value-of select="$base-uri" /></xsl:param>
 <xsl:param name="Encoding" >UTF-8</xsl:param>
 <xsl:param name="Anchor" />
+<xsl:param name="doc-title" select="''" />
 
 <xsl:variable name="nl"><xsl:text>
 </xsl:text></xsl:variable>
@@ -71,7 +72,7 @@ Without the correct profile you cannot assume the class values are intended for 
 		<xsl:text>BEGIN:VCARD</xsl:text>
 		<!-- <xsl:text>&#x0D;&#x0A;PRODID:</xsl:text><xsl:value-of select="$Prodid"/> -->
 		<xsl:text>&#x0D;&#x0A;SOURCE:</xsl:text><xsl:value-of select="$Source"/>
-		<xsl:apply-templates select="//*[local-name() = 'title']" mode="unFormatText" />
+		<xsl:text>&#x0D;&#x0A;NAME:</xsl:text><xsl:value-of select="$doc-title"/>
 		<xsl:text>&#x0D;&#x0A;VERSION:3.0</xsl:text>
 		
 		<xsl:call-template name="mf:doIncludes"/>
