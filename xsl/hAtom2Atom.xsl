@@ -900,8 +900,11 @@
 		<xsl:when test="name($context)='abbr'">
 			<xsl:value-of select="normalize-space($context/@title)"/>
 		</xsl:when>
-		<xsl:when test="$context/xhtml:*[contains(concat(' ',normalize-space(@class),' '),' value ')]">
-			<xsl:value-of select="normalize-space($context/xhtml:*[contains(concat(' ',normalize-space(@class),' '),' value ')])"/>
+		<xsl:when test="$context/xhtml:*[contains(concat(' ',normalize-space(@class),' '),' value-title ')]">
+			<xsl:value-of select="normalize-space($context/xhtml:*[contains(concat(' ',normalize-space(@class),' '),' value-title ')])"/>
+		</xsl:when>
+		<xsl:when test="name($context)='span' and $context/@title">
+			<xsl:value-of select="normalize-space($context/@title)"/>
 		</xsl:when>
 		<xsl:otherwise>
 			<xsl:value-of select="normalize-space($context)"/>

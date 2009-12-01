@@ -90,11 +90,7 @@ class Transformr
 			
 			$element = $dom->getElementById($frag_id);
 			
-			$element->setAttribute('xmlns', $xmlNs);
-			
-			$dom->loadXML($element);
-			
-			$doc = $dom->saveXML($element);
+			require_once('include/html.php');
 		} 
 		else {
 			$doc = $dom->saveXML();
@@ -129,6 +125,7 @@ class Transformr
 	elseif ($url == 'referer' && getenv("HTTP_REFERER") != '') {
 	
 	$referer = getenv("HTTP_REFERER");
+	
 		self::transform($referer, $xsl_filename);	
 	}
 	
@@ -140,7 +137,9 @@ class Transformr
 	}
 	
 	else {
+	
 		header("Location: ".PATH."?error=noURL");
+		
 		exit;
 	}
    }
