@@ -82,10 +82,20 @@
  </xsl:template>
 
 <xsl:template name="attributes">
+<xsl:param name="summary" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' entry-summary ')]"/>
+<xsl:param name="content" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' entry-content ')]"/>
 	<xsl:call-template name="title"/>
 	<xsl:call-template name="pubdate"/>
 	<xsl:call-template name="permalink"/>
 	<xsl:call-template name="author-name"/>
+   	<xsl:choose>
+    	<xsl:when test="$summary">
+        	<xsl:call-template name="entry-summary"/>
+        </xsl:when>
+        <xsl:otherwise>
+        	<xsl:call-template name="entry-content"/>
+        </xsl:otherwise>
+    </xsl:choose>
 	<xsl:call-template name="entry-content"/>
 	<xsl:call-template name="keywords"/>
 	<xsl:call-template name="media"/>
