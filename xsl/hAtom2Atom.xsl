@@ -124,6 +124,7 @@
 <xsl:import href="uri.xsl" />
 <xsl:import href="datetime.xsl" />
 <xsl:param name="base-uri" select="''"/>
+<xsl:param name="doc-title" select="''"/>
 <xsl:param name="source-uri" select="$base-uri"/>
 <xsl:param name="content-type">text/html</xsl:param>
 <xsl:param name="implicit-feed">1</xsl:param>
@@ -449,25 +450,15 @@
 		<!-- Extract feed title    -->
 
 		<!--[extension]-->
-			<!-- Try to find an element with class="feed-title" -->
-			<xsl:variable name="classTitles"
-				select="extension:node-set($feedLevelElements)/descendant-or-self::xhtml:*[contains(concat(' ',normalize-space(@class),' '),' feed-title ')]"
-				/>
-
 			<xsl:choose>
-				<xsl:when test="$classTitles">
-					<xsl:for-each select="$classTitles[1]">
-						<title><xsl:call-template name="h2a:text-value-of"/></title>
-					</xsl:for-each>
-				</xsl:when>
 				<xsl:when test="/xhtml:html/xhtml:head/xhtml:title">
 					<xsl:for-each select="/xhtml:html/xhtml:head/xhtml:title[1]">
 						<title><xsl:call-template name="h2a:text-value-of"/></title>
 					</xsl:for-each>
 				</xsl:when>
 				<xsl:otherwise>
-					<!--ERROR: A feed must have a title -->
-					<title/>
+					<!-- A feed must have a title ( set by parser $doc-title )-->
+					<title><xsl:value-of select="normalize-space($doc-title)"/></title>
 				</xsl:otherwise>
 			</xsl:choose>
 		<!--[/extension]-->
@@ -901,7 +892,7 @@
 			<xsl:value-of select="normalize-space($context/@title)"/>
 		</xsl:when>
 		<xsl:when test="$context/xhtml:*[contains(concat(' ',normalize-space(@class),' '),' value-title ')]">
-			<xsl:value-of select="normalize-space($context/xhtml:*[contains(concat(' ',normalize-space(@class),' '),' value-title ')])"/>
+			<xsl:value-of select="normalize-space($context/xhtml:*[contains(concat(' ',normalize-space(@class),' '),' value-title ')]/@title)"/>
 		</xsl:when>
 		<xsl:when test="name($context)='span' and $context/@title">
 			<xsl:value-of select="normalize-space($context/@title)"/>
