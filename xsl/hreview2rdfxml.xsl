@@ -12,7 +12,6 @@
 	xmlns:foaf="http://xmlns.com/foaf/0.1/" 
 	xmlns:vcard="http://www.w3.org/2006/vcard/ns#"
 	xmlns:tag="http://www.holygoat.co.uk/owl/redwood/0.1/tags/"
-	exclude-result-prefixes="xhtml"
 	version="1.0"
 >
 
@@ -33,13 +32,13 @@
 	method="xml"
 />
 
-<xsl:template match="/html/body">
+<xsl:template match="/xhtml:html/xhtml:body">
 	<rdf:RDF>
 		<!-- loop through for hReview data -->
 		<xsl:for-each select="//*[contains(concat(' ',normalize-space(@class),' '),' hreview ')]">
 			<xsl:if test="
 			(descendant::*[contains(concat(' ',normalize-space(@class),' '),' summary ')] or descendant::*[contains(concat(' ',normalize-space(@class),' '),' item ')]/descendant::*[contains(concat(' ',normalize-space(@class),' '),' fn ')])
-			and (not($Anchor) or ancestor-or-self::*[@id = $Anchor])
+			and (not($Anchor) or @id = $Anchor)
 			">
 				<xsl:element name="Description" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 					<xsl:attribute name="about" namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
