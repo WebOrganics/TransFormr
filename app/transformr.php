@@ -1,5 +1,5 @@
 <?php
-// TransFormr Version: 0.5.2, Updated: Sunday, 29th November 2009
+// TransFormr Version: 0.5.3b, Updated: Wednesday, 17th February 2010
 // Contact: Martin McEvoy info@weborganics.co.uk
 
 class Transformr
@@ -37,8 +37,8 @@ class Transformr
 	define('FORMAT',  'format/');
 	define('TEMPLATE',  'template/');
 	define('XSL',  'xsl/');
-	define('VERSION',  '0.5.2');
-	define('UPDATED',  'Sunday, 29th November 2009');
+	define('VERSION',  '0.5.3b');
+	define('UPDATED',  'Wednesday, 17th February 2010');
 	header("X-Application: Transformr ".VERSION );
 	ini_set('display_errors', 0); // set this to 1 to debug errors
 	}

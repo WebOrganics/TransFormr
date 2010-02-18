@@ -1,7 +1,6 @@
 <?php
 if (TYPE) { 
 	header("Cache-Control: no-cache, must-revalidate");
-	header("Expires: -1");
 }
 
 $url = URL;
@@ -90,6 +89,9 @@ break;
 
 case 'detect':
 $xsl_filename = XSL."detect-uf.xsl";
+break;
+
+case 'dataset':
 break;
 
 default:
