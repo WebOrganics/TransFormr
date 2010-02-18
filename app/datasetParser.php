@@ -1,9 +1,9 @@
 <?php
-class HTMLQuery extends Transformr
+class DatasetParse extends Transformr
 {
 	public $url = '';
 	
-	public function this_document($url)
+	public function html_query($url)
 	{
 		$contents = '';
 	
