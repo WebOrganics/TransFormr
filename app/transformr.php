@@ -1,5 +1,5 @@
 <?php
-// TransFormr Version: 0.5.3b, Updated: Wednesday, 17th February 2010
+// TransFormr Version: 0.5.3, Updated: Thursday, 18th February 2010
 // Contact: Martin McEvoy info@weborganics.co.uk
 
 class Transformr
@@ -31,19 +31,36 @@ class Transformr
 		echo $upgrade_php;
 	exit;
 	}
+	
 	define('PATH',  self::set_path());
 	define('TYPE',  $_GET['type']);
 	define('URL',  $_GET['url']);
 	define('FORMAT',  'format/');
 	define('TEMPLATE',  'template/');
 	define('XSL',  'xsl/');
-	define('VERSION',  '0.5.3b');
-	define('UPDATED',  'Wednesday, 17th February 2010');
+	define('VERSION',  '0.5.3');
+	define('UPDATED',  'Thursday, 18th February 2010');
 	header("X-Application: Transformr ".VERSION );
-	ini_set('display_errors', 0); // set this to 1 to debug errors
+	ini_set('display_errors', 1); // set this to 1 to debug errors
 	}
 	
-	public static function transform($url, $xsl_filename)
+	public function transform($url, $xsl_filename)
+	{	
+		self::init();
+		
+		require_once(FORMAT."types.php");
+		
+		if ($xsl_filename == null) 
+		{
+			//* require HTMLQuery class
+			require( 'datasetParser.php' );
+			return HTMLQuery::this_document($url);
+		}
+		//* Transform url
+		return self::transform_xsl($url, $xsl_filename);
+	}
+	
+	private static function transform_xsl($url, $xsl_filename)
 	{
 	if( strrchr($url, 'http://') ) {
 		
@@ -119,7 +136,7 @@ class Transformr
 		$xslt->setParameter('','doc-title', $title);
 		$xslt->importStyleSheet(DomDocument::load($xsl_filename));
 		
-		print $xslt->transformToXML(DomDocument::loadXML($doc));
+		return $xslt->transformToXML(DomDocument::loadXML($doc));
 	}
 
 	elseif ($url == 'referer' && getenv("HTTP_REFERER") != '') {

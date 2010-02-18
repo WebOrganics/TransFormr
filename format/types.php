@@ -92,6 +92,8 @@ $xsl_filename = XSL."detect-uf.xsl";
 break;
 
 case 'dataset':
+header("Content-type: application/rdf+xml"); # set header
+$xsl_filename = null;
 break;
 
 default:
