@@ -5,6 +5,12 @@ require_once('app/transformr.php');
  //* Start new Transformr
 $transformer = new Transformr;
 
+ //* initiate Transformr
+$transformer->init();
+
+ //* Include types
+require_once(FORMAT."types.php");
+
  //* Transform url
-echo $transformer->transform($url, $xsl_filename);
+$transformer->transform($url, $xsl_filename);
 ?>

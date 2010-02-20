@@ -1,9 +1,9 @@
 <?php
-class DatasetParse extends Transformr
+class HTMLQuery 
 {
 	public $url = '';
 	
-	public function html_query($url)
+	public function this_document($url)
 	{
 		$contents = '';
 	
@@ -51,7 +51,8 @@ class DatasetParse extends Transformr
 		$xml->preserveWhiteSpace = true;
 		$xml->formatOutput = true;
 		$root = $xml->createElementNS('http://www.w3.org/1999/02/22-rdf-syntax-ns#', 'rdf:RDF');
-		
+		header("Content-type: application/rdf+xml"); # set header
+
 		if ( isset($object->base) ) $url = $object->base;
 		
 		$root->setAttribute("xml:base", $url);

@@ -1,6 +1,8 @@
 <?php
-// TransFormr Version: 0.5.3, Updated: Thursday, 18th February 2010
-// Contact: Martin McEvoy info@weborganics.co.uk
+/*
+ * TransFormr Version: 0.5.3, Updated: Saturday, 20th February 2010
+ * Contact: Martin McEvoy info@weborganics.co.uk
+ */
 
 class Transformr
  {
@@ -27,12 +29,10 @@ class Transformr
 	$php_version = version_compare(THIS_PHP_VERSION, MIN_PHP_VERSION, '>=');
 	$upgrade_php = '<p>Sorry PHP Upgrade needed, <em>Transformr</em> requires PHP '.$min_php.' or newer. Your current PHP version is '.$php_self.'</p>';
 	
-	if (!$php_version) 
-	{
-		return $upgrade_php;
-		exit;
+	if (!$php_version) {
+		echo $upgrade_php;
+	exit;
 	}
-	
 	define('PATH',  self::set_path());
 	define('TYPE',  $_GET['type']);
 	define('URL',  $_GET['url']);
@@ -40,34 +40,29 @@ class Transformr
 	define('TEMPLATE',  'template/');
 	define('XSL',  'xsl/');
 	define('VERSION',  '0.5.3');
-	define('UPDATED',  'Thursday, 18th February 2010');
+	define('UPDATED',  'Saturday, 20th February 2010');
 	header("X-Application: Transformr ".VERSION );
 	ini_set('display_errors', 0); // set this to 1 to debug errors
 	}
 	
 	public function transform($url, $xsl_filename)
 	{	
-		self::init();
-		
-		require_once(FORMAT."types.php");
-		
 		if ($xsl_filename == null) 
 		{
 			//* require DatasetParser class
 			require( 'datasetParser.php' );
-			return DatasetParse::html_query($url);
+			echo HTMLQuery::this_document($url);
 		}
 		//* Transform url
-		return self::transform_xsl($url, $xsl_filename);
+		else return Transformr::transform_xsl($url, $xsl_filename);
 	}
 	
-	private static function transform_xsl($url, $xsl_filename)
+	private function transform_xsl($url, $xsl_filename)
 	{
 	if( strrchr($url, 'http://') ) {
 		
 		// disable same host requests
-		if ($url == PATH) 
-		{
+		if ($url == PATH) {
 			header("Location: ".PATH);
 			exit;
 		}
@@ -84,8 +79,8 @@ class Transformr
 		
 		$dom->preserveWhiteSpace = true;
 		
-		if (!@$dom->loadXML($html)) 
-		{	
+		if (!@$dom->loadXML($html)) {
+			
 			$htmlDoctype = '/<!DOCTYPE(.*)>/sU';
 			
 			$withStrict = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
@@ -115,8 +110,8 @@ class Transformr
 			$doc = $dom->saveXML();
 		}
 		
-		if (!DomDocument::loadXML($doc)) 
-		{	
+		if (!DomDocument::loadXML($doc)) {
+			
 			if (isset($tidyPhase)) $tidyPhase++;
 			else $tidyPhase = 1;
 			
@@ -138,7 +133,7 @@ class Transformr
 		$xslt->setParameter('','doc-title', $title);
 		$xslt->importStyleSheet(DomDocument::load($xsl_filename));
 		
-		return $xslt->transformToXML(DomDocument::loadXML($doc));
+		print $xslt->transformToXML(DomDocument::loadXML($doc));
 	}
 
 	elseif ($url == 'referer' && getenv("HTTP_REFERER") != '') {
