@@ -50,14 +50,15 @@ class Transformr
 		if ($xsl_filename == null) 
 		{
 			//* require DatasetParser class
-			require( 'datasetParser.php' );
-			echo HTMLQuery::this_document($url);
+			require( 'dataset.parser.php' );
+			$query = new HTMLQuery;
+			echo $query->this_document($url);
 		}
 		//* Transform url
 		else return Transformr::transform_xsl($url, $xsl_filename);
 	}
 	
-	private function transform_xsl($url, $xsl_filename)
+	protected function transform_xsl($url, $xsl_filename)
 	{
 	if( strrchr($url, 'http://') ) {
 		
@@ -158,7 +159,7 @@ class Transformr
 	}
    }
 
-   private static function schema()
+   protected function schema()
    {
     // a  generic RelaxNG schema to validate the presence of @id on any element in XHTML documents 
 	// (its faster than $dom->validateOnParse = true function) .
