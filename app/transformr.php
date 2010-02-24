@@ -5,8 +5,24 @@
  */
 
 class Transformr
- {
- 	private static function set_path()
+{
+	public function transform($url, $xsl_filename)
+	{	
+		$this->init();
+		
+		require_once 'format.types.php';
+		
+		if ($xsl_filename == null) 
+		{
+			require_once 'dataset.parser.php';
+			$query = new HTMLQuery;
+			print $query->this_document($url);
+		}
+		else 
+			print $this->transform_xsl($url, $xsl_filename);
+	}
+	
+ 	protected function set_path()
 	{
 	$_SCRIPT_DIR = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
 	$_BASE_DIR = realpath(dirname(__FILE__)); 
@@ -20,7 +36,7 @@ class Transformr
 		return "http://".$_SERVER['HTTP_HOST'].$INSTALLATION_PATH."/";
 	}
 	
-	public static function init()
+	public function init()
 	{
 	define('MIN_PHP_VERSION', '5.2.0');
 	define('THIS_PHP_VERSION', phpversion());
@@ -36,26 +52,12 @@ class Transformr
 	define('PATH',  self::set_path());
 	define('TYPE',  $_GET['type']);
 	define('URL',  $_GET['url']);
-	define('FORMAT',  'format/');
 	define('TEMPLATE',  'template/');
 	define('XSL',  'xsl/');
 	define('VERSION',  '0.5.3');
 	define('UPDATED',  'Saturday, 20th February 2010');
 	header("X-Application: Transformr ".VERSION );
 	ini_set('display_errors', 0); // set this to 1 to debug errors
-	}
-	
-	public function transform($url, $xsl_filename)
-	{	
-		if ($xsl_filename == null) 
-		{
-			//* require DatasetParser class
-			require( 'dataset.parser.php' );
-			$query = new HTMLQuery;
-			echo $query->this_document($url);
-		}
-		//* Transform url
-		else return Transformr::transform_xsl($url, $xsl_filename);
 	}
 	
 	protected function transform_xsl($url, $xsl_filename)
@@ -105,7 +107,7 @@ class Transformr
 			
 			$element = $dom->getElementById($frag_id);
 			
-			require_once('include/html.php');
+			require_once 'html.fragment.php';
 		} 
 		else {
 			$doc = $dom->saveXML();
@@ -123,7 +125,7 @@ class Transformr
 			}
 			else {
 				$tidyURL = 'http://cgi.w3.org/cgi-bin/tidy?forceXML=on&docAddr=';
-					self::transform($tidyURL.$url, $xsl_filename);
+					$this->transform($tidyURL.$url, $xsl_filename);
 			}
 		}
 		
@@ -132,29 +134,21 @@ class Transformr
 		$xslt->setParameter('','url', $url);
 		$xslt->setParameter('','base-uri', $url);
 		$xslt->setParameter('','doc-title', $title);
+		$xslt->setParameter('','version', VERSION);
 		$xslt->importStyleSheet(DomDocument::load($xsl_filename));
-		
-		print $xslt->transformToXML(DomDocument::loadXML($doc));
+		return $xslt->transformToXML(DomDocument::loadXML($doc));
 	}
 
 	elseif ($url == 'referer' && getenv("HTTP_REFERER") != '') {
-	
-	$referer = getenv("HTTP_REFERER");
-	
-		self::transform($referer, $xsl_filename);	
+		$referer = getenv("HTTP_REFERER");
+		$this->transform($referer, $xsl_filename);	
 	}
-	
 	elseif (getenv("HTTP_REFERER") != '' && $url !='') {
-	
-	$referer = getenv("HTTP_REFERER");
-	
-		self::transform($referer.'#'.$url, $xsl_filename);	
+		$referer = getenv("HTTP_REFERER");
+		$this->transform($referer.'#'.$url, $xsl_filename);	
 	}
-	
 	else {
-	
 		header("Location: ".PATH."?error=noURL");
-		
 		exit;
 	}
    }

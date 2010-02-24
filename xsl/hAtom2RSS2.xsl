@@ -22,6 +22,8 @@
 <!-- base of the current HTML doc set by Processor-->
 <xsl:param name="base-uri" select="''"/>
 
+<xsl:param name="version" select="''"/>
+
 <!-- url encoded base of the current HTML doc set by Processor -->
 <xsl:param name="base-encoded">
 	<xsl:call-template name="url-encode">
@@ -33,7 +35,8 @@
 <xsl:param name="doc-title" select="''"/>
 
 <xsl:param name="generator">
-	<xsl:text>TransFormr Version 0.5.1</xsl:text>
+	<xsl:text>TransFormr Version </xsl:text>
+	<xsl:value-of select="$version" />
 </xsl:param>
 
 <xsl:param name="parser">
@@ -96,7 +99,6 @@
         	<xsl:call-template name="entry-content"/>
         </xsl:otherwise>
     </xsl:choose>
-	<xsl:call-template name="entry-content"/>
 	<xsl:call-template name="keywords"/>
 	<xsl:call-template name="media"/>
 	<xsl:call-template name="media-enclosure"/>
@@ -161,7 +163,7 @@
 
 <!-- entry-summary -->
 <xsl:template name="entry-summary">
-<xsl:param name="summary" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' entry-summary ')]"/>
+<xsl:param name="summary" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' entry-summary ')][1]"/>
 	<xsl:if test="$summary">
 		<xsl:element name='description'>
 			<xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
@@ -175,7 +177,7 @@
 
 <!-- entry-content -->
 <xsl:template name="entry-content">
-<xsl:param name="content" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' entry-content ')]"/>
+<xsl:param name="content" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' entry-content ')][1]"/>
 	<xsl:if test="$content">
 		<xsl:element name='description'>
 			<xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>

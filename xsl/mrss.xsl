@@ -17,8 +17,11 @@
 <!-- base of the current HTML doc set by Processor-->
 <xsl:param name="base-uri" select="''"/>
 
+<xsl:param name="version" select="''"/>
+
 <xsl:param name="generator">
-	<xsl:text>TransFormr Version 3.0</xsl:text>
+	<xsl:text>TransFormr Version </xsl:text>
+	<xsl:value-of select="$version" />
 </xsl:param>
 
 <xsl:param name="parser">
