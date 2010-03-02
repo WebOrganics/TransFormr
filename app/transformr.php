@@ -1,6 +1,6 @@
 <?php
 /*
- * TransFormr Version: 0.5.3, Updated: Saturday, 20th February 2010
+ * TransFormr Version: 0.5.3, Updated: Tuesday, 2nd March 2010
  * Contact: Martin McEvoy info@weborganics.co.uk
  */
 
@@ -14,7 +14,7 @@ class Transformr
 		
 		if ($xsl_filename == null) 
 		{
-			require_once 'dataset.parser.php';
+			require_once 'application/Dataset_Parser.php';
 			$query = new HTMLQuery;
 			print $query->this_document($url);
 		}
@@ -55,7 +55,7 @@ class Transformr
 	define('TEMPLATE',  'template/');
 	define('XSL',  'xsl/');
 	define('VERSION',  '0.5.3');
-	define('UPDATED',  'Saturday, 20th February 2010');
+	define('UPDATED',  'Tuesday, 2nd March 2010');
 	header("X-Application: Transformr ".VERSION );
 	ini_set('display_errors', 0); // set this to 1 to debug errors
 	}

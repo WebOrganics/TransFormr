@@ -14,3 +14,6 @@ RewriteRule ^([A-Za-z0-9-]+)/http://?(.*)$  index.php?type=$1&url=http://$2 [NC,
 
 RewriteRule ^([A-Za-z0-9-]+)/([A-Za-z0-9-]+)$  index.php?type=$1&url=$2 [NC,NE]
 
+
+RewriteRule ^script/documentForm.js$  script/documentForm.php [NC,NE]
+

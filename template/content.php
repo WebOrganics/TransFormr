@@ -29,6 +29,7 @@
 	<option value="rdfa2rdfxml">RDFa2RDF</option>
 	<option value="haudio-rss2">hAudio2RSS2</option>
 	<option value="hfoaf">hFOAF</option>
+	<option value="dataset">Dataset</option>
 </optgroup>
 </select></label> 
 <span id="urlfield">
