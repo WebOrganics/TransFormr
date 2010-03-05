@@ -22,8 +22,5 @@
 	fieldset {padding-bottom:15px;}
   </style>
 <![endif]-->
-
-<script src="script/ValidationTextField.js" type="text/javascript"></script>
-<script src="script/documentForm.js" type="text/javascript"></script>
 </head>
 <body>
