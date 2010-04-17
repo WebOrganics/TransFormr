@@ -1,28 +1,12 @@
 <?php
 /*
- * TransFormr Version: 0.5.3, Updated: Tuesday, 2nd March 2010
+ * TransFormr Version: 0.6.0, Saturday, 17th April 2010
  * Contact: Martin McEvoy info@weborganics.co.uk
  */
 
 class Transformr
 {
-	public function transform($url, $xsl_filename)
-	{	
-		$this->init();
-		
-		require_once 'format.types.php';
-		
-		if ($xsl_filename == null) 
-		{
-			require_once 'application/Dataset_Parser.php';
-			$query = new HTMLQuery;
-			print $query->this_document($url);
-		}
-		else 
-			print $this->transform_xsl($url, $xsl_filename);
-	}
-	
- 	protected function set_path()
+ 	public function set_path()
 	{
 	$_SCRIPT_DIR = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
 	$_BASE_DIR = realpath(dirname(__FILE__)); 
@@ -36,7 +20,7 @@ class Transformr
 		return "http://".$_SERVER['HTTP_HOST'].$INSTALLATION_PATH."/";
 	}
 	
-	public function init()
+	protected function init()
 	{
 	define('MIN_PHP_VERSION', '5.2.0');
 	define('THIS_PHP_VERSION', phpversion());
@@ -45,19 +29,47 @@ class Transformr
 	$php_version = version_compare(THIS_PHP_VERSION, MIN_PHP_VERSION, '>=');
 	$upgrade_php = '<p>Sorry PHP Upgrade needed, <em>Transformr</em> requires PHP '.$min_php.' or newer. Your current PHP version is '.$php_self.'</p>';
 	
-	if (!$php_version) {
+	if (!$php_version) 
+	{
 		echo $upgrade_php;
-	exit;
+		exit;
 	}
-	define('PATH',  self::set_path());
+	
+	define('PATH',  $this->set_path());
 	define('TYPE',  $_GET['type']);
 	define('URL',  $_GET['url']);
 	define('TEMPLATE',  'template/');
 	define('XSL',  'xsl/');
-	define('VERSION',  '0.5.3');
-	define('UPDATED',  'Tuesday, 2nd March 2010');
+	define('VERSION',  '0.6.0');
+	define('UPDATED',  'Saturday, 17th April 2010');
 	header("X-Application: Transformr ".VERSION );
 	ini_set('display_errors', 0); // set this to 1 to debug errors
+	}
+	
+	public function transform()
+	{
+	$this->init();	
+	
+	$required = array("Transformr_Types", "RDFa_Parser", "ARC2_Transformr", "Entity_Decode", "Dataset_Transformr");
+	
+	foreach ($required as $require)
+	{
+		require_once($require.'.php');
+	}
+	
+	$RDFparser = new ARC2_Transformr;
+	
+	$HTMLQuery = new HTMLQuery;
+		
+	if ($arc2_parse == true) 
+	{
+		$output = 'rdf';
+		$document = $this->transform_xsl($url, $xsl_filename);
+		if (isset($_GET['output'])) $output = $_GET['output'];
+		return $RDFparser->Parse($url, $document, $output);
+	}	
+	if ($xsl_filename == "dataset") return $HTMLQuery->this_document($url);
+	else return $this->transform_xsl($url, $xsl_filename);
 	}
 	
 	protected function transform_xsl($url, $xsl_filename)
@@ -70,63 +82,61 @@ class Transformr
 			exit;
 		}
 		
-		$html = file_get_contents($url, FALSE, NULL, 0, 2097152);
+		$html = html_entity_safe_decode(file_get_contents($url, FALSE, NULL, 0, 2597152));
 		
 		if (strrchr($url, '#')) $frag_id = array_pop(explode('#', $url));
 		
-		if (strrchr($url, 'docAddr=')) $url = array_pop(explode('docAddr=', $url));
-		
 		$dom = new DOMDocument('1.0');
-		
-		$xmlNs = 'http://www.w3.org/1999/xhtml';
 		
 		$dom->preserveWhiteSpace = true;
 		
-		if (!@$dom->loadXML($html)) {
+		$dom->formatOutput = true;
+		
+		if (!$dom->loadXML($html)) {
 			
-			$htmlDoctype = '/<!DOCTYPE(.*)>/sU';
-			
-			$withStrict = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
-			
-			$html = preg_replace ($htmlDoctype, $withStrict, $html);
-			
-			@$dom->loadHTML($html);
-			
-			if (!$dom->getElementsByTagName('html')->item(0)->getAttribute('xmlns'))
-				$dom->getElementsByTagName('html')->item(0)->setAttribute('xmlns', $xmlNs);
+			# try local tidy function first
+			if (method_exists(new tidy,'parseString'))
+			{
+				$config = array(
+					'doctype'                     => 'strict',
+					'logical-emphasis'            => true,
+					'output-xhtml'                => true,
+					'wrap'                        => 200
+				);		
+				$tidy = new tidy;
+				$tidy->parseString($html, $config, 'utf8');
+				$tidy->cleanRepair();
+			} 
+			# or use w3c online tidy service
+			else {
+				$tidyURL = 'http://cgi.w3.org/cgi-bin/tidy?forceXML=on&docAddr=';
+				$tidy = file_get_contents($tidyURL.$url, FALSE, NULL, 0, 2597152);
+			}
 		}
-		else {
-			@$dom->loadXML($html);
+		
+		if (isset($tidy)) $html = $tidy;
+		$dom->loadXML($html);
+		
+		if (TYPE == "rdfa")
+		{
+			$RDFaparser = new RDFa_Parser;
+			$dom->loadXML($RDFaparser->get_document($dom)); 
 		}
 		
 		$title = $dom->getElementsByTagName('title')->item(0)->nodeValue;
 		
 		if (isset($frag_id)) 
 		{
-			$dom->relaxNGValidateSource(self::schema());
+			$dom->relaxNGValidateSource($this->schema());
 			
 			$element = $dom->getElementById($frag_id);
 			
-			require_once 'html.fragment.php';
+			$content = $dom->saveXML($element);
+			
+			include( 'HTML_Fragment.php' );	
 		} 
 		else {
 			$doc = $dom->saveXML();
-		}
-		
-		if (!DomDocument::loadXML($doc)) {
-			
-			if (isset($tidyPhase)) $tidyPhase++;
-			else $tidyPhase = 1;
-			
-			if ($tidyPhase == 2) {
-				echo "Sorry Cant parse this document";
-					unset($tidyPhase);
-				exit;
-			}
-			else {
-				$tidyURL = 'http://cgi.w3.org/cgi-bin/tidy?forceXML=on&docAddr=';
-					$this->transform($tidyURL.$url, $xsl_filename);
-			}
 		}
 		
 		$xslt = new xsltProcessor;
@@ -138,7 +148,6 @@ class Transformr
 		$xslt->importStyleSheet(DomDocument::load($xsl_filename));
 		return $xslt->transformToXML(DomDocument::loadXML($doc));
 	}
-
 	elseif ($url == 'referer' && getenv("HTTP_REFERER") != '') {
 		$referer = getenv("HTTP_REFERER");
 		$this->transform($referer, $xsl_filename);	
@@ -150,13 +159,16 @@ class Transformr
 	else {
 		header("Location: ".PATH."?error=noURL");
 		exit;
-	}
+	  }
    }
 
    protected function schema()
    {
-    // a  generic RelaxNG schema to validate the presence of @id on any element in XHTML documents 
-	// (its faster than $dom->validateOnParse = true function) .
+    /* 
+	 *	a  generic RelaxNG schema to validate the presence of @id on any element in XHTML documents 
+	 *	its faster than $dom->validateOnParse = true option
+	 *
+	 */
 	
    $valid = '<grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
     <start>

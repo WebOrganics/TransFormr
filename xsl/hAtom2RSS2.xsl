@@ -58,7 +58,7 @@
 	</xsl:choose>
 </xsl:param>
 
-<rss version="2.0">
+<rss version="2.0" xml:base="{$base-uri}">
 <channel>
 <atom:link rel="self" href="{$parser}{$base-encoded}" type="application/rss+xml" />
 	<title>
@@ -153,7 +153,7 @@
 
 <!-- author -->
 <xsl:template name="author-name">
-<xsl:param name="name" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' author ')]"/>
+<xsl:param name="name" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' author ') or contains(concat(' ',normalize-space(@class),' '),' fn ')]"/>
 	<xsl:if test="$name">
 		<xsl:element name='dc:creator'>
 			<xsl:value-of select="normalize-space($name)"/>
@@ -195,11 +195,11 @@
 	<xsl:if test="$tag">
 		<xsl:element name='dc:subject'>
       	<xsl:for-each select="$tag">
-        		<xsl:value-of select="."/>
-                <xsl:if test="not(position()=last())">
-                	<xsl:text >, </xsl:text>
-             	</xsl:if>
-      		</xsl:for-each>
+        	<xsl:value-of select="."/>
+            <xsl:if test="not(position()=last())">
+                <xsl:text >, </xsl:text>
+            </xsl:if>
+      	</xsl:for-each>
      </xsl:element>
 	</xsl:if>
 </xsl:template>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://purl.org/ontology/mo/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:dc="http://purl.org/dc/terms/" xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:time="http://www.w3.org/2006/time#" xmlns:tl="http://purl.org/NET/c4dm/timeline.owl#" exclude-result-prefixes="xhtml" version="1.0">
 
-<!-- Id: Mo-hAudio.xsl,$Version 0.3 *stable* updated Monday, December 29 2008 13:12 +0000 By Martin McEvoy contributions by Yves Raimond http://dbtune.org/, Extract Music Ontology from hAudio Microformat, GRDDL Link http://purl.org/weborganics/mo-haudio -->
+<!-- Id: Mo-hAudio.xsl,$Version 0.4 *stable* updated Wednesday, April 2nd 2010 By Martin McEvoy contributions by Yves Raimond http://dbtune.org/, Extract Music Ontology from hAudio Microformat, GRDDL Link http://purl.org/weborganics/mo-haudio -->
 
 <xsl:strip-space elements="*"/>
 
@@ -54,16 +54,16 @@
 
 <xsl:template match="xhtml:html">
 <xsl:for-each select="$audio">
-	<xsl:call-template name="artist"/>
 	<xsl:call-template name="recording"/>
 	<xsl:choose>
      		<xsl:when test="$items">
 			<xsl:call-template name="item"/>
 		</xsl:when>
-    		<xsl:otherwise>
+    	<xsl:otherwise>
    			<xsl:call-template name="haudio"/>
-    		</xsl:otherwise>
+    	</xsl:otherwise>
 	</xsl:choose>
+	<xsl:call-template name="artist"/>
 </xsl:for-each>
 </xsl:template>
 
@@ -104,10 +104,9 @@
 </xsl:template>
 
 <xsl:template name="artistLink">
-<xsl:param name="groupLink" select="descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' contributor ')][1]"/>
-<xsl:param name="groupLinkalt" select="/*//*[contains(concat(' ',normalize-space(attribute::class),' '),' contributor ')][1]"/>
-<xsl:choose>
-     	<xsl:when test="$groupLink">
+<xsl:param name="groupLink" select="descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' contributor ')
+									and not(ancestor::*[contains(concat(' ',normalize-space(attribute::class),' '),' item ')])]"/>
+    <xsl:if test="$groupLink">
   		<xsl:for-each select="$groupLink">
 			<xsl:element name="foaf:maker">
 				<xsl:attribute name="rdf:nodeID">
@@ -115,39 +114,36 @@
 				</xsl:attribute>
 			</xsl:element>
 		</xsl:for-each>
-	</xsl:when>
-    	<xsl:otherwise>
-  		<xsl:for-each select="$groupLinkalt">
-			<xsl:element name="foaf:maker">
-				<xsl:attribute name="rdf:nodeID">
-					<xsl:value-of select="generate-id()"/>
-				</xsl:attribute>
-			</xsl:element>
-		</xsl:for-each>
-    	</xsl:otherwise>
-</xsl:choose>
+	</xsl:if>
 </xsl:template>
 
 
 <!-- mo:MusicGroup => attribute::class="contributor"-->
 <xsl:template name="artist">
 <xsl:param name="group" select="descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' contributor ')]"/>
-  	<xsl:for-each select="$group">
+<xsl:for-each select="$group">
 	<xsl:element name="MusicGroup">
   	<xsl:attribute name="rdf:nodeID">
       <xsl:value-of select="generate-id()"/>
     </xsl:attribute>
 		<xsl:element name="foaf:name"><xsl:value-of select="descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' fn ')]"/></xsl:element>
-     <xsl:if test="substring-before(descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' url ')]/attribute::href,'musicbrainz') = 'http://'">
-				<musicbrainz rdf:resource="{descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' url ')]/attribute::href}"/>
-			</xsl:if>
+		<xsl:if test="descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' url ')]">
+			<xsl:choose>
+				<xsl:when test="substring-before(descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' url ')]/attribute::href,'musicbrainz') = 'http://'">
+					<musicbrainz rdf:resource="{descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' url ')]/attribute::href}"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<foaf:page rdf:resource="{descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' url ')]/attribute::href}"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:if>
 		<xsl:call-template name="madeLink"/>
 	</xsl:element>
-	</xsl:for-each>
+</xsl:for-each>
 </xsl:template>
 
 <xsl:template name="madeLink">
-<xsl:param name="audio" select="/.//*[contains(concat(' ',normalize-space(attribute::class),' '),' haudio ') and descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' fn ')]]"/>
+<xsl:param name="audio" select="descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' haudio ') and descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' fn ')]]"/>
 <xsl:for-each select="$audio">
 	<xsl:element name="made">
   		<xsl:attribute name="rdf:nodeID">
@@ -164,9 +160,9 @@
      <xsl:when test="$start">
 		<xsl:element name="dc:title"><xsl:value-of select="$recordtitle"/></xsl:element>
 	</xsl:when>
-    	<xsl:otherwise>
+    <xsl:otherwise>
 		<xsl:element name="dc:title"><xsl:value-of select="descendant::*[name() = 'title']"/></xsl:element>
-    	</xsl:otherwise>
+    </xsl:otherwise>
 </xsl:choose>
 </xsl:template>
 
@@ -175,12 +171,12 @@
 <xsl:template name="type">
 <xsl:param name="album" select="descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' fn ') and self::*[contains(concat(' ',normalize-space(attribute::class),' '),' album ')]]"/>
 <xsl:choose>
-     	<xsl:when test="$album">
+    <xsl:when test="$album">
 		<release_type rdf:resource="http://purl.org/ontology/mo/album"/>
 	</xsl:when>
-    	<xsl:otherwise>
+    <xsl:otherwise>
 		<release_type rdf:resource="http://purl.org/ontology/mo/compilation"/>
-    	</xsl:otherwise>
+    </xsl:otherwise>
 </xsl:choose>
 </xsl:template>
 
@@ -197,7 +193,7 @@
 <xsl:template name="published">
 <xsl:param name="pubdate" select="descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' published ')]"/>
 <xsl:if test="$pubdate">
-	<dc:date><xsl:value-of select="$pubdate"/></dc:date>
+	<dc:date><xsl:value-of select="$pubdate/@title"/></dc:date>
 </xsl:if>
 </xsl:template>
 
@@ -273,7 +269,7 @@
 
 <!-- foaf:maker link => attribute::class="contributor"/a/attribute::href-->
 <xsl:template name="trackLink">
-<xsl:param name="audio" select="/.//*[contains(concat(' ',normalize-space(attribute::class),' '),' contributor ')][1]"/>
+<xsl:param name="audio" select="descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' contributor ')][1]"/>
 <xsl:for-each select="$audio">
 	<xsl:element name="foaf:maker">
   		<xsl:attribute name="rdf:nodeID">

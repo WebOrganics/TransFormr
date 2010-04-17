@@ -42,6 +42,8 @@
 <xsl:param name="hreview" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' hreview ')]"/>
 <xsl:param name="vevent" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' vevent ')]"/>
 <xsl:param name="rdfa" select="descendant::*/attribute::about|descendant::*/attribute::property"/>
+<xsl:param name="erdf" select="descendant::*[contains(concat(' ',normalize-space(@profile),' '),' http://purl.org/NET/erdf/profile ')]"/>
+<xsl:param name="grddl" select="descendant::*[contains(concat(' ',normalize-space(@profile),' '),' http://www.w3.org/2003/g/data-view ')]"/>
 <xsl:output 
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
     doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" encoding="utf-8"  media-type="text/html;charset=utf-8" method="xml" indent="yes"/>
@@ -56,7 +58,7 @@
 	<meta name="description" content="Microformats Transformer"/>
 	<link rel="stylesheet" type="text/css" media="screen" href="{$transformr}stylesheets/user.css" />
 <xsl:if test="$hfoaf">
-  	<link type="application/rdf+xml" title="FOAF" href="{$transformr}/hfoaf/{$base-uri}" rel="meta" />
+  	<link type="application/rdf+xml" title="FOAF" href="{$transformr}hfoaf/{$base-uri}" rel="meta" />
 </xsl:if>
 <xsl:if test="$hatom">
 	<link type="application/atom+xml" title="Atom" href="{$transformr}hatom/{$base-uri}" rel="alternate"/>
@@ -107,30 +109,36 @@
 <xsl:template name="classes">
 <ul>
 <xsl:if test="$hcard">
-	<li><p>hCard <a href="{$transformr}?type=hcard&amp;url={$base-encoded}">vCard</a> | <a href="{$transformr}?type=hcard-rdf&amp;url={$base-encoded}">RDF</a></p></li>
+	<li><p>hCard <a href="{$transformr}?type=hcard&amp;url={$base-encoded}">vCard</a> | <a href="{$transformr}?type=hcard-rdf&amp;url={$base-encoded}">RDFXML</a></p></li>
 </xsl:if>
 <xsl:if test="$hatom">
 	<li><p>hAtom <a href="{$transformr}?type=hatom&amp;url={$base-encoded}">Atom</a> | <a href="{$transformr}?type=rss2&amp;url={$base-encoded}">RSS2</a></p></li>
 </xsl:if>
 <xsl:if test="$hfoaf">
-	<li><p>hFoaF <a href="{$transformr}?type=hfoaf&amp;url={$base-encoded}">RDF</a></p></li>
+	<li><p>hFoaF <a href="{$transformr}?type=hfoaf&amp;url={$base-encoded}">RDFXML</a></p></li>
 </xsl:if>
 <xsl:if test="$geo">
 	<li><p>Geo <a href="{$transformr}?type=geo&amp;url={$base-encoded}">KML</a></p></li>
 </xsl:if>
 <xsl:if test="$haudio">
-	<li><p>hAudio <a href="{$transformr}?type=haudio-rss2&amp;url={$base-encoded}">RSS2</a></p></li>
+	<li><p>hAudio <a href="{$transformr}?type=haudio-rss&amp;url={$base-encoded}">RSS2</a> | <a href="{$transformr}?type=haudio-xspf&amp;url={$base-encoded}">XSPF</a></p></li>
 </xsl:if>
 <xsl:if test="$hreview">
-	<li><p>hReview <a href="{$transformr}?type=hreview&amp;url={$base-encoded}">RDF</a></p></li>
+	<li><p>hReview <a href="{$transformr}?type=hreview&amp;url={$base-encoded}">RDFXML</a></p></li>
 </xsl:if>
 <xsl:if test="$vevent">
-	<li><p>hCalendar <a href="{$transformr}?type=hcalendar&amp;url={$base-encoded}">vCal</a> | <a href="{$transformr}?type=hcalendar-rdf&amp;url={$base-encoded}">RDF</a></p></li>
+	<li><p>hCalendar <a href="{$transformr}?type=hcalendar&amp;url={$base-encoded}">vCal</a> | <a href="{$transformr}?type=hcalendar-rdf&amp;url={$base-encoded}">RDFXML</a></p></li>
 </xsl:if>
 
 <xsl:if test="$rdfa">
-	<li><p>RDFa <a href="{$transformr}?type=rdfa2rdfxml&amp;url={$base-encoded}">RDFXML</a></p></li>
+	<li><p>RDFa <a href="{$transformr}?type=rdfa&amp;url={$base-encoded}">RDFXML</a></p></li>
 </xsl:if>
+<xsl:if test="$erdf">
+	<li><p>eRDF <a href="{$transformr}?type=erdf&amp;url={$base-encoded}">RDFXML</a></p></li>
+</xsl:if>
+<!-- <xsl:if test="$grddl">
+	<li><p>GRDDL <a href="{$transformr}?type=grddl&amp;url={$base-encoded}">RDFXML</a></p></li>
+</xsl:if> -->
 </ul>
 </xsl:template>
 

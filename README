@@ -1,4 +1,4 @@
-= TransFormr version 0.5.2 =  
+= TransFormr version 0.6.0 =  
 
 TransFormr is a simple toolkit that uses PHP and XSLT for extracting and transforming microformats <http://microformats.org/>.
 
@@ -9,10 +9,10 @@ Microformats that are supported by this transformer are:
 	* hReview <http://microformats.org/wiki/hreview>.
 	* hAtom <http://microformats.org/wiki/hatom>.
 	* geo <http://microformats.org/wiki/geo>.
+	* hAudio <http://microformats.org/wiki/haudio>.
 	
 Microformats that are supported by this transformr but are classed as *Experimental* and should not be used in a production environment because they may be removed or updated at any time are:
 
-	* hAudio <http://microformats.org/wiki/haudio>.
 	* hMedia <http://microformats.org/wiki/hmedia>.
 	* XFN <http://gmpg.org/xfn/>
 	* rel-enclosure <http://microformats.org/wiki/rel-enclosure>
@@ -20,6 +20,8 @@ Microformats that are supported by this transformr but are classed as *Experimen
 Non microformats supported by this transformer are:
 	
 	* RDFa <http://rdfa.info/>
+	* eRDF <http://rdfa.info/>
+	* JSON Dataset <http://weborganics.co.uk/dataset/>
 	
 == Installation ==
 
@@ -33,23 +35,27 @@ You must have PHP version 5.2.0 or higher with XSLT enabled to run TransFormr.
 == Conversions ==
 
 Main conversions are:
+
 	* Detect => Detect all.
-	* hCard => vCard (.vcf) and vCard RDF.
-	* hCalendar => iCal (.ics) and vCal RDF.
+	* hCard => vCard (.vcf), RDF, rdfjson, ntriples, turtle or RDFa.
+	* hCalendar => iCal (.ics), RDF, rdfjson, ntriples, turtle or RDFa.
 	* hAtom => Atom.
-	* hReview => RDF.
-	* Geo => KML
+	* hAtom => RSS2 + rel-enclosure.
+	* hReview => RDF, rdfjson, ntriples, turtle or RDFa.
+	* Geo => KML.
+	* hAudio => RSS2.
 
 Experimental conversions are:
 
-	* hAudio => RSS2.
-	* hAtom + rel-enclosure => RSS2.
+	* hAudio => XSPF.
 	* hAtom + hMedia => MRSS.
-	* hCard + XFN => FOAF (hFoaf).
+	* hCard + XFN => FOAF, rdfjson, ntriples, turtle or RDFa.
 	
 Other non microformat conversions
 
-	* RDFa => RDF
+	* RDFa => RDF, rdfjson, ntriples or turtle
+	* eRDF => RDF, rdfjson, ntriples, turtle or RDFa.
+	* JSON Dataset => RDF, rdfjson, ntriples, turtle or RDFa.
 	
 == Notes ==
 

@@ -1,4 +1,8 @@
-# Re-Writes urls like this 
+# set php max execution time to 30 seconds
+
+php_value max_execution_time 30
+
+# Re-Write urls
 
 RewriteEngine on
 
@@ -6,14 +10,14 @@ RewriteEngine on
 
 RewriteRule ^([A-Za-z0-9-]+)/referer$  index.php?type=$1&url=referer [NC,NE]
 
-# http://<your host>/<type>/http://<your page>
+# http://<your host>/<type>/http://<your page> ( transforms a whole page )
 
 RewriteRule ^([A-Za-z0-9-]+)/http://?(.*)$  index.php?type=$1&url=http://$2 [NC,NE]
 
-# http://<your host>/<type>/<your fragment>
+# http://<your host>/<type>/<your fragment> ( transforms from refering ID )
 
 RewriteRule ^([A-Za-z0-9-]+)/([A-Za-z0-9-]+)$  index.php?type=$1&url=$2 [NC,NE]
 
+# http://<your host>/<type>/(nt|rdfa|ttl|json)/http://<your page> 
 
-RewriteRule ^script/documentForm.js$  script/documentForm.php [NC,NE]
-
+RewriteRule ^([A-Za-z0-9-]+)/(ntriples|rdfa|turtle|rdfjson)/http://?(.*)$  index.php?type=$1&output=$2&url=http://$3 [NC,NE]

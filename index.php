@@ -1,10 +1,10 @@
 <?php
- //* require Transformr class
-require_once 'app/transformr.php';
+ # require Transformr class
+require_once 'app/Transformr.php';
 
- //* Start new Transformr
+ # Start new Transformr
 $transformer = new Transformr;
 
- //* Transform url
-$transformer->transform($url, $xsl_filename);
+ # Transform url
+print $transformer->transform();
 ?>

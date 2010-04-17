@@ -430,10 +430,8 @@ http://www.w3.org/2006/vcard/ns# ontology.</dc:description>
     </v:mailer>
   </xsl:if>
 
-  <xsl:if test="$uid != 0">
-    <v:uid>
-      <xsl:value-of select="."/>
-    </v:uid>
+  <xsl:if test="$uid != 0 and @href">
+    <v:uid rdf:resource="{@href}"/>
   </xsl:if>
 
   <xsl:if test="$rev != 0 and @title">
