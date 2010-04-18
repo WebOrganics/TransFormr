@@ -1,27 +1,27 @@
 = TransFormr version 0.6.0 =  
 
-TransFormr is a simple toolkit that uses PHP and XSLT for extracting and transforming microformats <http://microformats.org/>.
+TransFormr is a simple toolkit that uses PHP and XSLT for extracting and transforming microformats http://microformats.org/.
 
 Microformats that are supported by this transformer are:
 
-	* hCard <http://microformats.org/wiki/hcard>.
-	* hCalendar <http://microformats.org/wiki/hcalendar>.
-	* hReview <http://microformats.org/wiki/hreview>.
-	* hAtom <http://microformats.org/wiki/hatom>.
-	* geo <http://microformats.org/wiki/geo>.
-	* hAudio <http://microformats.org/wiki/haudio>.
+	* hCard http://microformats.org/wiki/hcard.
+	* hCalendar http://microformats.org/wiki/hcalendar.
+	* hReview http://microformats.org/wiki/hreview.
+	* hAtom http://microformats.org/wiki/hatom.
+	* geo http://microformats.org/wiki/geo.
+	* hAudio http://microformats.org/wiki/haudio.
 	
 Microformats that are supported by this transformr but are classed as *Experimental* and should not be used in a production environment because they may be removed or updated at any time are:
 
-	* hMedia <http://microformats.org/wiki/hmedia>.
-	* XFN <http://gmpg.org/xfn/>
-	* rel-enclosure <http://microformats.org/wiki/rel-enclosure>
+	* hMedia http://microformats.org/wiki/hmedia.
+	* XFN http://gmpg.org/xfn/
+	* rel-enclosure http://microformats.org/wiki/rel-enclosure
 	
 Non microformats supported by this transformer are:
 	
-	* RDFa <http://rdfa.info/>
-	* eRDF <http://rdfa.info/>
-	* JSON Dataset <http://weborganics.co.uk/dataset/>
+	* RDFa http://rdfa.info/
+	* eRDF http://research.talis.com/2005/erdf/wiki/Main/RdfInHtml
+	* JSON Dataset http://weborganics.co.uk/dataset/
 	
 == Installation ==
 
