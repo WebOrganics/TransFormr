@@ -358,7 +358,7 @@ class HTMLQuery extends Transformr
 	{
 	/* this function is messy sorry */
 	
-		foreach ($object->item as $item => $value) {
+		foreach ($object->keyword as $item => $value) {
 		
 		$parse_property = true;
 	
@@ -374,7 +374,7 @@ class HTMLQuery extends Transformr
 				or
 				$documentTag->nodeName == $item && $attribute == "node" ) {
 					
-					if (isset($value->item)) {
+					if (isset($value->keyword)) {
 					
 					$class = $xml->createElement($this->get_label($value, $item));
 					$root->appendChild($class);
@@ -385,7 +385,7 @@ class HTMLQuery extends Transformr
 					
 						foreach ( $documentTags as $documentTag ) 
 						{													
-							foreach ( $value->item as $prop => $val ) {
+							foreach ( $value->keyword as $prop => $val ) {
 								
 								foreach ($this->return_node_or_attribute($prop) as $attr => $i)
 								{
@@ -448,7 +448,7 @@ class HTMLQuery extends Transformr
 		if (isset($val->type)) $type = $val->type;
 		else $type = "text";
 	
-		if (!isset($val->item))
+		if (!isset($val->keyword))
 		{
 			switch ($type) {
 				
@@ -499,7 +499,7 @@ class HTMLQuery extends Transformr
 			$class->appendChild($property);
 		} 
 		else { 
-		if (isset($val->item))
+		if (isset($val->keyword))
 		{	
 			if (isset($val->rev))
 			{
