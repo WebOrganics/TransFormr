@@ -6,7 +6,7 @@
  * @license <http://arc.semsol.org/license>
  * @homepage <http://arc.semsol.org/>
  * @package ARC2
- * @version 2009-12-08
+ * @version 2010-03-16
 */
 
 class ARC2_Class {
@@ -70,10 +70,16 @@ class ARC2_Class {
 
   function camelCase($v, $lc_first = 0) {
     $r = ucfirst($v);
-    while (preg_match('/^(.*)[\-\_ ](.*)$/', $r, $m)) {
+    while (preg_match('/^(.*)[^a-z0-9](.*)$/si', $r, $m)) {
       $r = $m[1] . ucfirst($m[2]);
     }
-    return $lc_first ? strtolower(substr($r, 0, 1)) . substr($r, 1) : $r;
+    return $lc_first && !preg_match('/[A-Z]/', $r[1]) ? strtolower($r[0]) . substr($r, 1) : $r;
+  }
+
+  function deCamelCase($v, $uc_first = 0) {
+    $r = str_replace('_', ' ', $v);
+    $r = preg_replace('/([a-z])([A-Z])/e', '"\\1 " . strtolower("\\2")', $r);
+    return $uc_first ? ucfirst($r) : $r;
   }
 
   /*  */
@@ -175,7 +181,7 @@ class ARC2_Class {
         foreach ($os as $i => $o) {
           if (!is_array($o)) {
             $o_val = $this->expandPName($o);
-            $o_type = preg_match('/^[a-z]+\:[^\s]+$/si', $o_val) ? 'uri' : 'literal';
+            $o_type = preg_match('/^[a-z]+\:[^\s\<\>]+$/si', $o_val) ? 'uri' : 'literal';
             $o = array('value' => $o_val, 'type' => $o_type);
           }
           $os[$i] = $o;
@@ -307,6 +313,13 @@ class ARC2_Class {
     $ser = new ARC2_TurtleSerializer(array_merge($this->a, array('ns' => $ns)), $this);
     return (isset($v[0]) && isset($v[0]['s'])) ? $ser->getSerializedTriples($v, $raw) : $ser->getSerializedIndex($v, $raw);
   }
+  
+  function toRDFXML($v, $ns = '', $raw = 0) {
+    ARC2::inc('RDFXMLSerializer');
+    if (!$ns) $ns = isset($this->a['ns']) ? $this->a['ns'] : array();
+    $ser = new ARC2_RDFXMLSerializer(array_merge($this->a, array('ns' => $ns)), $this);
+    return (isset($v[0]) && isset($v[0]['s'])) ? $ser->getSerializedTriples($v, $raw) : $ser->getSerializedIndex($v, $raw);
+  }
 
   function toRDFJSON($v, $ns = '') {
     ARC2::inc('RDFJSONSerializer');
@@ -315,6 +328,43 @@ class ARC2_Class {
     return (isset($v[0]) && isset($v[0]['s'])) ? $ser->getSerializedTriples($v) : $ser->getSerializedIndex($v);
   }
 
+  function toRSS10($v, $ns = '') {
+    ARC2::inc('RSS10Serializer');
+    if (!$ns) $ns = isset($this->a['ns']) ? $this->a['ns'] : array();
+    $ser = new ARC2_RSS10Serializer(array_merge($this->a, array('ns' => $ns)), $this);
+    return (isset($v[0]) && isset($v[0]['s'])) ? $ser->getSerializedTriples($v) : $ser->getSerializedIndex($v);
+  }
+
+  function toLegacyXML($v, $ns = '') {
+    ARC2::inc('LegacyXMLSerializer');
+    if (!$ns) $ns = isset($this->a['ns']) ? $this->a['ns'] : array();
+    $ser = new ARC2_LegacyXMLSerializer(array_merge($this->a, array('ns' => $ns)), $this);
+    return $ser->getSerializedArray($v);
+  }
+
+  function toLegacyJSON($v, $ns = '') {
+    ARC2::inc('LegacyJSONSerializer');
+    if (!$ns) $ns = isset($this->a['ns']) ? $this->a['ns'] : array();
+    $ser = new ARC2_LegacyJSONSerializer(array_merge($this->a, array('ns' => $ns)), $this);
+    return $ser->getSerializedArray($v);
+  }
+
+  function toLegacyHTML($v, $ns = '') {
+    ARC2::inc('LegacyHTMLSerializer');
+    if (!$ns) $ns = isset($this->a['ns']) ? $this->a['ns'] : array();
+    $ser = new ARC2_LegacyHTMLSerializer(array_merge($this->a, array('ns' => $ns)), $this);
+    return $ser->getSerializedArray($v);
+  }
+
+  function toHTML($v, $ns = '') {
+    ARC2::inc('POSHRDFSerializer');
+    if (!$ns) $ns = isset($this->a['ns']) ? $this->a['ns'] : array();
+    $ser = new ARC2_POSHRDFSerializer(array_merge($this->a, array('ns' => $ns)), $this);
+    return (isset($v[0]) && isset($v[0]['s'])) ? $ser->getSerializedTriples($v) : $ser->getSerializedIndex($v);
+  }
+
+  /* used for ARC2_Transformr */
+  
   function toRDFa($v, $ns = '') {
 	ARC2::inc('RDFaSerializer');
     if (!$ns) $ns = isset($this->a['ns']) ? $this->a['ns'] : array();
@@ -322,10 +372,10 @@ class ARC2_Class {
     return (isset($v[0]) && isset($v[0]['s'])) ? $ser->getSerializedTriples($v) : $ser->getSerializedIndex($v);
   }
   
- function toRDFSS($v, $ns = '') {
-	ARC2::inc('RSS10Serializer');
+ function toPrettyRDF($v, $ns = '') {
+    ARC2::inc('PrettyRDFSerializer');
     if (!$ns) $ns = isset($this->a['ns']) ? $this->a['ns'] : array();
-    $ser = new ARC2_RSS10Serializer(array_merge($this->a, array('ns' => $ns)), $this);
+    $ser = new ARC2_PrettyRDFSerializer(array_merge($this->a, array('ns' => $ns)), $this);
     return (isset($v[0]) && isset($v[0]['s'])) ? $ser->getSerializedTriples($v) : $ser->getSerializedIndex($v);
   }
 

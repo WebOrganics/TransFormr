@@ -1,11 +1,15 @@
 <?php
-class HTMLQuery extends Transformr
+class HTMLQuery extends ARC2_Transformr
 {
 	public $url = '';
 	
-	function __construct()
-	{
-		include_once("ARC2_Transformr.php");
+	function __construct() {
+		parent::__construct();
+	}
+	
+	function __init() {
+		$this->__construct();
+		parent::__init();
 	}
 	
 	protected function json_dataset($xpath, $url) 
@@ -267,15 +271,13 @@ class HTMLQuery extends Transformr
 
 	public function this_document($url)
 	{
-		$this->__construct();
-		
 		$this->contents = '';
 	
 		$this->html = file_get_contents($url);
 		
 		$this->object = json_decode(utf8_encode($this->html));
 		
-		$this->file = $this->rand_filename().".rdf";
+		$this->file = $this->rand_filename('rdf');
 		
 		if (isset($this->object->query->base)) 
 		{
@@ -356,89 +358,64 @@ class HTMLQuery extends Transformr
 	
 	protected function json_query_properties($url, $object, $documentTag, $root, $xml, $hasroot) 
 	{
-	/* this function is messy sorry */
-	
 		foreach ($object->keyword as $item => $value) {
 		
-		$parse_property = true;
-	
-		if (!isset($arrvalue) ) $arrvalue = array();
-		else $arrvalue = array_values($arrvalue);
+		foreach ($this->return_node_or_attribute($item) as $attribute => $item) {
 		
-		foreach ($this->return_node_or_attribute($item) as $attr => $i)
-		{
-			$attribute = $attr;
-			$item = $i;
-		}
-			if (preg_match("/\b$item\b/i", $documentTag->getAttribute($attribute)) 
-				or
-				$documentTag->nodeName == $item && $attribute == "node" ) {
+		if (preg_match("/\b$item\b/i", $documentTag->getAttribute($attribute)) 
+			or
+			$documentTag->nodeName == $item && $attribute == "node" ) {
 					
-					if (isset($value->keyword)) {
+			if (isset($value->keyword)) {
+	
+			if (!isset($arrvalue) ) $arrvalue = array();
+			else $arrvalue = array_values($arrvalue);
 					
-					$class = $xml->createElement($this->get_label($value, $item));
-					$root->appendChild($class);
+			$class = $xml->createElement($this->get_label($value, $item));
+			$root->appendChild($class);
 					
-					$this->rdf_about($url, $documentTag, $value, $class);
+			$this->rdf_about($url, $documentTag, $value, $class);
 					
-					$documentTags = $documentTag->getElementsByTagName('*');
+			$documentTags = $documentTag->getElementsByTagName('*');
 					
-						foreach ( $documentTags as $documentTag ) 
-						{													
-							foreach ( $value->keyword as $prop => $val ) {
+				foreach ( $documentTags as $documentTag ) {	
+												
+					foreach ( $value->keyword as $prop => $val ) {
 								
-								foreach ($this->return_node_or_attribute($prop) as $attr => $i)
-								{
-									$attribute = $attr;
-									$prop = $i;
-								}
-								if (preg_match("/\b$prop\b/i", $documentTag->getAttribute($attribute) ) 
-									or 
-									$documentTag->nodeName == $prop && $attribute == "node" ) 
-								{
-									foreach ($arrvalue as $thiskey => $thisval)
-									{
-										if ($thisval == $prop) $parse_property = false;
+						foreach ($this->return_node_or_attribute($prop) as $attribute => $property) {
+		
+							if (preg_match("/\b$property\b/i", $documentTag->getAttribute($attribute) ) 
+								or 
+								$documentTag->nodeName == $property && $attribute == "node" ) {
+								
+									$parse_property = true;
+									
+									foreach ($arrvalue as $thiskey => $thisval) {
+										if ($thisval == $property) $parse_property = false;
 									}
 									if (isset($val->multiple)) $parse_property = true;
 									
-									if ($parse_property == true) 
-									{									
-										$this->return_properties($url, $prop, $val, $documentTag, $class, $xml);
-										$arrvalue[] = $prop;
+									if ($parse_property == true) {									
+										$this->return_properties($url, $property, $val, $documentTag, $class, $xml);
+										$arrvalue[] = $property;
+										}
 									}
 								}
 							}
-						}
-					}
-					else 
-					{
-						if ($hasroot == true ) 
-						{
-							$this->return_properties($url, $item, $value, $documentTag, $root, $xml);
-							$arrvalue[] = $item;
-						}
-						else {
-							
-						foreach ($arrvalue as $thiskey => $thisval)
-						{
-							if ($thisval == $item) $parse_property = false;
-						}
-						if (isset($value->multiple)) $parse_property = true;
-						
-						if ($parse_property == true) {
-							$class = $xml->createElement('rdf:Description');
-							$root->appendChild($class);
-							$this->rdf_about($url, $documentTag, $value, $class);
-							$this->return_properties($url, $item, $value, $documentTag, $class, $xml);
-							$arrvalue[] = $item;
+						} unset($arrvalue);
+					} 
+					else {
+					if ($hasroot == true ) $this->return_properties($url, $item, $value, $documentTag, $root, $xml);
+					else {
+						$class = $xml->createElement('rdf:Description');
+						$root->appendChild($class);
+						$this->rdf_about($url, $documentTag, $value, $class);
+						$this->return_properties($url, $item, $value, $documentTag, $class, $xml);
 						}
 					}
 				}
 			}
 		}
-		unset( $arrvalue, $thiskey, $thisval, $parse_property );
-		/* end messy function */
 	}
 
 	protected function return_properties($url, $prop, $val, $documentTag, $class, $xml) 
@@ -546,7 +523,7 @@ class HTMLQuery extends Transformr
 		unset( $class, $text, $resource );
 	}
 	
-	protected function rand_filename($ext)
+	protected function rand_filename($ext='')
 	{
 		return preg_replace("/([0-9])/e","chr((\\1+112))",mt_rand(100000,999999)).'.'.$ext;
 	}

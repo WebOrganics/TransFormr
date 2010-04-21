@@ -1,6 +1,6 @@
 <?php
 /*
- * TransFormr Version: 0.6.0, Saturday, 17th April 2010
+ * TransFormr Version: 0.6.1, Wednesday, 21st April 2010
  * Contact: Martin McEvoy info@weborganics.co.uk
  */
 
@@ -8,92 +8,86 @@ class Transformr
 {
  	public function set_path()
 	{
-	$_SCRIPT_DIR = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
-	$_BASE_DIR = realpath(dirname(__FILE__)); 
-	$_PATH = substr( $_SCRIPT_DIR, strlen($_BASE_DIR));
-	$INSTALLATION_PATH = $_PATH
-		? substr( dirname($_SERVER['SCRIPT_NAME']), 0, -strlen($_PATH) )
+	$this->script_dir = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
+	$this->base_dir = realpath(dirname(__FILE__)); 
+	$this->local_path = substr( $this->script_dir, strlen($this->base_dir));
+	$this->install_path = $this->local_path
+		? substr( dirname($_SERVER['SCRIPT_NAME']), 0, -strlen($this->local_path) )
 		: dirname($_SERVER['SCRIPT_NAME']);
-	if ($INSTALLATION_PATH == "/" || $INSTALLATION_PATH == "\\") 
+	if ($this->install_path == "/" || $this->install_path == "\\") 
 		return "http://".$_SERVER['HTTP_HOST']."/";
 	else 
-		return "http://".$_SERVER['HTTP_HOST'].$INSTALLATION_PATH."/";
+		return "http://".$_SERVER['HTTP_HOST'].$this->install_path."/";
 	}
 	
-	protected function init()
-	{
-	define('MIN_PHP_VERSION', '5.2.0');
-	define('THIS_PHP_VERSION', phpversion());
-	$php_self = THIS_PHP_VERSION;
-	$min_php = MIN_PHP_VERSION;
-	$php_version = version_compare(THIS_PHP_VERSION, MIN_PHP_VERSION, '>=');
+	function __construct() {
+	
+	$this->php_min_version = '5.2.0';
+	$this->server_php_version = phpversion();
+	
+	$php_self = $this->server_php_version;
+	$min_php = $this->php_min_version;
+	$php_version = version_compare($this->server_php_version, $this->php_min_version, '>=');
 	$upgrade_php = '<p>Sorry PHP Upgrade needed, <em>Transformr</em> requires PHP '.$min_php.' or newer. Your current PHP version is '.$php_self.'</p>';
 	
-	if (!$php_version) 
-	{
+	if (!$php_version) {
 		echo $upgrade_php;
-		exit;
+		break;
 	}
+	$this->path = $this->set_path();
+	$this->type = $_GET['type'];
+	$this->url = $_GET['url'];
+	$this->template = 'template/';
+	$this->xsl = 'xsl/';
+	$this->version = '0.6.1';
+	$this->updated = 'Wednesday, 21st April 2010';
+	$this->required = array('ARC2_Transformr', 'Dataset_Transformr', 'Transformr_Types');
 	
-	define('PATH',  $this->set_path());
-	define('TYPE',  $_GET['type']);
-	define('URL',  $_GET['url']);
-	define('TEMPLATE',  'template/');
-	define('XSL',  'xsl/');
-	define('VERSION',  '0.6.0');
-	define('UPDATED',  'Saturday, 17th April 2010');
-	header("X-Application: Transformr ".VERSION );
+	header("X-Application: Transformr ".$this->version );
+	ini_set('html_errors', 0); 
 	ini_set('display_errors', 0); // set this to 1 to debug errors
 	}
 	
-	public function transform()
-	{
-	$this->init();	
+	function __init() {
+		$this->__construct();
+	}
 	
-	$required = array("Transformr_Types", "RDFa_Parser", "ARC2_Transformr", "Entity_Decode", "Dataset_Transformr");
+	public function transform() {	
 	
-	foreach ($required as $require)
-	{
+	foreach ( $this->required as $require ) {
 		require_once($require.'.php');
 	}
-	
-	$RDFparser = new ARC2_Transformr;
-	
-	$HTMLQuery = new HTMLQuery;
+	$rdfparser = new ARC2_Transformr;
+	$htmlquery = new HTMLQuery;
 		
-	if ($arc2_parse == true) 
-	{
-		$output = 'rdf';
-		$document = $this->transform_xsl($url, $xsl_filename);
+	if ($arc2_parse == true) {
+	
 		if (isset($_GET['output'])) $output = $_GET['output'];
-		return $RDFparser->Parse($url, $document, $output);
+		else $output = 'rdf';
+		if ($this->type == "rdfa") return $rdfparser->get_semhtml($this->url, $output, $type = 'rdfa');
+		elseif ($this->type == "microformats") return $rdfparser->get_semhtml($this->url, $output, $type = 'microformats');
+		else $document = $this->transform_xsl($this->url, $xsl_filename);
+		if (isset($document)) return $rdfparser->Parse($this->url, $document, $output);
 	}	
-	if ($xsl_filename == "dataset") return $HTMLQuery->this_document($url);
-	else return $this->transform_xsl($url, $xsl_filename);
+	elseif ($this->type == "dataset") return $htmlquery->this_document($this->url);
+	else return $this->transform_xsl($this->url, $xsl_filename);
 	}
 	
-	protected function transform_xsl($url, $xsl_filename)
-	{
+	protected function transform_xsl($url, $xsl_filename) {
+	
 	if( strrchr($url, 'http://') ) {
 		
-		// disable same host requests
-		if ($url == PATH) {
-			header("Location: ".PATH);
-			exit;
-		}
-		
-		$html = html_entity_safe_decode(file_get_contents($url, FALSE, NULL, 0, 2597152));
-		
+		$html = file_get_contents($url, FALSE, NULL, 0, 2597152);
+
+		if (strrchr($url, 'docAddr=')) $url = array_pop(explode('docAddr=', $url));
 		if (strrchr($url, '#')) $frag_id = array_pop(explode('#', $url));
 		
 		$dom = new DOMDocument('1.0');
-		
 		$dom->preserveWhiteSpace = true;
-		
 		$dom->formatOutput = true;
 		
 		if (!$dom->loadXML($html)) {
-			
+		
 			# try local tidy function first
 			if (method_exists(new tidy,'parseString'))
 			{
@@ -109,30 +103,21 @@ class Transformr
 			} 
 			# or use w3c online tidy service
 			else {
-				$tidyURL = 'http://cgi.w3.org/cgi-bin/tidy?forceXML=on&docAddr=';
-				$tidy = file_get_contents($tidyURL.$url, FALSE, NULL, 0, 2597152);
+				$tidyURL = 'http://cgi.w3.org/cgi-bin/tidy?forceXML=on&docAddr='.$url;
+				$tidy = file_get_contents($tidyURL, FALSE, NULL, 0, 2597152);
 			}
 		}
 		
-		if (isset($tidy)) $html = $tidy;
-		$dom->loadXML($html);
-		
-		if (TYPE == "rdfa")
-		{
-			$RDFaparser = new RDFa_Parser;
-			$dom->loadXML($RDFaparser->get_document($dom)); 
-		}
+		if (isset($tidy)) $dom->loadXML($tidy);
+		else $dom->loadXML($html);
 		
 		$title = $dom->getElementsByTagName('title')->item(0)->nodeValue;
 		
 		if (isset($frag_id)) 
 		{
 			$dom->relaxNGValidateSource($this->schema());
-			
 			$element = $dom->getElementById($frag_id);
-			
 			$content = $dom->saveXML($element);
-			
 			include( 'HTML_Fragment.php' );	
 		} 
 		else {
@@ -140,30 +125,29 @@ class Transformr
 		}
 		
 		$xslt = new xsltProcessor;
-		$xslt->setParameter('','transformr', PATH);
+		$xslt->setParameter('','transformr', $this->path);
 		$xslt->setParameter('','url', $url);
 		$xslt->setParameter('','base-uri', $url);
 		$xslt->setParameter('','doc-title', $title);
-		$xslt->setParameter('','version', VERSION);
+		$xslt->setParameter('','version', $this->version);
 		$xslt->importStyleSheet(DomDocument::load($xsl_filename));
 		return $xslt->transformToXML(DomDocument::loadXML($doc));
 	}
 	elseif ($url == 'referer' && getenv("HTTP_REFERER") != '') {
 		$referer = getenv("HTTP_REFERER");
-		$this->transform($referer, $xsl_filename);	
+		return $this->transform_xsl($referer, $xsl_filename);	
 	}
 	elseif (getenv("HTTP_REFERER") != '' && $url !='') {
 		$referer = getenv("HTTP_REFERER");
-		$this->transform($referer.'#'.$url, $xsl_filename);	
+		return $this->transform_xsl($referer.'#'.$url, $xsl_filename);	
 	}
 	else {
-		header("Location: ".PATH."?error=noURL");
+		header("Location: ".$this->path."?error=noURL");
 		exit;
 	  }
    }
 
-   protected function schema()
-   {
+   protected function schema() {
     /* 
 	 *	a  generic RelaxNG schema to validate the presence of @id on any element in XHTML documents 
 	 *	its faster than $dom->validateOnParse = true option

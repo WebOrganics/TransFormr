@@ -1,4 +1,4 @@
-# TransFormr version 0.6.0  
+# TransFormr version 0.6.1  
 
 TransFormr is a simple toolkit that uses PHP and XSLT for extracting and transforming microformats http://microformats.org/.
 
@@ -40,7 +40,7 @@ Main conversions are:
 * hCard => vCard (.vcf), RDF, rdfjson, ntriples, turtle or RDFa.
 * hCalendar => iCal (.ics), RDF, rdfjson, ntriples, turtle or RDFa.
 * hAtom => Atom.
-* hAtom => RSS2 + rel-enclosure.
+* hAtom + rel-enclosure => RSS2.
 * hReview => RDF, rdfjson, ntriples, turtle or RDFa.
 * Geo => KML.
 * hAudio => RSS2.
@@ -50,22 +50,38 @@ Experimental conversions are:
 * hAudio => XSPF.
 * hAtom + hMedia => MRSS.
 * hCard + XFN => FOAF, rdfjson, ntriples, turtle or RDFa.
+* All Microformats => RDF, rdfjson, ntriples, turtle or RDFa.
 	
 Other non microformat conversions
 
 * RDFa => RDF, rdfjson, ntriples or turtle
 * eRDF => RDF, rdfjson, ntriples, turtle or RDFa.
 * JSON Dataset => RDF, rdfjson, ntriples, turtle or RDFa.
-	
+
+## Transformr Conversion urls
+
+### Types are :
+
+detect, hcard, hcard-rdf, hatom, rss2, geo, hcalendar, hcalendar-rdf, hreview, haudio-rss, mo-haudio, haudio-xspf, hfoaf, mrss, erdf, rdfa, microformats, and dataset.
+
+* http://[transformr]/[type]/http://[your page] ( transforms a whole page )
+* http://[transformr]/[type]/referer ( transforms from refering url )
+* http://[transformr]/[type]/[your fragment] ( transforms from refering html id )
+
+### For all RDF conversions
+
+* http://[transformr]/[type]/(ntriples|rdfa|turtle|rdfjson)/http://[your page] 
+
 ## Notes
 
-This Version of transformr also supports Fragment parsing for individual microformats.
+* 0.6.1 Most RDF including RDFa conversions are parsed by ARC2 ( included ) http://arc.semsol.org/
+* 0.5.1 Transformr also supports Fragment parsing for individual microformats.
 
 ## Credits
 
-Many thanks to:
+### Many thanks to:
 
-	* Brian Suda (X2V)
-	* Fabien Gandon (RDFa 2 RDF)
-	* Luke Arno, Benjamin Carlyle and Robert Bachmann ( hAtom to Atom)
-	* Dan Connoly, inspiration for FOAF conversion.
+* Brian Suda (X2V)
+* Benjamin Nowack ( ARC2 rdf parsing )
+* Luke Arno, Benjamin Carlyle and Robert Bachmann ( hAtom to Atom)
+* Dan Connoly, inspiration for hFOAF conversion.

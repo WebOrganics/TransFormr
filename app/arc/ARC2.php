@@ -6,13 +6,13 @@
  * @license <http://arc.semsol.org/license>
  * @homepage <http://arc.semsol.org/>
  * @package ARC2
- * @version 2010-01-15
+ * @version 2010-03-31
 */
 
 class ARC2 {
 
   function getVersion() {
-    return '2010-01-15';
+    return '2010-03-31';
   }
 
   /*  */
@@ -32,13 +32,17 @@ class ARC2 {
   function getIncPath($f = '') {
     $r = realpath(dirname(__FILE__)) . '/';
     $dirs = array(
+      'plugin' => 'plugins',
+      'trigger' => 'triggers',
+      'store' => 'store', 
       'serializer' => 'serializers', 
-      'parser' => 'parsers'
+      'extractor' => 'extractors', 
+      'sparqlscript' => 'sparqlscript', 
+      'parser' => 'parsers', 
     );
     foreach ($dirs as $k => $dir) {
       if (preg_match('/' . $k . '/i', $f)) {
-        $r .= $dir . '/';
-        return $r;
+        return $r . $dir . '/';
       }
     }
     return $r;
@@ -115,14 +119,17 @@ class ARC2 {
   /*  */
   
   function toUTF8($v) {
-    if (utf8_decode($v) == $v) return $v;
+    if (urlencode($v) === $v) return $v;
+    //if (utf8_decode($v) == $v) return $v;
 		$v = (strpos(utf8_decode(str_replace('?', '', $v)), '?') === false) ? utf8_decode($v) : $v;
     return preg_replace_callback('/([\x00-\xdf][\x80-\xbf]|[\xe0-\xef][\x80-\xbf]{2}|[\xf0-\xf7][\x80-\xbf]{3}|[\xf8-\xfb][\x80-\xbf]{4}|[\xfc-\xfd][\x80-\xbf]{5}|[^\x00-\x7f])/', array('ARC2', 'getUTF8Char'), $v);
   }
   
   function getUTF8Char($v) {
     $val = $v[1];
-    return (strlen(trim($val)) === 1) ? utf8_encode($val) : $val;
+    if (strlen(trim($val)) === 1) return utf8_encode($val);
+    if (preg_match('/^([\x00-\x7f])(.+)/', $val, $m)) return $m[1] . ARC2::toUTF8($m[2]);
+    return $val;
   }
 
   /*  */
@@ -435,53 +442,5 @@ class ARC2 {
   }
 
   /*  */
-  
-  public function return_ns()
-  {
-	$ns = array(
-	'rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-		'rdfs' => 'http://www.w3.org/2000/01/rdf-schema#',
-		'owl' => 'http://www.w3.org/2002/07/owl#',
-		'xsd' => 'http://www.w3.org/2001/XMLSchema#',
-		'foaf' => 'http://xmlns.com/foaf/0.1/',
-		'dc' => 'http://purl.org/dc/elements/1.1/',
-		'dc_terms' => 'http://purl.org/dc/terms/',
-		'dc_type' => 'http://purl.org/dc/dcmitype/',
-		'rss' => 'http://purl.org/rss/1.0/',
-		'vcard' => 'http://www.w3.org/2006/vcard/ns#',
-		'cal' => 'http://www.w3.org/2002/12/cal/ical#',
-		'sioc' => 'http://rdfs.org/sioc/ns#',
-		'sioct' => 'http://rdfs.org/sioc/types#',
-		'doap' => 'http://usefulinc.com/ns/doap#',
-		'gr' => 'http://purl.org/goodrelations/v1#',
-		'geo' => 'http://www.w3.org/2003/01/geo/wgs84_pos#',
-		'gv' => 'http://data-vocabulary.org/',
-		'wot' => 'http://xmlns.com/wot/0.1/',
-		'mo' => 'http://purl.org/ontology/mo/',
-		'frbr' => 'http://purl.org/vocab/frbr/core#',
-		'vs' => 'http://www.w3.org/2003/06/sw-vocab-status/ns#',
-		'timeline' => 'http://purl.org/NET/c4dm/timeline.owl#',
-		'time' => 'http://www.w3.org/2006/time#',
-		'contact' => 'http://www.w3.org/2000/10/swap/pim/contact#',
-		'bio' => 'http://vocab.org/bio/0.1/',
-		'rel' => 'http://purl.org/vocab/relationship/',
-		'rev' => 'http://purl.org/stuff/rev#',
-		'voc' => 'http://webns.net/mvcb/',
-		'air' => 'http://www.daml.org/2001/10/html/airport-ont#',
-		'aff' => 'http://purl.org/vocab/affiliations/0.1/',
-		'cc' => 'http://creativecommons.org/ns#',
-		'money' => 'http://www.purl.org/net/rdf-money/',
-		'media' => 'http://purl.org/microformat/hmedia/',
-		'audio' => 'http://purl.org/net/haudio#',
-		'xhv' => 'http://www.w3.org/1999/xhtml/vocab#',
-		'xfn' => 'http://gmpg.org/xfn/11#',
-		'dbp' => ' http://dbpedia.org/property/',
-		'dbpr' => 'http://dbpedia.org/resource/',
-		'taxo' => 'http://purl.org/rss/1.0/modules/taxonomy/',
-		'content' => 'http://purl.org/rss/1.0/modules/content/',
-		'sy' => 'http://purl.org/rss/1.0/modules/syndication/'
-	);
-	return array('ns' => $ns);
-  }
   
 }

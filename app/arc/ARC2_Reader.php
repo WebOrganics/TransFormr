@@ -6,7 +6,7 @@
  * @license <http://arc.semsol.org/license>
  * @homepage <http://arc.semsol.org/>
  * @package ARC2
- * @version 2009-12-08
+ * @version 2010-03-31
 */
 
 ARC2::inc('Class');
@@ -70,6 +70,11 @@ class ARC2_Reader extends ARC2_Class {
     $id = md5($path . ' ' . $data);
     if ($this->stream_id != $id) {
       $this->stream_id = $id;
+      /* data uri? */
+      if (!$data && preg_match('/^data\:([^\,]+)\,(.*)$/', $path, $m)) {
+        $path = '';
+        $data = preg_match('/base64/', $m[1]) ? base64_decode($m[2]) : rawurldecode($m[2]);
+      }
       $this->base = $this->calcBase($path);
       $this->uri = $this->calcURI($path, $this->base);
       $this->stream = ($data) ? $this->getDataStream($data) : $this->getSocketStream($this->base, $ping_only);
@@ -133,7 +138,7 @@ class ARC2_Reader extends ARC2_Class {
       }
       /* add header */
       if ($auth) {
-        $this->setCustomHeaders('Authorization: ' . $auth);
+        $this->addCustomHeaders('Authorization: ' . $auth);
         break;
       }
     }
@@ -185,15 +190,14 @@ class ARC2_Reader extends ARC2_Class {
     return array('type' => 'socket', 'socket' =>& $s, 'headers' => array(), 'pos' => 0, 'size' => filesize($parts['path']), 'buffer' => '');
   }
   
-  function getHTTPSocket($url, $redirs = 0) {
+  function getHTTPSocket($url, $redirs = 0, $prev_parts = '') {
     $parts = parse_url($url);
-
-    if (!isset($parts['scheme'])) { $parts['scheme']=$this->baseparts['scheme']; } #cjg
-    if (!isset($parts['host'])) { $parts['host']=$this->baseparts['host']; } #cjg
-
-    if (!isset($parts['scheme'])) {
-      return $this->addError('Socket error: No supported URI scheme detected.');
-    }
+    /* relative redirect */
+    if (!isset($parts['scheme']) && $prev_parts) $parts['scheme'] = $prev_parts['scheme'];
+    if (!isset($parts['host']) && $prev_parts) $parts['host'] = $prev_parts['host'];
+    /* no scheme */
+    if (!$this->v('scheme', '', $parts)) return $this->addError('Socket error: Missing URI scheme.');
+    /* port tweaks */
     $parts['port'] = ($parts['scheme'] == 'https') ? $this->v1('port', 443, $parts) : $this->v1('port', 80, $parts);
     $nl = "\r\n";
     $http_mthd = strtoupper($this->http_method);
@@ -203,15 +207,15 @@ class ARC2_Reader extends ARC2_Class {
     else {
       $h_code = $http_mthd . ' ' . $this->v1('path', '/', $parts) . (($v = $this->v1('query', 0, $parts)) ? '?' . $v : '') . (($v = $this->v1('fragment', 0, $parts)) ? '#' . $v : '');
     }
+    $port_code = ($parts['port'] != 80) ? ':' . $parts['port'] : '';
     $h_code .= ' HTTP/1.0' . $nl.
-      'Host: ' . $parts['host'] . ':' . $parts['port'] . $nl .
+      'Host: ' . $parts['host'] . $port_code . $nl .
       (($v = $this->http_accept_header) ? $v . $nl : '') .
       (($v = $this->http_user_agent_header) && !preg_match('/User\-Agent\:/', $this->http_custom_headers) ? $v . $nl : '') .
       (($http_mthd == 'POST') ? 'Content-Length: ' . strlen($this->message_body) . $nl : '') .
       ($this->http_custom_headers ? trim($this->http_custom_headers) . $nl : '') .
       $nl .
     '';
-
     /* post body */
     if ($http_mthd == 'POST') {
       $h_code .= $this->message_body . $nl;
@@ -228,7 +232,7 @@ class ARC2_Reader extends ARC2_Class {
           stream_context_set_option($context, 'ssl', $m[1], $v);
         }
       }
-      $s = stream_socket_client('ssl://' . $parts['host'] . ':' . $parts['port'], $errno, $errstr, $this->timeout, STREAM_CLIENT_CONNECT, $context);
+      $s = stream_socket_client('ssl://' . $parts['host'] . $port_code, $errno, $errstr, $this->timeout, STREAM_CLIENT_CONNECT, $context);
     }
     elseif ($parts['scheme'] == 'https') {
       $s = @fsockopen('ssl://' . $parts['host'], $parts['port'], $errno, $errstr, $this->timeout);
@@ -290,18 +294,17 @@ class ARC2_Reader extends ARC2_Class {
           $this->digest_auth = 1;
           return $this->getHTTPSocket($url);
         }
-        return $this->addError($error . ' "' . (!feof($s) ? trim(strip_tags(fread($s, 64))) . '..."' : ''));
+        return $this->addError($error . ' "' . (!feof($s) ? trim(strip_tags(fread($s, 128))) . '..."' : ''));
       }
       /* redirect */
       if ($this->v('redirect', 0, $h) && ($new_url = $this->v1('location', 0, $h))) {
         fclose($s);
         $this->redirects[$url] = $new_url;
         $this->base = $new_url;
-	$this->baseparts = $parts; #cjg
         if ($redirs > $this->max_redirects) {
           return $this->addError('Max numbers of redirects exceeded.');
         }
-        return $this->getHTTPSocket($new_url, $redirs+1);
+        return $this->getHTTPSocket($new_url, $redirs+1, $parts);
       }
     }
     if ($this->timeout) {

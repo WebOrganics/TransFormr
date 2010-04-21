@@ -18,6 +18,6 @@ RewriteRule ^([A-Za-z0-9-]+)/http://?(.*)$  index.php?type=$1&url=http://$2 [NC,
 
 RewriteRule ^([A-Za-z0-9-]+)/([A-Za-z0-9-]+)$  index.php?type=$1&url=$2 [NC,NE]
 
-# http://<your host>/<type>/(nt|rdfa|ttl|json)/http://<your page> 
+# http://<your host>/<type>/(ntriples|rdfa|turtle|rdfjson)/http://<your page> 
 
 RewriteRule ^([A-Za-z0-9-]+)/(ntriples|rdfa|turtle|rdfjson)/http://?(.*)$  index.php?type=$1&output=$2&url=http://$3 [NC,NE]

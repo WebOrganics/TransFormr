@@ -10,7 +10,7 @@
 	</a>
 </div>
 <div class="heading" style="clear:both;">
-<h1><a href="<?php echo PATH; ?>" title="Microformats Transformer"><img src="images/transformr.png" alt="Microformats Transformer"></a></h1>
+<h1><a href="<?php echo $this->path ; ?>" title="Microformats Transformer"><img src="images/transformr.png" alt="Microformats Transformer"></a></h1>
 <q class="subtitle" cite="http://www.hp.com/hpinfo/execteam/speeches/fiorina/04openworld.html">The goal is to transform data into information and information into insight.</q>
 </div>
 

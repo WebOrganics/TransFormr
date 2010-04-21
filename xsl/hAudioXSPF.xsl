@@ -44,7 +44,23 @@
 <!-- ==============================================playlist===============================================-->
 <xsl:template name="playlist">
 <xsl:param name="published" select="descendant::xhtml:*[contains(concat(' ',normalize-space(@class),' '),' published ')][1]"/>
-<title><xsl:value-of select="//xhtml:*[name() = 'title']"/></title>
+<xsl:param name="recordtitle" select="descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' fn ')][1]"/>
+<xsl:param name="group" select="descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' contributor ')]"/>
+<xsl:if test="$group">
+	<xsl:for-each select="$group">
+		<xsl:element name="creator">
+			<xsl:value-of select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' fn ')][1]"/>
+		</xsl:element>
+	</xsl:for-each>
+</xsl:if>
+<xsl:choose>
+     <xsl:when test="$recordtitle">
+		<xsl:element name="title"><xsl:value-of select="$recordtitle"/></xsl:element>
+	</xsl:when>
+    <xsl:otherwise>
+		<xsl:element name="title"><xsl:value-of select="descendant::*[name() = 'title']"/></xsl:element>
+    </xsl:otherwise>
+</xsl:choose>
 <link rel="{$index}"><xsl:value-of select="$index"/></link>
 <xsl:if test="$published">
 <xsl:choose>

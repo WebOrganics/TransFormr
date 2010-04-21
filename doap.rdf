@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" 
+         xmlns:doap="http://usefulinc.com/ns/doap#" 
+         xmlns:foaf="http://xmlns.com/foaf/0.1/">
+
+  <doap:Project rdf:about="http://transformr.co.uk/">
+    <doap:name>Microformats Transformer Toolkit</doap:name>
+    <doap:shortname>Transformr</doap:shortname>
+    <doap:homepage rdf:resource="http://transformr.co.uk/"/>
+    <doap:created>2008-05-10</doap:created>
+    <foaf:logo rdf:resource="http://transformr.co.uk/images/transformr.png" />
+    <doap:description>The goal is to transform data into information and information into insight.</doap:description>
+		<foaf:maker rdf:resource="http://weborganics.co.uk/" />
+    <doap:release>
+      <doap:Version>
+        <doap:name>Microformats Transformer Toolkit</doap:name>
+        <doap:created>2010-04-21</doap:created>
+        <doap:revision>0.6.1</doap:revision>
+      </doap:Version>
+    </doap:release>
+  </doap:Project>
+</rdf:RDF>

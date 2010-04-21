@@ -155,9 +155,9 @@
 
 <!-- see if mo:Record has a title else title of page -->
 <xsl:template name="recordtitle">
-<xsl:param name="recordtitle" select="descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' fn ')]"/>
+<xsl:param name="recordtitle" select="descendant::*[contains(concat(' ',normalize-space(attribute::class),' '),' fn ')][1]"/>
 <xsl:choose>
-     <xsl:when test="$start">
+     <xsl:when test="$recordtitle">
 		<xsl:element name="dc:title"><xsl:value-of select="$recordtitle"/></xsl:element>
 	</xsl:when>
     <xsl:otherwise>

@@ -1,128 +1,131 @@
 <?php
-if (TYPE) 
+if ($this->type) 
 { 
 	header("Cache-Control: no-cache, must-revalidate");
 	header("Expires: -1");
 }
 
-$url = URL;
+$url = $this->url;
 $arc2_parse = false;
 
-switch(TYPE)
+switch($this->type)
 {
 case 'hcard':
 header("Content-type: text/x-vcard");
 header('Content-Disposition: attachment; filename="hCard.vcf"');
-$xsl_filename = XSL."xhtml2vcard.xsl";
+$xsl_filename = $this->xsl ."xhtml2vcard.xsl";
 break;
 
 case 'hcard-rdf':
 header("Content-type: application/rdf+xml");
 header('Content-Disposition: inline; filename="vCard.rdf"');
-$xsl_filename = XSL."hcard2rdf.xsl";
+$xsl_filename = $this->xsl ."hcard2rdf.xsl";
 $arc2_parse = true;
 break;
 
 case 'hatom':
 header("Content-type: application/xml");
-$xsl_filename = XSL."hAtom2Atom.xsl";
+$xsl_filename = $this->xsl ."hAtom2Atom.xsl";
 break;
 
 case 'rss2':
 header("Content-type: application/rss+xml");
-$xsl_filename = XSL."hAtom2RSS2.xsl";
+$xsl_filename = $this->xsl ."hAtom2RSS2.xsl";
 break;
 
 case 'geo':
 header("Content-type: application/vnd.google-earth.kml+xml");
 header('Content-Disposition: attachment; filename="Geo.kml"');
-$xsl_filename = XSL."xhtml2kml.xsl";
+$xsl_filename = $this->xsl ."xhtml2kml.xsl";
 break;
 
 case 'hcalendar':
 header("Content-type: text/x-vcalendar");
 header('Content-Disposition: attachment; filename="hCal.ics"');
-$xsl_filename = XSL."xhtml2vcal.xsl";
+$xsl_filename = $this->xsl ."xhtml2vcal.xsl";
 break;
 
 case 'hcalendar-rdf':
 header("Content-type: application/rdf+xml");
 header('Content-Disposition: inline; filename="vCal.rdf"');
-$xsl_filename = XSL."glean-hcal.xsl";
+$xsl_filename = $this->xsl ."glean-hcal.xsl";
 $arc2_parse = true;
 break;
 
 case 'hreview':
 header("Content-type: application/rdf+xml");
 header('Content-Disposition: inline; filename="hReview.rdf"');
-$xsl_filename = XSL."hreview2rdfxml.xsl";
+$xsl_filename = $this->xsl ."hreview2rdfxml.xsl";
 $arc2_parse = true;
 break;
 
 case 'haudio-rss':
 header("Content-type: application/xml");
-$xsl_filename = XSL."hAudioRSS2.xsl";
+$xsl_filename = $this->xsl ."hAudioRSS2.xsl";
 break;
 
 case 'mo-haudio':
 header('Content-type: application/rdf+xml');
 header('Content-Disposition: inline; filename="MoAudio.rdf"');
-$xsl_filename = XSL."Mo-hAudio.xsl";
+$xsl_filename = $this->xsl ."Mo-hAudio.xsl";
 $arc2_parse = true;
 break;
 
 case 'haudio-xspf':
 header('Content-type: application/xspf+xml');
 header('Content-Disposition: attachment; filename="haudio-xspf.xspf"');
-$xsl_filename = XSL."hAudioXSPF.xsl";
+$xsl_filename = $this->xsl ."hAudioXSPF.xsl";
 break;
 
 case 'hfoaf':
 header('Content-type: application/rdf+xml');
 header('Content-Disposition: inline; filename="hFoaF.rdf"');
-$xsl_filename = XSL."hFoaF.xsl";
-$arc2_parse = true;
-break;
-
-case 'rdfa':
-header('Content-type: application/rdf+xml');
-header('Content-Disposition: inline; filename="RDFa.rdf"');
-$xsl_filename = XSL."RDFa2RDFXML.xsl";
+$xsl_filename = $this->xsl ."hFoaF.xsl";
 $arc2_parse = true;
 break;
 
 case 'mrss':
 header("Content-type: application/rss+xml");
-$xsl_filename = XSL."mrss.xsl";
+$xsl_filename = $this->xsl ."mrss.xsl";
 break;
 
 case 'RDF-3T':
 header("Content-type: application/rdf+xml");
 header('Content-Disposition: inline; filename="RDF-3T.rdf"');
-$xsl_filename = XSL."RDF-3T.xsl";
+$xsl_filename = $this->xsl ."RDF-3T.xsl";
 $arc2_parse = true;
 break;
 
 case 'erdf':
 header("Content-type: application/rdf+xml");
 header('Content-Disposition: inline; filename="erdf.rdf"');
-$xsl_filename = XSL."extract-rdf.xsl";
+$xsl_filename = $this->xsl ."extract-rdf.xsl";
 $arc2_parse = true;
 break;
 
-case 'detect':
-$xsl_filename = XSL."detect-uf.xsl";
+case 'rdfa':
+header('Content-type: application/rdf+xml');
+$arc2_parse = true;
+break;
+
+case 'microformats':
+header('Content-type: application/rdf+xml');
+$arc2_parse = true;
 break;
 
 case 'dataset':
-$xsl_filename = "dataset";
+
+break;
+
+case 'detect':
+$xsl_filename = $this->xsl ."detect-uf.xsl";
 break;
 
 default:
 header("Content-Type: text/html; charset=UTF-8");
-include TEMPLATE."head.php";
-include TEMPLATE."content.php";
-include TEMPLATE."foot.php";
+include $this->template ."head.php";
+include $this->template ."content.php";
+include $this->template ."foot.php";
 break;
 }
 ?>

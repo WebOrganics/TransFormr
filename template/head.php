@@ -6,6 +6,7 @@
 <meta name="keywords" content="hCard Transformer,hAtom Transformer,hCalendar Transformer,Geo Transformer">
 <meta name="description" content="Microformats Transformer Toolkit">
 <link type="application/atom+xml" title="TransFormr Updates Feed" href="http://github.com/feeds/WebOrganics/commits/TransFormr/master" rel="alternate">
+<link type="application/rdf+xml" title="DOAP" href="<?php echo $this->path; ?>doap.rdf" rel="meta">
 <style media="all" type="text/css">
 	@import "stylesheets/user.css";
 </style>
