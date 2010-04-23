@@ -66,11 +66,11 @@ detect, hcard, hcard-rdf, hatom, rss2, geo, hcalendar, hcalendar-rdf, hreview, h
 
 #### Non RDF conversions,
 
-*index.php?type=(type)&url=http://(your page)
+* index.php?type=(type)&url=http://(your page)
 
 #### For all RDF conversions
 
-*index.php?type=(type)&output=(ntriples|rdfa|turtle|rdfjson)&url=http://(your page)
+* index.php?type=(type)&output=(ntriples|rdfa|turtle|rdfjson)&url=http://(your page)
 
 
 ### Apache Clean URLs
