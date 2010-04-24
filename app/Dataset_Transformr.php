@@ -12,263 +12,6 @@ class HTMLQuery extends ARC2_Transformr
 		parent::__init();
 	}
 	
-	protected function json_dataset($xpath, $url) 
-	{
-		$data = "//*[contains(concat(' ',normalize-space(@rel), ' '),' dataset ')][1]"; /* only one supported at mo :) */
-		if($nodes = $xpath->query($data))
-		{
-			foreach($nodes as $node)
-			{
-				$resource = $node->getAttribute('href');
-				$json_data = $this->return_url($resource , $url);
-            }
-			return $json_data;
-        }
-	}
-	
-	protected function reverse_strrchr($val, $selector)
-	{
-		$selector = strrpos($val, $selector);
-	
-		if (!substr($val, 0, $selector) == '') 
-		{
-			return substr($val, 0, $selector);
-		}
-		else return null;
-	}
-
-	protected function forward_strrchr($val, $selector)
-	{
-		if (strrchr($val, $selector))
-		{
-			return array_pop(explode($selector, $val));
-		}
-		else return null;
-	}
-
-	protected  function get_attr_value($val)
-	{
-	$selectors = array('class' => '.', 'id' => '#', null => '~=');
-	
-		foreach ($selectors as $attribute => $selector)
-		{
-			if(!is_null( $this->reverse_strrchr($val, $selector)) && $selector == '~=' )
-			{
-				return array( $this->reverse_strrchr($val, $selector) => $this->forward_strrchr($val, $selector) );
-			}
-			elseif(!is_null( $this->forward_strrchr($val, $selector)) && is_null($this->reverse_strrchr($val, $selector)))
-			{
-				if (!$attribute == null) 
-				{
-					return array( $attribute => $this->forward_strrchr($val, $selector) );
-				}
-			}
-		}
-	}
-	
-	protected function return_node_or_attribute($val)
-	{
-		if (!$this->get_attr_value($val)) return array('node' => $val);
-		else return $this->get_attr_value($val);
-	}
-	
-	protected function get_label($value, $item) 
-	{
-		if (isset($value->label)) $label = $value->label;
-		else $label = $item;
-		return $label;
-	}
-	
-	protected function return_url($resource, $url)
-    {
-        if (parse_url($resource, PHP_URL_SCHEME) != '') return $resource;
-
-        if ($resource[0]=='#' || $resource[0]=='?') return $url.$resource;
-
-        extract(parse_url($url));
-
-        $path = preg_replace('#/[^/]*$#', '', $path);
-
-        if ($resource[0] == '/') $path = '';
-
-        $abs = "$host$path/$resource";
-
-        $re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
-		
-        for($n=1; $n>0; $abs=preg_replace($re, '/', $abs, -1, $n)) {}
-
-        return $scheme.'://'.$abs;
-    }
-	
-	protected function rdf_about($url, $documentTag, $value, $class) 
-	{
-	if( isset($value->about)) $about = $value->about;
-	else $about = true;
-	
-	if ( $documentTag->getAttribute('id') ) {
-	
-		if (isset($value->about) && !$about == false ) {
-			
-			foreach ($value->about as $id => $uri ) {
-			
-				if ($newids = explode('|', $id)) { 
-				
-					foreach ($newids as $newid) {
-					
-						if ($documentTag->getAttribute('id') == $newid)  {
-							return $class->setAttribute("rdf:about", $uri);
-						}
-						else {
-							return $class->setAttribute("rdf:about", $url."#".$documentTag->getAttribute('id'));
-						}
-					}
-				}
-				else {
-					if ($documentTag->getAttribute('id') == $id)  {
-						return $class->setAttribute("rdf:about", $uri);
-					}
-					else {
-						return $class->setAttribute("rdf:about", $url."#".$documentTag->getAttribute('id'));
-					}
-				}
-			}
-		} 
-		else 
-			if( $about == true ) return $class->setAttribute("rdf:about", $url."#".$documentTag->getAttribute('id'));
-	} 
-	elseif ($documentTag->getAttribute('href')) return $class->setAttribute("rdf:about", $this->return_url($documentTag->getAttribute('href'), $url));
-	elseif ($documentTag->getAttribute('src')) return $class->setAttribute("rdf:about", $this->return_url($documentTag->getAttribute('src'), $url));
-	else 
-		if( $about == true ) 
-			return $class->setAttribute("rdf:about", $url); 
-	}
-	
-	protected function get_content_from_id($value, $documentTag) 
-	{
-	$content_id = null;
-					
-	foreach ($value->content as $cid => $content) 
-	{
-		if ($cid == "value") 
-		{
-			$content_id = 1;
-			$text = $content;
-		}
-		
-		if ($newcids = explode('|', $cid)) 
-		{	
-		foreach($newcids as $newcid) 
-		{		
-			if ($documentTag->getAttribute('id') == $newcid) 
-			{
-				$content_id = 1;
-				$text = $content;
-				}
-			}
-		}
-		if ($documentTag->getAttribute('id') == $cid) 
-		{
-			$content_id = 1;
-			$text = $content;
-		}
-		else 
-		{
-			if (is_null($content_id)) 
-			{
-				if ($documentTag->getAttribute('datetime')) 
-				{
-					$text = $documentTag->getAttribute('datetime');
-				}
-				elseif ($documentTag->getAttribute('content')) 
-				{
-					$text = $documentTag->getAttribute('content');
-				}
-				else {
-				
-					$text = $documentTag->nodeValue;
-					}
-				}
-			}
-		}
-		$text = str_replace(array("\r\n", "\r", "\n", "\t"), '', $text);
-		return $text;
-	}
-	
-	protected function get_resource_from_id($value, $documentTag) {
-	
-	global $url;
-
-	$content_id = null;
-					
-	foreach ($value->content as $cid => $content) 
-	{
-	if ($cid == "value") 
-	{
-		$content_id = 1;
-		$resource = $content;
-	}				
-	if ($newcids = explode('|', $cid)) 
-	{
-		foreach($newcids as $newcid) 
-		{		
-			if ($documentTag->getAttribute('id') == $newcid) 
-			{
-				$content_id = 1;
-				$resource = $content;
-				}
-			}
-		}
-		if ($documentTag->getAttribute('id') == $cid) 
-		{
-			$content_id = 1;
-			$resource = $content;
-		}
-		else {
-		
-			if (is_null($content_id)) $resource = $this->return_resource($documentTag, $url);
-			}
-		}
-		return $resource;
-	}
-	
-	protected function return_node_value($child) 
-	{	
-	$result = '';
-	
-	$tmpdoc = new DOMDocument();
-	$tmpdoc->appendChild($tmpdoc->importNode($child, TRUE));
-	$tmpdoc->formatOutput = true;
-	$result .= $tmpdoc->saveXML();
-	$result = str_replace(array("\r\n", "\r", "\n", "\t", "&#xD;"), '', $result);
-	$result = trim(preg_replace('/<\?xml.*\?>/', '', $result, 1));
-	
-	return $result;
-	}
-
-	protected function return_text_nodes($val, $documentTag, $prop, $xml) 
-	{
-	if (isset($val->content)) 
-	{
-		$text = $this->get_content_from_id($val, $documentTag);
-	}
-	elseif ($documentTag->getAttribute('datetime')) $text = $documentTag->getAttribute('datetime');
-	elseif ($documentTag->getAttribute('content')) $text = $documentTag->getAttribute('content');
-	elseif ($documentTag->getAttribute('title')) $text = $documentTag->getAttribute('title');
-	else $text = $documentTag->nodeValue;
-	$text = str_replace(array("\r\n", "\r", "\n", "\t"), '', $text);
-	$property = $xml->createElement($this->get_label($val, $prop), $text );
-	return $property;
-	}
-	
-	protected function return_resource($documentTag, $url) 
-	{
-	if ($documentTag->getAttribute('src')) $resource = $documentTag->getAttribute('src');
-	elseif ($documentTag->getAttribute('href')) $resource = $documentTag->getAttribute('href');
-	elseif ($documentTag->getAttribute('id')) $resource = $url."#".$documentTag->getAttribute('id');
-	
-	return $resource;
-	}
-
 	public function this_document($url)
 	{
 		$this->contents = '';
@@ -279,13 +22,11 @@ class HTMLQuery extends ARC2_Transformr
 		
 		$this->file = $this->rand_filename('rdf');
 		
-		if (isset($this->object->query->base)) 
-		{
+		if (isset($this->object->query->base)) {
 			$this->html = file_get_contents($this->return_url($this->object->query->base, $url));
 			$this->contents = "json";
 		}
-		if (!$this->html) 
-		{ 
+		if (!$this->html) { 
 			return $this->return_error('1'); 
 			exit;
 		}
@@ -297,16 +38,14 @@ class HTMLQuery extends ARC2_Transformr
 		if ($this->contents == "json") $this->contents = file_get_contents($url);
 		else $this->contents = file_get_contents($this->json_dataset($xpath, $url));
 		
-		if (!$this->contents) 
-		{ 
+		if (!$this->contents) { 
 			return $this->return_error('2');  
 			exit;
 		}
 		
 		$this->object = json_decode(utf8_encode($this->contents));
 		
-		if (!$this->object) 
-		{ 
+		if (!$this->object) { 
 			return $this->return_error('3'); 
 			exit;
 		}
@@ -317,9 +56,6 @@ class HTMLQuery extends ARC2_Transformr
 		$xml->formatOutput = true;
 		$root = $xml->createElementNS('http://www.w3.org/1999/02/22-rdf-syntax-ns#', 'rdf:RDF');
 		
-		header("Content-type: application/rdf+xml");
-		header("Content-Disposition: inline; filename=".$this->file);
-		
 		if ( isset($object->base) ) $url = $this->return_url($object->base , $url);
 		$root->setAttribute("xml:base", $url);
 		
@@ -327,31 +63,27 @@ class HTMLQuery extends ARC2_Transformr
 		
 		$documentTags = $dom->getElementsByTagName('*');
 
-		foreach ( $object->vocab as $prefix => $urlns ) 
-		{	
+		foreach ( $object->vocab as $prefix => $urlns ) {	
 			if ($prefix == "value") {
 				$thisns ="xmlns";
 				$root->setAttribute($thisns, $urlns);
 			}
 			else {
-				$xmlns = "xmlns:";
-				$thisns = $xmlns.$prefix;
+				$thisns = "xmlns:".$prefix;
 				$root->setAttributeNS('http://www.w3.org/2000/xmlns/' , $thisns, $urlns);
 			}
 		}
 		
-		foreach ( $documentTags as $documentTag ) 
-		{
+		foreach ( $documentTags as $documentTag ) {
 			$this->json_query_properties($url, $object, $documentTag, $root, $xml, $hasroot = false);
 		}
-		
-		if (isset($object->output)) 
-		{ 
+		if (isset($object->output)){ 
 			$RDFparser = new ARC2_Transformr;
-			
 			return $RDFparser->Parse($this->html, $xml->saveXML(), $object->output);
 		}
 		else {
+			header("Content-type: application/rdf+xml");
+			header("Content-Disposition: inline; filename=".$this->file);
 			return $xml->saveXML();
 		}
 	}
@@ -476,8 +208,7 @@ class HTMLQuery extends ARC2_Transformr
 			$class->appendChild($property);
 		} 
 		else { 
-		if (isset($val->keyword))
-		{	
+	
 			if (isset($val->rev))
 			{
 				$root = $xml->createElement($val->rev);
@@ -486,7 +217,7 @@ class HTMLQuery extends ARC2_Transformr
 				$root->appendChild($newroot);
 				$this->rdf_about($url, $documentTag, $val, $newroot);
 			} 
-			elseif (isset($val->type) && $val->type == "rdfresource")
+			elseif (isset($val->type) && $val->type == "resource")
 			{
 				$newroot = $xml->createElement($this->get_label($val, $prop));
 				$class->appendChild($newroot);
@@ -518,9 +249,235 @@ class HTMLQuery extends ARC2_Transformr
 			
 			foreach ( $documentTags as $documentTag ) 
 				$this->json_query_properties($url, $val, $documentTag, $newroot, $xml, $hasroot = true);
-			}
 		}
 		unset( $class, $text, $resource );
+	}
+	
+	protected function json_dataset($xpath, $url) 
+	{
+		$data = "//*[contains(concat(' ',normalize-space(@rel), ' '),' dataset ')][1]"; /* only one supported at mo :) */
+		if($nodes = $xpath->query($data)) {
+			foreach($nodes as $node) {
+				$resource = $node->getAttribute('href');
+				$json_data = $this->return_url($resource , $url);
+            }
+			return $json_data;
+        }
+	}
+	
+	protected function reverse_strrchr($val, $selector)
+	{
+		$selector = strrpos($val, $selector);
+	
+		if (!substr($val, 0, $selector) == '') {
+			return substr($val, 0, $selector);
+		}
+		else return null;
+	}
+
+	protected function forward_strrchr($val, $selector)
+	{
+		if (strrchr($val, $selector)) {
+			return array_pop(explode($selector, $val));
+		}
+		else return null;
+	}
+
+	protected  function get_attr_value($val)
+	{
+	$selectors = array('class' => '.', 'id' => '#', null => '~=');
+		foreach ($selectors as $attribute => $selector) {
+			if(!is_null( $this->reverse_strrchr($val, $selector)) && $selector == '~=' ) {
+				return array( $this->reverse_strrchr($val, $selector) => $this->forward_strrchr($val, $selector) );
+			}
+			elseif(!is_null( $this->forward_strrchr($val, $selector)) && is_null($this->reverse_strrchr($val, $selector))) {
+				if (!$attribute == null) {
+					return array( $attribute => $this->forward_strrchr($val, $selector) );
+				}
+			}
+		}
+	}
+	
+	protected function return_node_or_attribute($val)
+	{
+		if (!$this->get_attr_value($val)) return array('node' => $val);
+		else return $this->get_attr_value($val);
+	}
+	
+	protected function get_label($value, $item) 
+	{
+		if (isset($value->label)) $label = $value->label;
+		else $label = $item;
+		return $label;
+	}
+	
+	protected function return_url($resource, $url)
+    {
+        if (parse_url($resource, PHP_URL_SCHEME) != '') return $resource;
+
+        if ($resource[0]=='#' || $resource[0]=='?') return $url.$resource;
+
+        extract(parse_url($url));
+
+        $path = preg_replace('#/[^/]*$#', '', $path);
+
+        if ($resource[0] == '/') $path = '';
+
+        $abs = "$host$path/$resource";
+
+        $re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
+		
+        for($n=1; $n>0; $abs=preg_replace($re, '/', $abs, -1, $n)) {}
+
+        return $scheme.'://'.$abs;
+    }
+	
+	protected function rdf_about($url, $documentTag, $value, $class) 
+	{
+	if( isset($value->about)) $about = $value->about;
+	else $about = true;
+	
+	if ( $documentTag->getAttribute('id') ) {
+	
+		if (isset($value->about) && !$about == false ) {
+			
+			foreach ($value->about as $id => $uri ) {
+			
+				if ($newids = explode('|', $id)) { 
+				
+					foreach ($newids as $newid) {
+					
+						if ($documentTag->getAttribute('id') == $newid)  {
+							return $class->setAttribute("rdf:about", $uri);
+						}
+						else {
+							return $class->setAttribute("rdf:about", $url."#".$documentTag->getAttribute('id'));
+						}
+					}
+				}
+				else {
+					if ($documentTag->getAttribute('id') == $id)  {
+						return $class->setAttribute("rdf:about", $uri);
+					}
+					else {
+						return $class->setAttribute("rdf:about", $url."#".$documentTag->getAttribute('id'));
+					}
+				}
+			}
+		} 
+		else 
+			if( $about == true ) return $class->setAttribute("rdf:about", $url."#".$documentTag->getAttribute('id'));
+	} 
+	elseif ($documentTag->getAttribute('href')) return $class->setAttribute("rdf:about", $this->return_url($documentTag->getAttribute('href'), $url));
+	elseif ($documentTag->getAttribute('src')) return $class->setAttribute("rdf:about", $this->return_url($documentTag->getAttribute('src'), $url));
+	else 
+		if( $about == true ) 
+			return $class->setAttribute("rdf:about", $url); 
+	}
+	
+	protected function get_content_from_id($value, $documentTag) 
+	{
+	$content_id = null;
+					
+	foreach ($value->content as $cid => $content) {
+		if ($cid == "value") {
+			$content_id = 1;
+			$text = $content;
+		}
+		if ($newcids = explode('|', $cid)) {	
+		foreach($newcids as $newcid) {		
+			if ($documentTag->getAttribute('id') == $newcid) {
+				$content_id = 1;
+				$text = $content;
+				}
+			}
+		}
+		if ($documentTag->getAttribute('id') == $cid) {
+			$content_id = 1;
+			$text = $content;
+		}
+		else {
+			if (is_null($content_id)) {
+				if ($documentTag->getAttribute('datetime')) {
+					$text = $documentTag->getAttribute('datetime');
+				}
+				elseif ($documentTag->getAttribute('content')) {
+					$text = $documentTag->getAttribute('content');
+				}
+				else {
+					$text = $documentTag->nodeValue;
+					}
+				}
+			}
+		}
+		$text = str_replace(array("\r\n", "\r", "\n", "\t"), '', $text);
+		return $text;
+	}
+	
+	protected function get_resource_from_id($value, $documentTag) 
+	{
+	$content_id = null;
+	
+	foreach ($value->content as $cid => $content) {
+	if ($cid == "value") {
+		$content_id = 1;
+		$resource = $content;
+	}				
+	if ($newcids = explode('|', $cid)) {
+		foreach($newcids as $newcid) {		
+			if ($documentTag->getAttribute('id') == $newcid) {
+				$content_id = 1;
+				$resource = $content;
+				}
+			}
+		}
+		if ($documentTag->getAttribute('id') == $cid) {
+			$content_id = 1;
+			$resource = $content;
+		}
+		else {
+			if (is_null($content_id)) $resource = $this->return_resource($documentTag, $this->url);
+			}
+		}
+		return $resource;
+	}
+	
+	protected function return_node_value($child) 
+	{	
+	$result = '';
+	
+	$tmpdoc = new DOMDocument();
+	$tmpdoc->appendChild($tmpdoc->importNode($child, TRUE));
+	$tmpdoc->formatOutput = true;
+	$result .= $tmpdoc->saveXML();
+	$result = str_replace(array("\r\n", "\r", "\n", "\t", "&#xD;"), '', $result);
+	$result = trim(preg_replace('/<\?xml.*\?>/', '', $result, 1));
+	
+	return $result;
+	}
+
+	protected function return_text_nodes($val, $documentTag, $prop, $xml) 
+	{
+	if (isset($val->content)) 
+	{
+		$text = $this->get_content_from_id($val, $documentTag);
+	}
+	elseif ($documentTag->getAttribute('datetime')) $text = $documentTag->getAttribute('datetime');
+	elseif ($documentTag->getAttribute('content')) $text = $documentTag->getAttribute('content');
+	elseif ($documentTag->getAttribute('title')) $text = $documentTag->getAttribute('title');
+	else $text = $documentTag->nodeValue;
+	$text = str_replace(array("\r\n", "\r", "\n", "\t"), '', $text);
+	$property = $xml->createElement($this->get_label($val, $prop), $text );
+	return $property;
+	}
+	
+	protected function return_resource($documentTag, $url) 
+	{
+	if ($documentTag->getAttribute('src')) $resource = $documentTag->getAttribute('src');
+	elseif ($documentTag->getAttribute('href')) $resource = $documentTag->getAttribute('href');
+	elseif ($documentTag->getAttribute('id')) $resource = $url."#".$documentTag->getAttribute('id');
+	
+	return $resource;
 	}
 	
 	protected function rand_filename($ext='')
