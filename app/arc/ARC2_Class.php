@@ -363,22 +363,6 @@ class ARC2_Class {
     return (isset($v[0]) && isset($v[0]['s'])) ? $ser->getSerializedTriples($v) : $ser->getSerializedIndex($v);
   }
 
-  /* used for ARC2_Transformr */
-  
-  function toRDFa($v, $ns = '') {
-	ARC2::inc('RDFaSerializer');
-    if (!$ns) $ns = isset($this->a['ns']) ? $this->a['ns'] : array();
-    $ser = new ARC2_RDFaSerializer(array_merge($this->a, array('ns' => $ns)), $this);
-    return (isset($v[0]) && isset($v[0]['s'])) ? $ser->getSerializedTriples($v) : $ser->getSerializedIndex($v);
-  }
-  
- function toPrettyRDF($v, $ns = '') {
-    ARC2::inc('PrettyRDFSerializer');
-    if (!$ns) $ns = isset($this->a['ns']) ? $this->a['ns'] : array();
-    $ser = new ARC2_PrettyRDFSerializer(array_merge($this->a, array('ns' => $ns)), $this);
-    return (isset($v[0]) && isset($v[0]['s'])) ? $ser->getSerializedTriples($v) : $ser->getSerializedIndex($v);
-  }
-
   /*  */
 
   function getFilledTemplate($t, $vals, $g = '') {

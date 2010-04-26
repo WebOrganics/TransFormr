@@ -15,8 +15,8 @@
     <doap:release>
       <doap:Version>
         <doap:name>Microformats Transformer Toolkit</doap:name>
-        <doap:created>2010-04-21</doap:created>
-        <doap:revision>0.6.1</doap:revision>
+        <doap:created>2010-04-26</doap:created>
+        <doap:revision>0.6.2</doap:revision>
       </doap:Version>
     </doap:release>
   </doap:Project>

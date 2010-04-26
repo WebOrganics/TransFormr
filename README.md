@@ -1,4 +1,4 @@
-# TransFormr version 0.6.1  
+# TransFormr version 0.6.2  
 
 TransFormr is a simple toolkit that uses PHP and XSLT for extracting and transforming microformats http://microformats.org/.
 
@@ -29,7 +29,7 @@ You must have PHP version 5.2.0 or higher with XSLT enabled to run TransFormr.
 
 * Download the latest version of Transformr from http://github.com/WebOrganics/TransFormr.
 * Unpack the entire contents of the file called WebOrganics-TransFormr-XXXXX to your webserver either into its own directory or the the root of your directory (dedicated transformers only). 
-* Surf your way to wherever you unpacked your file eg: http://example.com/transformr/.
+* Surf your way to wherever you unpacked your file eg: http://example.com/transformr/ it works ( and looks ) exactly the same as the webservice available at http://transformr.co.uk/.
 * Enter a url, Have fun transforming some microformats ;)
 	
 ## Conversions
@@ -64,29 +64,17 @@ Other non microformat conversions
 
 detect, hcard, hcard-rdf, hatom, rss2, geo, hcalendar, hcalendar-rdf, hreview, haudio-rss, mo-haudio, haudio-xspf, hfoaf, mrss, erdf, rdfa, microformats, and dataset.
 
-#### Non RDF conversions,
-
-* index.php?type=(type)&url=http://(your page)
-
-#### For all RDF conversions
-
-* index.php?type=(type)&output=(ntriples|rdfa|turtle|rdfjson)&url=http://(your page)
-
-
-### Apache Clean URLs
-
-#### Non RDF conversions,
-
 * http://[transformr]/[type]/http://[your page] ( transforms a whole page )
 * http://[transformr]/[type]/referer ( transforms from refering url )
 * http://[transformr]/[type]/[your fragment] ( transforms from refering html id )
 
-#### For all RDF conversions
+### For all RDF conversions
 
 * http://[transformr]/[type]/(ntriples|rdfa|turtle|rdfjson)/http://[your page] 
 
 ## Notes
 
+* 0.6.2 updated ARC2_Transformr, incudes a non-hacked version of ARC2.  
 * 0.6.1 Most RDF including RDFa conversions are parsed by ARC2 ( included ) http://arc.semsol.org/
 * 0.5.1 Transformr also supports Fragment parsing for individual microformats.
 

@@ -1,11 +1,12 @@
 <?php
 /*
- * TransFormr Version: 0.6.1, Wednesday, 21st April 2010
+ * TransFormr Version: 0.6.2, Monday, 26th April 2010
  * Contact: Martin McEvoy info@weborganics.co.uk
  */
+
 class Transformr
 {
- 	public function set_path()
+ 	function set_path()
 	{
 	$this->script_dir = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
 	$this->base_dir = realpath(dirname(__FILE__)); 
@@ -31,16 +32,16 @@ class Transformr
 	
 	if (!$php_version) {
 		echo $upgrade_php;
-		break;
+		exit;
 	}
 	$this->path = $this->set_path();
 	$this->type = $_GET['type'];
 	$this->url = $_GET['url'];
 	$this->template = 'template/';
 	$this->xsl = 'xsl/';
-	$this->version = '0.6.1';
-	$this->updated = 'Wednesday, 21st April 2010';
-	$this->required = array('ARC2_Transformr', 'Dataset_Transformr', 'Transformr_Types');
+	$this->version = '0.6.2';
+	$this->updated = 'Monday, 26th April 2010';
+	$this->required = array('Transformr_Types', 'arc/ARC2', 'arc/ARC2_Class', 'ARC2_Transformr', 'Dataset_Transformr');
 	
 	header("X-Application: Transformr ".$this->version );
 	ini_set('html_errors', 0); 
@@ -48,27 +49,35 @@ class Transformr
 	}
 	
 	function __init() {
-		$this->__construct();
 	}
 	
-	public function transform() {	
+	public function transform() {
+
+	$arc2_parse = false;	
 	
 	foreach ( $this->required as $require ) {
 		require_once($require.'.php');
 	}
+
 	$rdfparser = new ARC2_Transformr;
-	$htmlquery = new HTMLQuery;
 		
 	if ($arc2_parse == true) {
 	
 		if (isset($_GET['output'])) $output = $_GET['output'];
 		else $output = 'rdf';
-		if ($this->type == "rdfa") return $rdfparser->get_semhtml($this->url, $output, $type = 'rdfa');
-		elseif ($this->type == "microformats") return $rdfparser->get_semhtml($this->url, $output, $type = 'microformats');
-		else $document = $this->transform_xsl($this->url, $xsl_filename);
-		if (isset($document)) return $rdfparser->Parse($this->url, $document, $output);
+		
+		if ($this->type == "rdfa") {
+			return $rdfparser->get_semhtml($this->url, $output, $type = 'rdfa');
+		}
+		elseif ($this->type == "microformats") {
+			return $rdfparser->get_semhtml($this->url, $output, $type = 'microformats');
+		}
+		else {
+			$document = $this->transform_xsl($this->url, $xsl_filename);
+			return $rdfparser->parse_rdf($this->url, $document, $output);
+		}
 	}	
-	elseif ($this->type == "dataset") return $htmlquery->this_document($this->url);
+	elseif ($this->type == "dataset") return $rdfparser->this_document_query($this->url);
 	else return $this->transform_xsl($this->url, $xsl_filename);
 	}
 	

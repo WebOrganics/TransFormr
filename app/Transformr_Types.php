@@ -4,10 +4,6 @@ if ($this->type)
 	header("Cache-Control: no-cache, must-revalidate");
 	header("Expires: -1");
 }
-
-$url = $this->url;
-$arc2_parse = false;
-
 switch($this->type)
 {
 case 'hcard':

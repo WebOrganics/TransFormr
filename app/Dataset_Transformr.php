@@ -4,24 +4,21 @@ class HTMLQuery extends ARC2_Transformr
 	public $url = '';
 	
 	function __construct() {
+	
 		parent::__construct();
+		$this->contents = '';
+		$this->html = file_get_contents($this->url);
+		$this->object = json_decode(utf8_encode($this->html));
+		$this->file = $this->rand_filename('rdf');
 	}
 	
 	function __init() {
-		$this->__construct();
 		parent::__init();
 	}
 	
 	public function this_document($url)
 	{
-		$this->contents = '';
 	
-		$this->html = file_get_contents($url);
-		
-		$this->object = json_decode(utf8_encode($this->html));
-		
-		$this->file = $this->rand_filename('rdf');
-		
 		if (isset($this->object->query->base)) {
 			$this->html = file_get_contents($this->return_url($this->object->query->base, $url));
 			$this->contents = "json";
@@ -79,7 +76,7 @@ class HTMLQuery extends ARC2_Transformr
 		}
 		if (isset($object->output)){ 
 			$RDFparser = new ARC2_Transformr;
-			return $RDFparser->Parse($this->html, $xml->saveXML(), $object->output);
+			return $RDFparser->parse_rdf($this->html, $xml->saveXML(), $object->output);
 		}
 		else {
 			header("Content-type: application/rdf+xml");
@@ -137,12 +134,14 @@ class HTMLQuery extends ARC2_Transformr
 						} unset($arrvalue);
 					} 
 					else {
-					if ($hasroot == true ) $this->return_properties($url, $item, $value, $documentTag, $root, $xml);
-					else {
-						$class = $xml->createElement('rdf:Description');
-						$root->appendChild($class);
-						$this->rdf_about($url, $documentTag, $value, $class);
-						$this->return_properties($url, $item, $value, $documentTag, $class, $xml);
+						if ($hasroot == true ) {
+							$this->return_properties($url, $item, $value, $documentTag, $root, $xml);
+						}
+						else {
+							$class = $xml->createElement('rdf:Description');
+							$root->appendChild($class);
+							$this->rdf_about($url, $documentTag, $value, $class);
+							$this->return_properties($url, $item, $value, $documentTag, $class, $xml);
 						}
 					}
 				}
@@ -477,15 +476,10 @@ class HTMLQuery extends ARC2_Transformr
 	elseif ($documentTag->getAttribute('href')) $resource = $documentTag->getAttribute('href');
 	elseif ($documentTag->getAttribute('id')) $resource = $url."#".$documentTag->getAttribute('id');
 	
-	return $resource;
+	return $this->return_url($resource , $url);
 	}
 	
-	protected function rand_filename($ext='')
-	{
-		return preg_replace("/([0-9])/e","chr((\\1+112))",mt_rand(100000,999999)).'.'.$ext;
-	}
-	
-	protected function return_error($num) 
+	protected function return_error($num ='') 
 	{
 	switch ($num) {
 		case "1":
