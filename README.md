@@ -74,11 +74,13 @@ detect, hcard, hcard-rdf, hatom, rss2, geo, hcalendar, hcalendar-rdf, hreview, h
 
 ### Apache Clean URLs
 
+#### Non RDF conversions,
+
 * http://[transformr]/[type]/http://[your page] ( transforms a whole page )
 * http://[transformr]/[type]/referer ( transforms from refering url )
 * http://[transformr]/[type]/[your fragment] ( transforms from refering html id )
 
-### For all RDF conversions
+#### For all RDF conversions
 
 * http://[transformr]/[type]/(ntriples|rdfa|turtle|rdfjson)/http://[your page] 
 
