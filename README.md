@@ -64,6 +64,16 @@ Other non microformat conversions
 
 detect, hcard, hcard-rdf, hatom, rss2, geo, hcalendar, hcalendar-rdf, hreview, haudio-rss, mo-haudio, haudio-xspf, hfoaf, mrss, erdf, rdfa, microformats, and dataset.
 
+#### Non RDF conversions,
+
+* index.php?type=(type)&url=http://(your page)
+
+#### For all RDF conversions
+
+* index.php?type=(type)&output=(ntriples|rdfa|turtle|rdfjson)&url=http://(your page)
+
+### Apache Clean URLs
+
 * http://[transformr]/[type]/http://[your page] ( transforms a whole page )
 * http://[transformr]/[type]/referer ( transforms from refering url )
 * http://[transformr]/[type]/[your fragment] ( transforms from refering html id )
