@@ -1,4 +1,6 @@
 <?php
+ARC2::inc('Class');
+
 class ARC2_Transformr extends Transformr
 {
 	function __construct() {
@@ -6,22 +8,18 @@ class ARC2_Transformr extends Transformr
 		parent::__construct();
 		$this->a = $this->config_ns();
 	}
-	
-	function __init() {
-		parent::__init();
-	}
 
-	public function get_semhtml($url, $output, $type) {
+	function this_semhtml($url, $output, $type) {
 	
 		$parser = ARC2::getSemHTMLParser($this->a);
 		$parser->parse($url);
 		$parser->extractRDF($type);
 		$triples = $parser->getTriples();
 		$document = $parser->toRDFXML($triples);
-		return $this->parse_rdf($url, $document, $output);
+		return $this->this_rdf($url, $document, $output);
 	}
 	
-	function parse_rdf($url, $document, $output) {
+	function this_rdf($url, $document, $output) {
 	
 	$parser = ARC2::getRDFParser($this->a);
 	$parser->parse($url, $document);
@@ -68,7 +66,6 @@ class ARC2_Transformr extends Transformr
 	}
 	
 	function config_ns() {
-	
 	$ns = array(
 		'rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
 		'rdfs' => 'http://www.w3.org/2000/01/rdf-schema#',
@@ -123,27 +120,27 @@ class ARC2_Transformr extends Transformr
 		'icra' => 'http://www.icra.org/rdfs/vocabularyv03#',
 		'uri' => 'http://www.w3.org/2006/uri#',
 	);
-		return array(
-			'ns' => $ns, 
-			'auto_extract' => 0, 
-			'serializer_type_nodes' => 1, 
-			'bnode_prefix' => 'genid'.substr(md5(uniqid(rand())), 0, 4) 
-		);
+	return array(
+		'ns' => $ns, 
+		'auto_extract' => 0, 
+		'serializer_type_nodes' => 1, 
+		'bnode_prefix' => 'genid'.substr(md5(uniqid(rand())), 0, 4) 
+	  );
     }
 	
  	function rand_filename($ext = '') {
-		return preg_replace("/([0-9])/e","chr((\\1+112))",mt_rand(100000,999999)).".".$ext;
+		return substr(md5(uniqid(rand())), 0, 8).'.'.$ext;
 	}
 	
 	function toRDFa($triples) {
 		ARC2::inc('RDFaSerializer');
 		$rdfa = new ARC2_RDFaSerializer($this->a, $this);
-		return (isset($triples[0]) && isset($triples[0]['s'])) ? $rdfa->getSerializedTriples($triples) : $rdfa->getSerializedIndex($triples);
+		return ( isset($triples[0]) && isset($triples[0]['s']) ) ? $rdfa->getSerializedTriples($triples) : $rdfa->getSerializedIndex($triples);
 	}
 	
-    function this_document_query($url = '') {
-		$htmlquery = new HTMLQuery;
-		return $htmlquery->this_document($url);
+    function this_query($url = '') {
+		$query = new Dataset_Transformr();
+		return $query->this_rdf_document($url);
 	}
 }
 ?>

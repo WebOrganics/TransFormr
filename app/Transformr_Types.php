@@ -16,7 +16,7 @@ case 'hcard-rdf':
 header("Content-type: application/rdf+xml");
 header('Content-Disposition: inline; filename="vCard.rdf"');
 $xsl_filename = $this->xsl ."hcard2rdf.xsl";
-$arc2_parse = true;
+$this->arc2_parse = true;
 break;
 
 case 'hatom':
@@ -45,14 +45,14 @@ case 'hcalendar-rdf':
 header("Content-type: application/rdf+xml");
 header('Content-Disposition: inline; filename="vCal.rdf"');
 $xsl_filename = $this->xsl ."glean-hcal.xsl";
-$arc2_parse = true;
+$this->arc2_parse = true;
 break;
 
 case 'hreview':
 header("Content-type: application/rdf+xml");
 header('Content-Disposition: inline; filename="hReview.rdf"');
 $xsl_filename = $this->xsl ."hreview2rdfxml.xsl";
-$arc2_parse = true;
+$this->arc2_parse = true;
 break;
 
 case 'haudio-rss':
@@ -64,7 +64,7 @@ case 'mo-haudio':
 header('Content-type: application/rdf+xml');
 header('Content-Disposition: inline; filename="MoAudio.rdf"');
 $xsl_filename = $this->xsl ."Mo-hAudio.xsl";
-$arc2_parse = true;
+$this->arc2_parse = true;
 break;
 
 case 'haudio-xspf':
@@ -77,7 +77,7 @@ case 'hfoaf':
 header('Content-type: application/rdf+xml');
 header('Content-Disposition: inline; filename="hFoaF.rdf"');
 $xsl_filename = $this->xsl ."hFoaF.xsl";
-$arc2_parse = true;
+$this->arc2_parse = true;
 break;
 
 case 'mrss':
@@ -89,24 +89,24 @@ case 'RDF-3T':
 header("Content-type: application/rdf+xml");
 header('Content-Disposition: inline; filename="RDF-3T.rdf"');
 $xsl_filename = $this->xsl ."RDF-3T.xsl";
-$arc2_parse = true;
+$this->arc2_parse = true;
 break;
 
 case 'erdf':
 header("Content-type: application/rdf+xml");
 header('Content-Disposition: inline; filename="erdf.rdf"');
 $xsl_filename = $this->xsl ."extract-rdf.xsl";
-$arc2_parse = true;
+$this->arc2_parse = true;
 break;
 
 case 'rdfa':
 header('Content-type: application/rdf+xml');
-$arc2_parse = true;
+$this->arc2_parse = true;
 break;
 
 case 'microformats':
 header('Content-type: application/rdf+xml');
-$arc2_parse = true;
+$this->arc2_parse = true;
 break;
 
 case 'dataset':

@@ -42,6 +42,7 @@
 <xsl:param name="hreview" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' hreview ')]"/>
 <xsl:param name="vevent" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' vevent ')]"/>
 <xsl:param name="rdfa" select="descendant::*/attribute::about|descendant::*/attribute::property"/>
+<xsl:param name="xfn" select="descendant::*[contains(concat(' ',normalize-space(@profile),' '),' http://gmpg.org/xfn/11 ') or contains(concat(' ',normalize-space(@profile),' '),' http://gmpg.org/xfn/1 ')]"/>
 <xsl:param name="erdf" select="descendant::*[contains(concat(' ',normalize-space(@profile),' '),' http://purl.org/NET/erdf/profile ')]"/>
 <xsl:param name="grddl" select="descendant::*[contains(concat(' ',normalize-space(@profile),' '),' http://www.w3.org/2003/g/data-view ')]"/>
 <xsl:output 
@@ -108,6 +109,9 @@
 
 <xsl:template name="classes">
 <ul>
+<xsl:if test="$hcard|$hatom|$geo|$hreview|$vevent|$xfn">
+	<li><p>Microformats <a href="{$transformr}?type=microformats&amp;url={$base-encoded}">RDFXML</a></p></li>
+</xsl:if>
 <xsl:if test="$hcard">
 	<li><p>hCard <a href="{$transformr}?type=hcard&amp;url={$base-encoded}">vCard</a> | <a href="{$transformr}?type=hcard-rdf&amp;url={$base-encoded}">RDFXML</a></p></li>
 </xsl:if>

@@ -1,91 +1,68 @@
 <?php
-class HTMLQuery extends ARC2_Transformr
+class Dataset_Transformr extends ARC2_Transformr
 {
-	public $url = '';
 	
 	function __construct() {
 	
 		parent::__construct();
-		$this->contents = '';
+		$this->dataset = '';
 		$this->html = file_get_contents($this->url);
 		$this->object = json_decode(utf8_encode($this->html));
-		$this->file = $this->rand_filename('rdf');
+		$this->rdf_file = $this->rand_filename('rdf');
+		$this->xml_file = $this->rand_filename('xml');
 	}
 	
-	function __init() {
-		parent::__init();
-	}
-	
-	public function this_document($url)
+	public function this_rdf_document($url)
 	{
+		$json = $this->object->query;
 	
-		if (isset($this->object->query->base)) {
-			$this->html = file_get_contents($this->return_url($this->object->query->base, $url));
-			$this->contents = "json";
+		if (isset($json->base)) {
+			$this->html = file_get_contents($this->return_url($json->base, $url));
+			$this->dataset = "json";
 		}
-		if (!$this->html) { 
-			return $this->return_error('1'); 
-			exit;
-		}
+		if (!$this->html) $this->return_error('1');
 		
 		$dom = new DomDocument();
 		@$dom->loadHtml($this->html);
 		$xpath = new DomXpath($dom);
+		$parse = new ARC2_Transformr();
 		
-		if ($this->contents == "json") $this->contents = file_get_contents($url);
-		else $this->contents = file_get_contents($this->json_dataset($xpath, $url));
+		if ($this->dataset == "json") $this->dataset = file_get_contents($url);
+		else $this->dataset = file_get_contents($this->json_dataset($xpath, $url));		
+		if (!$this->dataset) return $this->return_error('2');
 		
-		if (!$this->contents) { 
-			return $this->return_error('2');  
-			exit;
-		}
+		$this->object = json_decode(utf8_encode($this->dataset));
+		if (!$this->object) return $this->return_error('3');
 		
-		$this->object = json_decode(utf8_encode($this->contents));
-		
-		if (!$this->object) { 
-			return $this->return_error('3'); 
-			exit;
-		}
 		$object = $this->object->query;
+		
+		$url = isset($object->base) ? $this->return_url($object->base , $url) : $url;
 		
 		$xml  = new DOMDocument('1.0', 'utf-8');
 		$xml->preserveWhiteSpace = true;
 		$xml->formatOutput = true;
+		
 		$root = $xml->createElementNS('http://www.w3.org/1999/02/22-rdf-syntax-ns#', 'rdf:RDF');
-		
-		if ( isset($object->base) ) $url = $this->return_url($object->base , $url);
 		$root->setAttribute("xml:base", $url);
-		
+		$this->set_xmlns($object, $root);
 		$xml->appendChild($root);
 		
 		$documentTags = $dom->getElementsByTagName('*');
-
-		foreach ( $object->vocab as $prefix => $urlns ) {	
-			if ($prefix == "value") {
-				$thisns ="xmlns";
-				$root->setAttribute($thisns, $urlns);
-			}
-			else {
-				$thisns = "xmlns:".$prefix;
-				$root->setAttributeNS('http://www.w3.org/2000/xmlns/' , $thisns, $urlns);
-			}
-		}
 		
 		foreach ( $documentTags as $documentTag ) {
-			$this->json_query_properties($url, $object, $documentTag, $root, $xml, $hasroot = false);
+			$this->json_query_rdf_properties($url, $object, $documentTag, $root, $xml, $hasroot = false);
 		}
 		if (isset($object->output)){ 
-			$RDFparser = new ARC2_Transformr;
-			return $RDFparser->parse_rdf($this->html, $xml->saveXML(), $object->output);
+			return $parse->this_rdf($this->html, $xml->saveXML(), $object->output);
 		}
 		else {
 			header("Content-type: application/rdf+xml");
-			header("Content-Disposition: inline; filename=".$this->file);
+			header("Content-Disposition: inline; filename=".$this->rdf_file);
 			return $xml->saveXML();
 		}
 	}
 	
-	protected function json_query_properties($url, $object, $documentTag, $root, $xml, $hasroot) 
+	protected function json_query_rdf_properties($url, $object, $documentTag, $root, $xml, $hasroot) 
 	{
 		foreach ($object->keyword as $item => $value) {
 		
@@ -97,9 +74,8 @@ class HTMLQuery extends ARC2_Transformr
 					
 			if (isset($value->keyword)) {
 	
-			if (!isset($arrvalue) ) $arrvalue = array();
-			else $arrvalue = array_values($arrvalue);
-					
+			$arrvalue = !isset($arrvalue) ? $arrvalue = array() : array_values($arrvalue);
+		
 			$class = $xml->createElement($this->get_label($value, $item));
 			$root->appendChild($class);
 					
@@ -125,7 +101,7 @@ class HTMLQuery extends ARC2_Transformr
 									if (isset($val->multiple)) $parse_property = true;
 									
 									if ($parse_property == true) {									
-										$this->return_properties($url, $property, $val, $documentTag, $class, $xml);
+										$this->return_rdf_properties($url, $property, $val, $documentTag, $class, $xml);
 										$arrvalue[] = $property;
 										}
 									}
@@ -133,15 +109,16 @@ class HTMLQuery extends ARC2_Transformr
 							}
 						} unset($arrvalue);
 					} 
-					else {
+					else 
+					{
 						if ($hasroot == true ) {
-							$this->return_properties($url, $item, $value, $documentTag, $root, $xml);
+							$this->return_rdf_properties($url, $item, $value, $documentTag, $root, $xml);
 						}
 						else {
 							$class = $xml->createElement('rdf:Description');
 							$root->appendChild($class);
 							$this->rdf_about($url, $documentTag, $value, $class);
-							$this->return_properties($url, $item, $value, $documentTag, $class, $xml);
+							$this->return_rdf_properties($url, $item, $value, $documentTag, $class, $xml);
 						}
 					}
 				}
@@ -149,22 +126,16 @@ class HTMLQuery extends ARC2_Transformr
 		}
 	}
 
-	protected function return_properties($url, $prop, $val, $documentTag, $class, $xml) 
+	protected function return_rdf_properties($url, $prop, $val, $documentTag, $class, $xml, $resource = '') 
 	{
-		$resource = '';
+		$type = isset($val->type) ? $val->type : "text";
 		
-		if (isset($val->type)) $type = $val->type;
-		else $type = "text";
-	
 		if (!isset($val->keyword))
 		{
 			switch ($type) {
 				
 			    case "resource":
-			    if (isset($val->content)) {
-					$resource =	$this->get_resource_from_id($val, $documentTag);
-				}  
-				else $resource = $this->return_resource($documentTag, $url);
+				$resource = isset($val->content) ? $this->get_resource_from_id($val, $documentTag) : $this->return_resource($documentTag, $url);
 				$property = $xml->createElement($this->get_label($val, $prop));
 				$property->setAttribute("rdf:resource", $this->return_url($resource, $url));
 			    break;
@@ -247,15 +218,17 @@ class HTMLQuery extends ARC2_Transformr
 			$documentTags = $documentTag->getElementsByTagName('*');
 			
 			foreach ( $documentTags as $documentTag ) 
-				$this->json_query_properties($url, $val, $documentTag, $newroot, $xml, $hasroot = true);
+				$this->json_query_rdf_properties($url, $val, $documentTag, $newroot, $xml, $hasroot = true);
 		}
 		unset( $class, $text, $resource );
 	}
 	
-	protected function json_dataset($xpath, $url) 
+	protected function json_dataset($xpath, $url, $json_data ='') 
 	{
-		$data = "//*[contains(concat(' ',normalize-space(@rel), ' '),' dataset ')][1]"; /* only one supported at mo :) */
+		$data = "//*[contains(concat(' ',normalize-space(@rel), ' '),' dataset ')][1]";
+		
 		if($nodes = $xpath->query($data)) {
+		
 			foreach($nodes as $node) {
 				$resource = $node->getAttribute('href');
 				$json_data = $this->return_url($resource , $url);
@@ -264,81 +237,83 @@ class HTMLQuery extends ARC2_Transformr
         }
 	}
 	
+	protected function set_xmlns($object, $node) 
+	{
+	foreach ( $object->vocab as $prefix => $urlns ) {	
+			if ($prefix == "value") {
+				$thisns ="xmlns";
+				$node->setAttribute($thisns, $urlns);
+			}
+			else {
+				$thisns = "xmlns:".$prefix;
+				$node->setAttributeNS('http://www.w3.org/2000/xmlns/' , $thisns, $urlns);
+			}
+		}
+	}
+	
 	protected function reverse_strrchr($val, $selector)
 	{
 		$selector = strrpos($val, $selector);
-	
-		if (!substr($val, 0, $selector) == '') {
-			return substr($val, 0, $selector);
-		}
-		else return null;
+		return substr($val, 0, $selector) != '' ? substr($val, 0, $selector) : null;
 	}
 
 	protected function forward_strrchr($val, $selector)
 	{
-		if (strrchr($val, $selector)) {
-			return array_pop(explode($selector, $val));
-		}
-		else return null;
+		return strrchr($val, $selector) ? array_pop(explode($selector, $val)) : null;
 	}
 
 	protected  function get_attr_value($val)
 	{
-	$selectors = array('class' => '.', 'id' => '#', null => '~=');
+		$selectors = array('class' => '.', 'id' => '#', null => '~=');
+		
 		foreach ($selectors as $attribute => $selector) {
-			if(!is_null( $this->reverse_strrchr($val, $selector)) && $selector == '~=' ) {
-				return array( $this->reverse_strrchr($val, $selector) => $this->forward_strrchr($val, $selector) );
+		
+			if(!is_null( $this->reverse_strrchr($val, $selector)) && $selector == '~=' ) 
+			{
+				$result =  array( $this->reverse_strrchr($val, $selector) => $this->forward_strrchr($val, $selector) );
 			}
-			elseif(!is_null( $this->forward_strrchr($val, $selector)) && is_null($this->reverse_strrchr($val, $selector))) {
-				if (!$attribute == null) {
-					return array( $attribute => $this->forward_strrchr($val, $selector) );
-				}
+			elseif(!is_null( $this->forward_strrchr($val, $selector)) && is_null($this->reverse_strrchr($val, $selector))) 
+			{
+				if (!$attribute == null) $result =  array( $attribute => $this->forward_strrchr($val, $selector) );
 			}
 		}
+		return $result;
 	}
 	
 	protected function return_node_or_attribute($val)
 	{
-		if (!$this->get_attr_value($val)) return array('node' => $val);
-		else return $this->get_attr_value($val);
+		return !$this->get_attr_value($val) ? array('node' => $val) : $this->get_attr_value($val);
 	}
 	
 	protected function get_label($value, $item) 
-	{
-		if (isset($value->label)) $label = $value->label;
-		else $label = $item;
-		return $label;
+	{ 
+		return isset($value->label) ? $value->label : $item;
 	}
 	
 	protected function return_url($resource, $url)
     {
         if (parse_url($resource, PHP_URL_SCHEME) != '') return $resource;
-
         if ($resource[0]=='#' || $resource[0]=='?') return $url.$resource;
-
+		
         extract(parse_url($url));
-
+		
         $path = preg_replace('#/[^/]*$#', '', $path);
-
+		
         if ($resource[0] == '/') $path = '';
-
         $abs = "$host$path/$resource";
-
         $re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
 		
         for($n=1; $n>0; $abs=preg_replace($re, '/', $abs, -1, $n)) {}
-
         return $scheme.'://'.$abs;
     }
 	
 	protected function rdf_about($url, $documentTag, $value, $class) 
 	{
-	if( isset($value->about)) $about = $value->about;
-	else $about = true;
+	$about = isset($value->about) ? $value->about : true;
 	
 	if ( $documentTag->getAttribute('id') ) {
 	
-		if (isset($value->about) && !$about == false ) {
+		if ( isset($value->about) && $about != false ) {
 			
 			foreach ($value->about as $id => $uri ) {
 			
@@ -346,38 +321,27 @@ class HTMLQuery extends ARC2_Transformr
 				
 					foreach ($newids as $newid) {
 					
-						if ($documentTag->getAttribute('id') == $newid)  {
-							return $class->setAttribute("rdf:about", $uri);
-						}
-						else {
-							return $class->setAttribute("rdf:about", $url."#".$documentTag->getAttribute('id'));
-						}
+						return $documentTag->getAttribute('id') == $newid 
+						? $class->setAttribute("rdf:about", $uri) 
+						: $class->setAttribute("rdf:about", $url."#".$documentTag->getAttribute('id'));
 					}
 				}
 				else {
-					if ($documentTag->getAttribute('id') == $id)  {
-						return $class->setAttribute("rdf:about", $uri);
-					}
-					else {
-						return $class->setAttribute("rdf:about", $url."#".$documentTag->getAttribute('id'));
-					}
+					return $documentTag->getAttribute('id') == $id 
+					? $class->setAttribute("rdf:about", $uri) 
+					: $class->setAttribute("rdf:about", $url."#".$documentTag->getAttribute('id'));
 				}
 			}
 		} 
-		else 
-			if( $about == true ) return $class->setAttribute("rdf:about", $url."#".$documentTag->getAttribute('id'));
+		elseif( $about == true ) return $class->setAttribute("rdf:about", $url."#".$documentTag->getAttribute('id'));
 	} 
 	elseif ($documentTag->getAttribute('href')) return $class->setAttribute("rdf:about", $this->return_url($documentTag->getAttribute('href'), $url));
 	elseif ($documentTag->getAttribute('src')) return $class->setAttribute("rdf:about", $this->return_url($documentTag->getAttribute('src'), $url));
-	else 
-		if( $about == true ) 
-			return $class->setAttribute("rdf:about", $url); 
+	elseif( $about == true ) return $class->setAttribute("rdf:about", $url); 
 	}
 	
-	protected function get_content_from_id($value, $documentTag) 
-	{
-	$content_id = null;
-					
+	protected function get_content_from_id($value, $documentTag, $content_id = null) 
+	{	
 	foreach ($value->content as $cid => $content) {
 		if ($cid == "value") {
 			$content_id = 1;
@@ -397,15 +361,9 @@ class HTMLQuery extends ARC2_Transformr
 		}
 		else {
 			if (is_null($content_id)) {
-				if ($documentTag->getAttribute('datetime')) {
-					$text = $documentTag->getAttribute('datetime');
-				}
-				elseif ($documentTag->getAttribute('content')) {
-					$text = $documentTag->getAttribute('content');
-				}
-				else {
-					$text = $documentTag->nodeValue;
-					}
+				if ($documentTag->getAttribute('datetime')) $text = $documentTag->getAttribute('datetime');
+				elseif ($documentTag->getAttribute('content')) $text = $documentTag->getAttribute('content');
+				else $text = $documentTag->nodeValue;
 				}
 			}
 		}
@@ -413,10 +371,8 @@ class HTMLQuery extends ARC2_Transformr
 		return $text;
 	}
 	
-	protected function get_resource_from_id($value, $documentTag) 
+	protected function get_resource_from_id($value, $documentTag, $content_id = '') 
 	{
-	$content_id = null;
-	
 	foreach ($value->content as $cid => $content) {
 	if ($cid == "value") {
 		$content_id = 1;
@@ -441,42 +397,35 @@ class HTMLQuery extends ARC2_Transformr
 		return $resource;
 	}
 	
-	protected function return_node_value($child) 
+	protected function return_node_value($doc, $result = '') 
 	{	
-	$result = '';
-	
-	$tmpdoc = new DOMDocument();
-	$tmpdoc->appendChild($tmpdoc->importNode($child, TRUE));
-	$tmpdoc->formatOutput = true;
-	$result .= $tmpdoc->saveXML();
-	$result = str_replace(array("\r\n", "\r", "\n", "\t", "&#xD;"), '', $result);
-	$result = trim(preg_replace('/<\?xml.*\?>/', '', $result, 1));
-	
-	return $result;
+		$tmpdoc = new DOMDocument();
+		$tmpdoc->appendChild($tmpdoc->importNode($doc, TRUE));
+		$tmpdoc->formatOutput = true;
+		$result .= $tmpdoc->saveXML();
+		$result = str_replace(array("\r\n", "\r", "\n", "\t", "&#xD;"), '', $result);
+		$result = trim(preg_replace('/<\?xml.*\?>/', '', $result, 1));
+		return $result;
 	}
 
 	protected function return_text_nodes($val, $documentTag, $prop, $xml) 
 	{
-	if (isset($val->content)) 
-	{
-		$text = $this->get_content_from_id($val, $documentTag);
-	}
-	elseif ($documentTag->getAttribute('datetime')) $text = $documentTag->getAttribute('datetime');
-	elseif ($documentTag->getAttribute('content')) $text = $documentTag->getAttribute('content');
-	elseif ($documentTag->getAttribute('title')) $text = $documentTag->getAttribute('title');
-	else $text = $documentTag->nodeValue;
-	$text = str_replace(array("\r\n", "\r", "\n", "\t"), '', $text);
-	$property = $xml->createElement($this->get_label($val, $prop), $text );
-	return $property;
+		if (isset($val->content)) $text = $this->get_content_from_id($val, $documentTag);
+		elseif ($documentTag->getAttribute('datetime')) $text = $documentTag->getAttribute('datetime');
+		elseif ($documentTag->getAttribute('content')) $text = $documentTag->getAttribute('content');
+		elseif ($documentTag->getAttribute('title')) $text = $documentTag->getAttribute('title');
+		else $text = $documentTag->nodeValue;
+		$text = str_replace(array("\r\n", "\r", "\n", "\t"), '', $text);
+		$result = $xml->createElement($this->get_label($val, $prop), $text );
+		return $result;
 	}
 	
 	protected function return_resource($documentTag, $url) 
 	{
-	if ($documentTag->getAttribute('src')) $resource = $documentTag->getAttribute('src');
-	elseif ($documentTag->getAttribute('href')) $resource = $documentTag->getAttribute('href');
-	elseif ($documentTag->getAttribute('id')) $resource = $url."#".$documentTag->getAttribute('id');
-	
-	return $this->return_url($resource , $url);
+		if ($documentTag->getAttribute('src')) $resource = $documentTag->getAttribute('src');
+		elseif ($documentTag->getAttribute('href')) $resource = $documentTag->getAttribute('href');
+		elseif ($documentTag->getAttribute('id')) $resource = $url."#".$documentTag->getAttribute('id');
+		return $this->return_url($resource , $url);
 	}
 	
 	protected function return_error($num ='') 
@@ -492,6 +441,7 @@ class HTMLQuery extends ARC2_Transformr
 			return 'Dataset not well formed please validate your dataset at <a href="http://www.jsonlint.com/">http://www.jsonlint.com/</a>';
 		break;       
 		}
+	exit;
 	}
 }
 ?>

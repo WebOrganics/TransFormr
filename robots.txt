@@ -1,4 +1,3 @@
 User-agent: *
 Disallow: /app/
-Disallow: /xsl/
 Disallow: /template/
