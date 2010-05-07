@@ -9,7 +9,7 @@ function bookmarkUrl()
 {	
   var transformer = "<?php echo $this->path; ?>";	
   var type = document.getElementById('type').value;
-  var bookmarklet = "javascript:void(location.href='"+transformer+type+"/'+location.href)";
+  var bookmarklet = "javascript:void(location.href='"+transformer+"?type="+type+"&amp;url='+escape(location.href))";
   document.getElementById('bookmark').innerHTML = '<a href="'+bookmarklet+'">'+type+' bookmarklet</a>';
 }
 
