@@ -6,13 +6,13 @@
  * @license <http://arc.semsol.org/license>
  * @homepage <http://arc.semsol.org/>
  * @package ARC2
- * @version 2010-03-31
+ * @version 2010-04-26
 */
 
 class ARC2 {
 
   function getVersion() {
-    return '2010-03-31';
+    return '2010-04-26';
   }
 
   /*  */
@@ -393,12 +393,12 @@ class ARC2 {
     return ARC2::getComponent('Store', $a, $caller);
   }
 
-  function getStoreEndpoint($a = '') {
-    return ARC2::getComponent('StoreEndpoint', $a);
+  function getStoreEndpoint($a = '', $caller = '') {
+    return ARC2::getComponent('StoreEndpoint', $a, $caller);
   }
 
-  function getRemoteStore($a = '') {
-    return ARC2::getComponent('RemoteStore', $a);
+  function getRemoteStore($a = '', $caller = '') {
+    return ARC2::getComponent('RemoteStore', $a, $caller);
   }
 
   function getMemStore($a = '') {
@@ -427,8 +427,12 @@ class ARC2 {
     return ARC2::getSer('RDFJSON', $a);
   }
 
-  function getPOSHRDFSerializer($a = '') {
+  function getPOSHRDFSerializer($a = '') {/* deprecated */
     return ARC2::getSer('POSHRDF', $a);
+  }
+
+  function getMicroRDFSerializer($a = '') {
+    return ARC2::getSer('MicroRDF', $a);
   }
 
   function getRSS10Serializer($a = '') {

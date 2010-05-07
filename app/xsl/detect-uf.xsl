@@ -45,6 +45,7 @@
 <xsl:param name="xfn" select="descendant::*[contains(concat(' ',normalize-space(@profile),' '),' http://gmpg.org/xfn/11 ') or contains(concat(' ',normalize-space(@profile),' '),' http://gmpg.org/xfn/1 ')]"/>
 <xsl:param name="erdf" select="descendant::*[contains(concat(' ',normalize-space(@profile),' '),' http://purl.org/NET/erdf/profile ')]"/>
 <xsl:param name="grddl" select="descendant::*[contains(concat(' ',normalize-space(@profile),' '),' http://www.w3.org/2003/g/data-view ')]"/>
+<xsl:param name="dataset" select="descendant::*[contains(concat(' ',normalize-space(@rel),' '),' dataset ')]"/>
 <xsl:output 
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
     doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" encoding="utf-8"  media-type="text/html;charset=utf-8" method="xml" indent="yes"/>
@@ -65,7 +66,7 @@
 	<link type="application/atom+xml" title="Atom" href="{$transformr}hatom/{$base-uri}" rel="alternate"/>
 	<link type="application/rss+xml" title="RSS2" href="{$transformr}rss2/{$base-uri}" rel="alternate"/>
 </xsl:if>
-<link rel="default-slice" type="application/x-hatom" href="{$transformr}#content"/>
+<link rel="default-slice" type="application/x-hatom" href="{$transformr}detect/#content"/>
 	</head>
 <body>
 <div class="heading">
@@ -110,16 +111,16 @@
 <xsl:template name="classes">
 <ul>
 <xsl:if test="$hcard|$hatom|$geo|$hreview|$vevent|$xfn">
-	<li><p>Microformats <a href="{$transformr}?type=microformats&amp;url={$base-encoded}">RDFXML</a></p></li>
+	<li><p>Microformats <a href="{$transformr}?type=uf-rdf&amp;url={$base-encoded}">RDF</a></p></li>
 </xsl:if>
 <xsl:if test="$hcard">
-	<li><p>hCard <a href="{$transformr}?type=hcard&amp;url={$base-encoded}">vCard</a> | <a href="{$transformr}?type=hcard-rdf&amp;url={$base-encoded}">RDFXML</a></p></li>
+	<li><p>hCard <a href="{$transformr}?type=hcard&amp;url={$base-encoded}">vCard</a> | <a href="{$transformr}?type=hcard-rdf&amp;url={$base-encoded}">RDF</a></p></li>
 </xsl:if>
 <xsl:if test="$hatom">
-	<li><p>hAtom <a href="{$transformr}?type=hatom&amp;url={$base-encoded}">Atom</a> | <a href="{$transformr}?type=rss2&amp;url={$base-encoded}">RSS2</a></p></li>
+	<li><p>hAtom <a href="{$transformr}?type=hatom&amp;url={$base-encoded}">Atom</a> | <a href="{$transformr}?type=hatom-rss2&amp;url={$base-encoded}">RSS2</a></p></li>
 </xsl:if>
 <xsl:if test="$hfoaf">
-	<li><p>hFoaF <a href="{$transformr}?type=hfoaf&amp;url={$base-encoded}">RDFXML</a></p></li>
+	<li><p>hFoaF <a href="{$transformr}?type=hfoaf&amp;url={$base-encoded}">RDF</a></p></li>
 </xsl:if>
 <xsl:if test="$geo">
 	<li><p>Geo <a href="{$transformr}?type=geo&amp;url={$base-encoded}">KML</a></p></li>
@@ -128,21 +129,21 @@
 	<li><p>hAudio <a href="{$transformr}?type=haudio-rss&amp;url={$base-encoded}">RSS2</a> | <a href="{$transformr}?type=haudio-xspf&amp;url={$base-encoded}">XSPF</a></p></li>
 </xsl:if>
 <xsl:if test="$hreview">
-	<li><p>hReview <a href="{$transformr}?type=hreview&amp;url={$base-encoded}">RDFXML</a></p></li>
+	<li><p>hReview <a href="{$transformr}?type=hreview&amp;url={$base-encoded}">RDF</a></p></li>
 </xsl:if>
 <xsl:if test="$vevent">
-	<li><p>hCalendar <a href="{$transformr}?type=hcalendar&amp;url={$base-encoded}">vCal</a> | <a href="{$transformr}?type=hcalendar-rdf&amp;url={$base-encoded}">RDFXML</a></p></li>
+	<li><p>hCalendar <a href="{$transformr}?type=hcalendar&amp;url={$base-encoded}">vCal</a> | <a href="{$transformr}?type=hcalendar-rdf&amp;url={$base-encoded}">RDF</a></p></li>
 </xsl:if>
 
 <xsl:if test="$rdfa">
-	<li><p>RDFa <a href="{$transformr}?type=rdfa&amp;url={$base-encoded}">RDFXML</a></p></li>
+	<li><p>RDFa <a href="{$transformr}?type=rdfa&amp;url={$base-encoded}">RDF</a></p></li>
 </xsl:if>
 <xsl:if test="$erdf">
-	<li><p>eRDF <a href="{$transformr}?type=erdf&amp;url={$base-encoded}">RDFXML</a></p></li>
+	<li><p>eRDF <a href="{$transformr}?type=erdf&amp;url={$base-encoded}">RDF</a></p></li>
 </xsl:if>
-<!-- <xsl:if test="$grddl">
-	<li><p>GRDDL <a href="{$transformr}?type=grddl&amp;url={$base-encoded}">RDFXML</a></p></li>
-</xsl:if> -->
+<xsl:if test="$dataset">
+	<li><p>JSON Dataset <a href="{$transformr}?type=dataset&amp;url={$base-encoded}">RDF</a></p></li>
+</xsl:if>
 </ul>
 </xsl:template>
 

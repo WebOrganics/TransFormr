@@ -22,25 +22,28 @@
 	<option selected="selected" value="detect">Detect all</option>
 </optgroup>
 <optgroup label="Microformats">
+	<option value="uf-rdf">UF RDF</option>
 	<option value="hcard">hCard</option>
-	<option value="hcard-rdf">hCard-RDF</option>
+	<option value="hcard-rdf">hCard RDF</option>
 	<option value="hatom">hAtom2Atom</option>
-	<option value="rss2">hAtom2RSS2</option>
+	<option value="rss2">hAtom RSS2</option>
 	<option value="geo">Geo KML</option>
 	<option value="hcalendar">hCalendar</option>
 	<option value="hcalendar-rdf">hCalendar RDF</option>
 	<option value="hreview">hReview RDF</option>
-	<option value="haudio-rss">hAudio2RSS2</option>
+	<option value="haudio-rss">hAudio RSS2</option>
+	<option value="xoxo-opml">xoxo opml</option>
+</optgroup>
+<optgroup label="Experimental">
+	<option value="mo-haudio">hAudio MO</option>
+	<option value="haudio-xspf">hAudio XSPF</option>
+	<option value="hfoaf">hFOAF</option>
 </optgroup>
 <optgroup label="Non-Microformats">
 	<option value="rdfa">RDFa</option>
 	<option value="erdf">eRDF</option>
-</optgroup>
-<optgroup label="Experimental">
-	<option value="mo-haudio">hAudio2MO</option>
-	<option value="haudio-xspf">hAudio2XSPF</option>
-	<option value="hfoaf">hFOAF</option>
-	<option value="dataset">JSON Dataset</option>
+	<option value="ogp-rdf">OGP</option>
+	<option value="dataset">JSONData</option>
 </optgroup>
 </select></label> 
 <span id="urlfield">

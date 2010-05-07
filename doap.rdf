@@ -12,11 +12,18 @@
     <foaf:logo rdf:resource="http://transformr.co.uk/images/transformr.png" />
     <doap:description>The goal is to transform data into information and information into insight.</doap:description>
 		<foaf:maker rdf:resource="http://weborganics.co.uk/" />
+		<doap:release>
+      <doap:Version>
+        <doap:name>Microformats Transformer Toolkit</doap:name>
+        <doap:revision>1.0</doap:revision>
+        <doap:created>2010-05-07</doap:created>
+      </doap:Version>
+    </doap:release>
     <doap:release>
       <doap:Version>
         <doap:name>Microformats Transformer Toolkit</doap:name>
-        <doap:created>2010-04-26</doap:created>
         <doap:revision>0.6.2</doap:revision>
+        <doap:created>2010-04-26</doap:created>
       </doap:Version>
     </doap:release>
   </doap:Project>

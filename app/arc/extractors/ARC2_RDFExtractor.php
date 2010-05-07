@@ -24,7 +24,7 @@ class ARC2_RDFExtractor extends ARC2_Class {
     parent::__init();
     $this->nodes = $this->caller->getNodes();
     $this->index = $this->caller->getNodeIndex();
-    $this->bnode_prefix = $this->v('bnode_prefix', 'genid' . substr(md5(uniqid(rand())), 0, 4) . 'b', $this->a);
+    $this->bnode_prefix = $this->v('bnode_prefix', 'arc' . substr(md5(uniqid(rand())), 0, 4) . 'b', $this->a);
     $this->bnode_id = 0;
     $this->keep_cdata_ws = $this->v('keep_cdata_whitespace', 0, $this->a);
     if (!isset($this->a['ns'])) $this->a['ns'] = array('rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');

@@ -3,7 +3,6 @@
 php_value max_execution_time 30
 
 # Re-Write urls
-
 RewriteEngine on
 
 # http://<your host>/<type>/referer ( transforms from refering url )
@@ -20,4 +19,4 @@ RewriteRule ^([A-Za-z0-9-]+)/([A-Za-z0-9-]+)$  index.php?type=$1&url=$2 [NC,NE]
 
 # http://<your host>/<type>/(ntriples|rdfa|turtle|rdfjson)/http://<your page> 
 
-RewriteRule ^([A-Za-z0-9-]+)/(ntriples|rdfa|turtle|rdfjson)/http://?(.*)$  index.php?type=$1&output=$2&url=http://$3 [NC,NE]
+RewriteRule ^([A-Za-z0-9-]+)/(ntriples|rdfa|turtle|rdfjson|html)/http://?(.*)$  index.php?type=$1&output=$2&url=http://$3 [NC,NE]

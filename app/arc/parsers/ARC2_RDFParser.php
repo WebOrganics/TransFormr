@@ -29,7 +29,7 @@ class ARC2_RDFParser extends ARC2_Class {
     $this->t_count = 0;
     $this->added_triples = array();
     $this->skip_dupes = $this->v('skip_dupes', false, $this->a);
-    $this->bnode_prefix = $this->v('bnode_prefix', 'genid'.substr(md5(uniqid(rand())), 0, 4).'b', $this->a);
+    $this->bnode_prefix = $this->v('bnode_prefix', 'arc'.substr(md5(uniqid(rand())), 0, 4).'b', $this->a);
     $this->bnode_id = 0;
     $this->format = '';
   }

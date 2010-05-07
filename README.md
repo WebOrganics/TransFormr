@@ -1,4 +1,4 @@
-# TransFormr version 0.6.2  
+# TransFormr version 1.0
 
 TransFormr is a simple toolkit that uses PHP and XSLT for extracting and transforming microformats http://microformats.org/.
 
@@ -10,6 +10,7 @@ Microformats that are supported by this transformer are:
 * hAtom http://microformats.org/wiki/hatom.
 * geo http://microformats.org/wiki/geo.
 * hAudio http://microformats.org/wiki/haudio.
+* XOXO http://microformats.org/wiki/xoxo.
 	
 Microformats that are supported by this transformr but are classed as *Experimental* and should not be used in a production environment because they may be removed or updated at any time are:
 
@@ -22,6 +23,7 @@ Non microformats supported by this transformer are:
 * RDFa http://rdfa.info/
 * eRDF http://research.talis.com/2005/erdf/wiki/Main/RdfInHtml
 * JSON Dataset http://weborganics.co.uk/dataset/
+* OGP ( Open Graph Protocol ) http://opengraphprotocol.org/
 	
 ## Installation 
 
@@ -29,7 +31,7 @@ You must have PHP version 5.2.0 or higher with XSLT enabled to run TransFormr.
 
 * Download the latest version of Transformr from http://github.com/WebOrganics/TransFormr.
 * Unpack the entire contents of the file called WebOrganics-TransFormr-XXXXX to your webserver either into its own directory or the the root of your directory (dedicated transformers only). 
-* Surf your way to wherever you unpacked your file eg: http://example.com/transformr/ it works ( and looks ) exactly the same as the webservice available at http://transformr.co.uk/.
+* Surf your way to wherever you unpacked your file eg: http://example.com/transformr/ .
 * Enter a url, Have fun transforming some microformats ;)
 	
 ## Conversions
@@ -37,32 +39,34 @@ You must have PHP version 5.2.0 or higher with XSLT enabled to run TransFormr.
 Main conversions are:
 
 * Detect => Detect all.
-* hCard => vCard (.vcf), RDF, rdfjson, ntriples, turtle or RDFa.
-* hCalendar => iCal (.ics), RDF, rdfjson, ntriples, turtle or RDFa.
+* hCard => vCard (.vcf), RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.
+* hCalendar => iCal (.ics), RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.
 * hAtom => Atom.
 * hAtom + rel-enclosure => RSS2.
-* hReview => RDF, rdfjson, ntriples, turtle or RDFa.
+* hReview => RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.
 * Geo => KML.
 * hAudio => RSS2.
+* XOXO => OPML.
 
 Experimental conversions are:
 
 * hAudio => XSPF.
 * hAtom + hMedia => MRSS.
-* hCard + XFN => FOAF, rdfjson, ntriples, turtle or RDFa.
-* All Microformats => RDF, rdfjson, ntriples, turtle or RDFa.
+* hCard + XFN => FOAF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.
+* All Microformats => RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.
 	
 Other non microformat conversions
 
-* RDFa => RDF, rdfjson, ntriples or turtle
-* eRDF => RDF, rdfjson, ntriples, turtle or RDFa.
-* JSON Dataset => RDF, rdfjson, ntriples, turtle or RDFa.
+* OGP ( Facebook Open Graph Protocol ) => RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.
+* RDFa => RDF, rdfjson, ntriples, turtle, or html ( microdata ).
+* eRDF => RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.
+* JSON Dataset => RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.
 
 ## Transformr Conversion urls
 
 ### Types are :
 
-detect, hcard, hcard-rdf, hatom, rss2, geo, hcalendar, hcalendar-rdf, hreview, haudio-rss, mo-haudio, haudio-xspf, hfoaf, mrss, erdf, rdfa, microformats, and dataset.
+detect, hcard, hcard-rdf, hatom, hatom-rss2, geo, hcalendar, hcalendar-rdf, hreview, xoxo-opml, haudio-rss, mo-haudio, haudio-xspf, hfoaf, mrss, ogp-rdf, erdf, rdfa, uf-rdf, and dataset.
 
 #### Non RDF conversions,
 
@@ -70,7 +74,7 @@ detect, hcard, hcard-rdf, hatom, rss2, geo, hcalendar, hcalendar-rdf, hreview, h
 
 #### For all RDF conversions
 
-* index.php?type=(type)&output=(ntriples|rdfa|turtle|rdfjson)&url=http://(your page)
+* index.php?type=(type)&output=(ntriples|rdfa|turtle|rdfjson|html)&url=http://(your page)
 
 ### Apache Clean URLs
 
@@ -82,10 +86,11 @@ detect, hcard, hcard-rdf, hatom, rss2, geo, hcalendar, hcalendar-rdf, hreview, h
 
 #### For all RDF conversions
 
-* http://[transformr]/[type]/(ntriples|rdfa|turtle|rdfjson)/http://[your page] 
+* http://[transformr]/[type]/(ntriples|rdfa|turtle|rdfjson|html)/http://[your page]
 
 ## Notes
 
+* 1.0 New code, added some configurations, ogp-rdf transformation added, xoxo-opml transformation added, updated version of ARC2 2010-04-26
 * 0.6.2 updated ARC2_Transformr, incudes a non-hacked version of ARC2.  
 * 0.6.1 Most RDF including RDFa conversions are parsed by ARC2 ( included ) http://arc.semsol.org/
 * 0.5.1 Transformr also supports Fragment parsing for individual microformats.
@@ -94,7 +99,9 @@ detect, hcard, hcard-rdf, hatom, rss2, geo, hcalendar, hcalendar-rdf, hreview, h
 
 ### Many thanks to:
 
-* Brian Suda (X2V)
-* Benjamin Nowack ( ARC2 rdf parsing )
-* Luke Arno, Benjamin Carlyle and Robert Bachmann ( hAtom to Atom)
-* Dan Connoly, inspiration for hFOAF conversion.
+* Matthias Pfefferle ( microform.at ) 
+* Fabien Gandon ( Facebook Open Graph Protocol, OGPGRDDL.xsl )
+* Brian Suda ( X2V, hcard, hcalendar, hreview, geo )
+* Benjamin Nowack ( ARC2 rdf parsing and translations )
+* Luke Arno, Benjamin Carlyle and Robert Bachmann ( hAtom to Atom )
+* Norman Walsh ( hCard 2 RDF conversion )

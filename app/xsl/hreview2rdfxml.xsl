@@ -2,7 +2,7 @@
 <xsl:stylesheet 
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
 	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
-	xmlns:review="http://dannyayers.com/xmlns/rev/" 
+	xmlns:review="http://purl.org/stuff/rev#" 
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
 	xmlns:mf="http://suda.co.uk/projects/microformats/mf-templates.xsl?template="
 	xmlns:xhtml="http://www.w3.org/1999/xhtml" 

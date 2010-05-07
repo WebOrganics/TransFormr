@@ -28,7 +28,7 @@ class ARC2_SemHTMLParser extends ARC2_LegacyXMLParser {
     $this->t_count = 0;
     $this->added_triples = array();
     $this->skip_dupes = false;
-    $this->bnode_prefix = $this->v('bnode_prefix', 'genid'.substr(md5(uniqid(rand())), 0, 4).'b', $this->a);
+    $this->bnode_prefix = $this->v('bnode_prefix', 'arc'.substr(md5(uniqid(rand())), 0, 4).'b', $this->a);
     $this->bnode_id = 0;
     $this->auto_extract = $this->v('auto_extract', 1, $this->a);
     $this->extracted_formats = array();
