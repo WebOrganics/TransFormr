@@ -38,7 +38,7 @@ class Transformr
 	function __construct() 
 	{
 		$this->path = $this->set_path();
-		$this->url = isset($_GET['url']) ? $_GET['url'] : '' ;
+		$this->url = isset($_GET['url']) ? str_replace('%23','#', trim($_GET['url'])) : '' ;
 		$this->type = isset($_GET['type']) ? $_GET['type'] : '';
 		$this->output = isset($_GET['output']) ? $_GET['output'] : 'rdf';
 		$this->template = 'app/template/';
@@ -214,7 +214,7 @@ class Transformr
 			curl_setopt($cache, CURLOPT_TIMEOUT, $timeout);
 			curl_setopt($cache, CURLOPT_FOLLOWLOCATION, true );
 			curl_setopt($cache, CURLOPT_USERAGENT, 'Mozilla/5.0');
-			curl_setopt($cache, CURLOPT_URL, str_replace('&amp;','&', trim($url)));
+			curl_setopt($cache, CURLOPT_URL, str_replace('&amp;','&', $url));
 			return curl_exec($cache);
 		}
 		else return file_get_contents($url);
