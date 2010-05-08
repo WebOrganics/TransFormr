@@ -214,7 +214,6 @@ class Transformr
 			curl_setopt($cache, CURLOPT_TIMEOUT, $timeout);
 			curl_setopt($cache, CURLOPT_FOLLOWLOCATION, true );
 			curl_setopt($cache, CURLOPT_USERAGENT, 'Mozilla/5.0');
-			curl_setopt($cache, CURLOPT_URL, str_replace('&amp;','&', $url));
 			return curl_exec($cache);
 		}
 		else return file_get_contents($url);
