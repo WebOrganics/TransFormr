@@ -43,7 +43,6 @@
 	<option value="rdfa">RDFa</option>
 	<option value="erdf">eRDF</option>
 	<option value="ogp-rdf">OGP</option>
-	<option value="dataset">JSONData</option>
 </optgroup>
 </select></label> 
 <span id="urlfield">

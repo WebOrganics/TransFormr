@@ -49,7 +49,7 @@ class Transformr
 		header("X-Application: Transformr ".$this->version );
 		ini_set('log_errors', $this->log_errors !='' ? $this->log_errors : 0 );
 		ini_set('display_errors', $this->debug !='' ? $this->debug : 0 );
-		$this->required = array('arc/ARC2', 'extension/Dataset_Transformr');
+		$this->required = array('arc/ARC2');
 		$this->a = $this->config_ns();
 	}
 	
@@ -185,11 +185,6 @@ class Transformr
 			return $this->this_semhtml($this->url, $this->output, 'microformats');
 		break;
 
-		case 'dataset':
-			/* Dataset_Transformr Extension see http://weborganics.co.uk/dataset/ */
-			return $this->dataset($this->url);
-		break;
-
 		case 'detect':
 			$xsl_filename = $this->xsl ."detect-uf.xsl";
 			return $this->transform_xsl($this->url, $xsl_filename);
@@ -213,6 +208,7 @@ class Transformr
 			curl_setopt($cache, CURLOPT_CONNECTTIMEOUT, $timeout);
 			curl_setopt($cache, CURLOPT_TIMEOUT, $timeout);
 			curl_setopt($cache, CURLOPT_FOLLOWLOCATION, true );
+			curl_setopt($cache, CURLOPT_URL, $url);
 			curl_setopt($cache, CURLOPT_USERAGENT, 'Mozilla/5.0');
 			return curl_exec($cache);
 		}
@@ -280,12 +276,6 @@ class Transformr
 		ARC2::inc('RDFaSerializer');
 		$rdfa = new ARC2_RDFaSerializer($this->a, $this);
 		return ( isset($triples[0]) && isset($triples[0]['s']) ) ? $rdfa->getSerializedTriples($triples) : $rdfa->getSerializedIndex($triples);
-	}
-	
-    private function dataset($url = '') 
-	{
-		$query = new Dataset_Transformr();
-		return $query->asRDF($url);
 	}
 
 	protected function this_semhtml($url, $output, $type) 
