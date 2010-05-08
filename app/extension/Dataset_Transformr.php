@@ -12,12 +12,13 @@ class Dataset_Transformr extends Transformr
 	
 	function __construct() {
 		parent::__construct();
+		$this->use_curl = 1;
 		$this->dataset = $this->with_dataset != '' ? $this->with_dataset : false;
 		$this->url = $this->base_uri != '' ? $this->base_uri : $this->url ;	
 		$this->doc = $this->get_file_contents($this->url);	
 		$this->json = $this->dataset != false ? json_decode(utf8_encode($this->dataset)) : json_decode(utf8_encode($this->doc));
-		$this->is_json = isset($this->json->query) ? $this->json->query : false;
-		$this->document = $this->is_json != false && isset($this->is_json->base) ? $this->get_file_contents($this->return_url($this->is_json->base, $this->url)) : $this->doc;
+		$this->isjson = isset($this->json->query) ? $this->json->query : false;
+		$this->document = $this->isjson != false && isset($this->isjson->base) ? $this->get_file_contents($this->return_url($this->isjson->base, $this->url)) : $this->doc;
 		$this->output_type = $this->output_as_xml == true  ? 'xml' : 'rdf';
 		$this->file = $this->rand_filename($this->output_type);
 	}
