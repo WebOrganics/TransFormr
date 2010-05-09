@@ -22,7 +22,6 @@ Non microformats supported by this transformer are:
 	
 * RDFa http://rdfa.info/
 * eRDF http://research.talis.com/2005/erdf/wiki/Main/RdfInHtml
-* JSON Dataset http://weborganics.co.uk/dataset/
 * OGP ( Open Graph Protocol ) http://opengraphprotocol.org/
 	
 ## Installation 
@@ -60,13 +59,12 @@ Other non microformat conversions
 * OGP ( Facebook Open Graph Protocol ) => RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.
 * RDFa => RDF, rdfjson, ntriples, turtle, or html ( microdata ).
 * eRDF => RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.
-* JSON Dataset => RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.
 
 ## Transformr Conversion urls
 
 ### Types are :
 
-detect, hcard, hcard-rdf, hatom, hatom-rss2, geo, hcalendar, hcalendar-rdf, hreview, xoxo-opml, haudio-rss, mo-haudio, haudio-xspf, hfoaf, mrss, ogp-rdf, erdf, rdfa, uf-rdf, and dataset.
+detect, hcard, hcard-rdf, hatom, hatom-rss2, geo, hcalendar, hcalendar-rdf, hreview, xoxo-opml, haudio-rss, mo-haudio, haudio-xspf, hfoaf, mrss, ogp-rdf, erdf, rdfa, and uf-rdf.
 
 #### Non RDF conversions,
 
