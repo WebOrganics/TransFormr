@@ -199,7 +199,7 @@ class Transformr
 		}
 	}
 	
-	protected function get_file_contents($url, $timeout = 5)
+	protected function get_file_contents($url, $timeout = 10)
 	{
 		if ( $this->use_curl != '' ) {
 		
@@ -350,7 +350,7 @@ class Transformr
 			$config = array(
 				'doctype'                     => 'strict',
 				'logical-emphasis'            => true,
-				'output-xhtml'                => true,
+				'output-xml'                  => true,
 				'wrap'                        => 200
 			);
 			$tidy = new tidy;
