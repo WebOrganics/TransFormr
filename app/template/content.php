@@ -38,6 +38,7 @@
 	<option value="mo-haudio">hAudio MO</option>
 	<option value="haudio-xspf">hAudio XSPF</option>
 	<option value="hfoaf">hFOAF</option>
+	<option value="hcard2qrcode">hCard2QRCode</option>
 </optgroup>
 <optgroup label="Non-Microformats">
 	<option value="rdfa">RDFa</option>
@@ -49,6 +50,6 @@
 	<label for="url">Url: <input tabindex="2" id="url" type="text" name="url" /></label>
 </span>
 <label for="submit"><button tabindex="3" id="submit" type="submit">Submit</button></label></p>
-<p>Drag this <span id="bookmark"></span> to your favorites.</p>
+<p>Drag this <span id="bookmark"></span>&nbsp;to your favorites.</p>
 </fieldset>
 </form>

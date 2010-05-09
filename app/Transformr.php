@@ -7,7 +7,6 @@ class Transformr
 {
 	public $tidy_option = '';
 	public $debug = '';
-	public $log_errors = '';
 	public $use_curl = '';
 	
  	function set_path()
@@ -47,14 +46,14 @@ class Transformr
 		$this->updated = array('Friday, 7th May 2010', '2010-05-07T10:49:00+01:00');
 		$this->check_php_version('5.2.0', 'Transformr'); 
 		header("X-Application: Transformr ".$this->version );
-		ini_set('log_errors', $this->log_errors !='' ? $this->log_errors : 0 );
-		ini_set('display_errors', $this->debug !='' ? $this->debug : 0 );
-		$this->required = array('arc/ARC2');
+		$this->required = array('arc/ARC2', 'extension/class.hqr');
 		$this->a = $this->config_ns();
 	}
 	
 	public function transform() 
-	{		
+	{
+		if ($this->debug == 1) ini_set('display_errors',  1 );
+		
 		foreach ( $this->required as $require ) {
 			require_once($require.'.php');
 		}
@@ -188,6 +187,10 @@ class Transformr
 		case 'detect':
 			$xsl_filename = $this->xsl ."detect-uf.xsl";
 			return $this->transform_xsl($this->url, $xsl_filename);
+		break;
+		
+		case 'hcard2qrcode':
+			return $this->return_qrcode($this->url);
 		break;
 
 		default:
@@ -485,6 +488,15 @@ $result = <<<HTML
 HTML;
 	
 	return $result;
+	}
+	
+	private function return_qrcode($url)
+	{
+		$hqr = new hQR;
+		$hqr->url = $url;
+		header("Content-Type: text/html; charset=UTF-8");
+		include $this->template ."head.php";
+		include $this->template ."content-qr.php";
 	}
  }
 ?>
