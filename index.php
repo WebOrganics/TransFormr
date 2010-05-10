@@ -13,10 +13,6 @@ $transformer->tidy_option = 'php';
 
 $transformer->use_curl = 1;
 
-/* uncomment line below to print transformr errors ( including html errors ) to screen default 0 */
-
-# $transformer->debug = 1;
-
 /*  Transform */
 print $transformer->transform();
 ?>

@@ -6,7 +6,6 @@
 class Transformr
 {
 	public $tidy_option = '';
-	public $debug = '';
 	public $use_curl = '';
 	
  	function set_path()
@@ -48,12 +47,11 @@ class Transformr
 		header("X-Application: Transformr ".$this->version );
 		$this->required = array('arc/ARC2', 'extension/class.hqr');
 		$this->a = $this->config_ns();
+		ini_set('display_errors',  0 );
 	}
 	
 	public function transform() 
 	{
-		if ($this->debug == 1) ini_set('display_errors',  1 );
-		
 		foreach ( $this->required as $require ) {
 			require_once($require.'.php');
 		}
@@ -273,6 +271,15 @@ class Transformr
 		exit;
 	  }
 	}
+	
+	private function return_qrcode($url)
+	{
+		$hqr = new hQR;
+		$hqr->url = $url;
+		header("Content-Type: text/html; charset=UTF-8");
+		include $this->template ."head.php";
+		include $this->template ."content-qr.php";
+	}
    
 	private function toRDFa($triples) 
 	{
@@ -488,15 +495,6 @@ $result = <<<HTML
 HTML;
 	
 	return $result;
-	}
-	
-	private function return_qrcode($url)
-	{
-		$hqr = new hQR;
-		$hqr->url = $url;
-		header("Content-Type: text/html; charset=UTF-8");
-		include $this->template ."head.php";
-		include $this->template ."content-qr.php";
 	}
  }
 ?>

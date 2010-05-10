@@ -15,7 +15,7 @@ class hQR extends Transformr
 	// some vars
 	var	$tiny_url =	'http://tinyurl.com/api-create.php?url=';
 	var $url_x2v =	'http://microform.at/?type=hcard&url=';
-	var $url_kaywa =	'http://qrcode.kaywa.com/img.php?s=6&amp;t=png&amp;d=';
+	var $url_kaywa = 'http://qrcode.kaywa.com/img.php?s=6&amp;t=png&amp;d=';
 	var $url_google = 'http://chart.apis.google.com/chart?chs=200x200&cht=qr&choe=UTF-8&chl=';
 	
 	function __construct() 
@@ -56,8 +56,8 @@ class hQR extends Transformr
 		return $qr;        
     }
     
-    function loadUrl($url) {
-    	return $this->get_file_contents($url, $this->use_curl = 1);	
+    function loadUrl($request) {
+    	return $this->get_file_contents($request, $this->use_curl = 1);	
     }
 }
 ?>

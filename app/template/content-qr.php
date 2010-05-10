@@ -8,7 +8,7 @@
 	print ('<h4>From <a href="'. $this->url .'">'. $this->url .'</a></h4>'."\n");
 		
 	// to load faster
-	if( isset($_GET['full']) == true) {
+	if($_GET['full'] == true) {
 		print ('<pre>'.$hqr->getVCard().'</pre>'."\n");
 	}
 		
@@ -18,11 +18,12 @@
 	print ('<p><img src="'.$hqr->getUrlQR().'" alt="for your mobile phone" />'."\n");
 	print ('<img src="'.$hqr->getUrlQR($hqr->url_kaywa).'" alt="for your mobile phone" /></p>'."\n");
 	// to load faster
-	if(isset($_GET['full']) == true) {
-		print ('<p>QR-Code of the vCard</p>'."\n");
-		print ('<p><img src="'.$hqr->getVcardQR().'" alt="for your mobile phone" /></p>'."\n");
-	}
-	print ('<small>Use the <a href="http://reader.kaywa.com/">kaywa reader</a> to save the hcard to your phone.</small>'."\n");
+	if($_GET['full'] == true) {
+			print ('<p>QR-Code of the vCard</p>'."\n");
+			print ('<p><img src="'.$hqr->getVcardQR().'" alt="for your mobile phone" /></p>'."\n");
+		}
+		
+		print ('<small>Use the <a href="http://reader.kaywa.com/">kaywa reader</a> to save the hcard to your phone.</small>'."\n");
 ?>
 </div>
 <div style="clear: both; margin-top: 40px; margin-bottom: 40px;">
