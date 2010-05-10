@@ -110,9 +110,6 @@
 
 <xsl:template name="classes">
 <ul>
-<xsl:if test="$hcard|$hatom|$geo|$hreview|$vevent|$xfn">
-	<li><p>Microformats <a href="{$transformr}?type=uf-rdf&amp;url={$base-encoded}">RDF</a></p></li>
-</xsl:if>
 <xsl:if test="$hcard">
 	<li><p>hCard <a href="{$transformr}?type=hcard&amp;url={$base-encoded}">vCard</a> | <a href="{$transformr}?type=hcard-rdf&amp;url={$base-encoded}">RDF</a></p></li>
 </xsl:if>

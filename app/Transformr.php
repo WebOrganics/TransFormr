@@ -168,14 +168,15 @@ class Transformr
 		break;
 
 		case 'erdf':
-			header("Content-type: application/rdf+xml");
 			$xsl_filename = $this->xsl ."extract-rdf.xsl";
-			return $this->transform_xsl($this->url, $xsl_filename);
+			$document = $this->transform_xsl($this->url, $xsl_filename);
+			return $this->as_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'rdfa':
-			header('Content-type: application/rdf+xml');
-			return $this->this_semhtml($this->url, $this->output, 'rdfa');
+			$xsl_filename = $this->xsl ."RDFa2RDFXML.xsl";
+			$document = $this->transform_xsl($this->url, $xsl_filename);
+			return $this->as_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'detect':
@@ -275,23 +276,6 @@ class Transformr
 		header("Content-Type: text/html; charset=UTF-8");
 		include $this->template ."head.php";
 		include $this->template ."content-qr.php";
-	}
-   
-	private function toRDFa($triples) 
-	{
-		ARC2::inc('RDFaSerializer');
-		$rdfa = new ARC2_RDFaSerializer($this->a, $this);
-		return ( isset($triples[0]) && isset($triples[0]['s']) ) ? $rdfa->getSerializedTriples($triples) : $rdfa->getSerializedIndex($triples);
-	}
-
-	protected function this_semhtml($url, $output, $type) 
-	{
-		$parser = ARC2::getSemHTMLParser($this->a);
-		$parser->parse($url);
-		$parser->extractRDF($type);
-		$triples = $parser->getTriples();
-		$document = $parser->toRDFXML($triples);
-		return $this->as_rdf($url, $document, $output);
 	}
 	
 	protected function as_rdf($url, $document, $output) 
