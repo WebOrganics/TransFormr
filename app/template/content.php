@@ -22,7 +22,6 @@
 	<option selected="selected" value="detect">Detect all</option>
 </optgroup>
 <optgroup label="Microformats">
-	<option value="uf-rdf">UF RDF</option>
 	<option value="hcard">hCard</option>
 	<option value="hcard-rdf">hCard RDF</option>
 	<option value="hatom">hAtom2Atom</option>

@@ -45,7 +45,7 @@ class Transformr
 		$this->updated = array('Friday, 7th May 2010', '2010-05-07T10:49:00+01:00');
 		$this->check_php_version('5.2.0', 'Transformr'); 
 		header("X-Application: Transformr ".$this->version );
-		$this->required = array('arc/ARC2', 'extension/class.hqr');
+		$this->required = array('arc/ARC2', 'extension/class.hqr', 'extension/class.encoded');
 		$this->a = $this->config_ns();
 		ini_set('display_errors',  0 );
 	}
@@ -163,23 +163,19 @@ class Transformr
 
 		case 'mrss':
 			header("Content-type: application/rss+xml");
-			$xsl_filename = $this->xsl ."mrss.xsl";
+			$xsl_filename = $this->xsl ."extract-rdf.xsl";
 			return $this->transform_xsl($this->url, $xsl_filename);
 		break;
 
 		case 'erdf':
 			header("Content-type: application/rdf+xml");
-			return $this->this_semhtml($this->url, $this->output, 'erdf');
+			$xsl_filename = $this->xsl ."extract-rdf.xsl";
+			return $this->transform_xsl($this->url, $xsl_filename);
 		break;
 
 		case 'rdfa':
 			header('Content-type: application/rdf+xml');
 			return $this->this_semhtml($this->url, $this->output, 'rdfa');
-		break;
-
-		case 'uf-rdf':
-			header('Content-type: application/rdf+xml');
-			return $this->this_semhtml($this->url, $this->output, 'microformats');
 		break;
 
 		case 'detect':
@@ -211,9 +207,9 @@ class Transformr
 			curl_setopt($cache, CURLOPT_FOLLOWLOCATION, true );
 			curl_setopt($cache, CURLOPT_URL, $url);
 			curl_setopt($cache, CURLOPT_USERAGENT, 'Mozilla/5.0');
-			return curl_exec($cache);
+			return html_convert_entities(curl_exec($cache));
 		}
-		else return file_get_contents($url);
+		else return html_convert_entities(file_get_contents($url));
 	}
 	
 	protected function transform_xsl($url, $xsl_filename) 
