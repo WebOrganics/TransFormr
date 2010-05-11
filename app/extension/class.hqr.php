@@ -32,11 +32,13 @@ class hQR extends Transformr
 		return $url;
 	}
 	
-	// get the vCard code
+	// get the first vCard code
 	function getVCard() {
 		$request = $this->getUrlVCard();
 		$vcard = $this->loadUrl($request);
-		return $vcard;        
+		$newcard = explode("END:VCARD",$vcard);
+		$newcard = $newcard[0] . "END:VCARD"; 
+		return $newcard;        
     }
 	
 	// get the QR-Code of the short url
