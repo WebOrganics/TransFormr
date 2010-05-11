@@ -206,7 +206,9 @@ class Transformr
 			curl_setopt($cache, CURLOPT_FOLLOWLOCATION, true );
 			curl_setopt($cache, CURLOPT_URL, $url);
 			curl_setopt($cache, CURLOPT_USERAGENT, 'Mozilla/5.0');
-			return html_convert_entities(curl_exec($cache));
+			$result = curl_exec($cache);
+			curl_close($cache);
+			return html_convert_entities($result);
 		}
 		else return html_convert_entities(file_get_contents($url));
 	}
