@@ -269,6 +269,13 @@ class Transformr
 	  }
 	}
 	
+
+	private function toRDFa($triples) {
+		ARC2::inc('RDFaSerializer');
+		$rdfa = new ARC2_RDFaSerializer($this->a, $this);
+		return ( isset($triples[0]) && isset($triples[0]['s']) ) ? $rdfa->getSerializedTriples($triples) : $rdfa->getSerializedIndex($triples);
+	}
+	
 	private function return_qrcode($url)
 	{
 		$hqr = new hQR;
