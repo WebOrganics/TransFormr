@@ -197,14 +197,12 @@ class Transformr
 		}
 	}
 	
-	protected function get_file_contents($url, $timeout = 10)
+	protected function get_file_contents($url)
 	{
 		if ( $this->use_curl != '' ) {
 		
 			$cache = curl_init();
 			curl_setopt($cache, CURLOPT_RETURNTRANSFER, true );
-			curl_setopt($cache, CURLOPT_CONNECTTIMEOUT, $timeout);
-			curl_setopt($cache, CURLOPT_TIMEOUT, $timeout);
 			curl_setopt($cache, CURLOPT_FOLLOWLOCATION, true );
 			curl_setopt($cache, CURLOPT_URL, $url);
 			curl_setopt($cache, CURLOPT_USERAGENT, 'Mozilla/5.0');
@@ -269,13 +267,6 @@ class Transformr
 	  }
 	}
 	
-
-	private function toRDFa($triples) {
-		ARC2::inc('RDFaSerializer');
-		$rdfa = new ARC2_RDFaSerializer($this->a, $this);
-		return ( isset($triples[0]) && isset($triples[0]['s']) ) ? $rdfa->getSerializedTriples($triples) : $rdfa->getSerializedIndex($triples);
-	}
-	
 	private function return_qrcode($url)
 	{
 		$hqr = new hQR;
@@ -283,6 +274,12 @@ class Transformr
 		header("Content-Type: text/html; charset=UTF-8");
 		include $this->template ."head.php";
 		include $this->template ."content-qr.php";
+	}
+
+	private function toRDFa($triples) {
+		ARC2::inc('RDFaSerializer');
+		$rdfa = new ARC2_RDFaSerializer($this->a, $this);
+		return ( isset($triples[0]) && isset($triples[0]['s']) ) ? $rdfa->getSerializedTriples($triples) : $rdfa->getSerializedIndex($triples);
 	}
 	
 	protected function as_rdf($url, $document, $output) 

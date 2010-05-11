@@ -1,6 +1,6 @@
-# set php max execution time to 30 seconds
+# set php max execution time to 60 seconds
 
-php_value max_execution_time 30
+php_value max_execution_time 60
 
 # Re-Write urls
 RewriteEngine on
