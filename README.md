@@ -1,4 +1,4 @@
-# TransFormr version 1.0
+# TransFormr version 1.1
 
 TransFormr is a simple toolkit that uses PHP and XSLT for extracting and transforming microformats http://microformats.org/.
 
@@ -88,6 +88,7 @@ detect, hcard, hcard-rdf, hatom, hatom-rss2, geo, hcalendar, hcalendar-rdf, hrev
 
 ## Notes
 
+* 1.1 some bugs fixed, new hcard 2 qrcode api
 * 1.0 New code, added some configurations, ogp-rdf transformation added, xoxo-opml transformation added, updated version of ARC2 2010-04-26
 * 0.6.2 updated ARC2_Transformr, incudes a non-hacked version of ARC2.  
 * 0.6.1 Most RDF including RDFa conversions are parsed by ARC2 ( included ) http://arc.semsol.org/

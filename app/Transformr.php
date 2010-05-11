@@ -1,6 +1,6 @@
 <?php
 /*
- * TransFormr Version: 1.0, Friday, 7th May 2010
+ * TransFormr Version: 1.1, Tuesday, 11th May 2010
  * Contact: Martin McEvoy info@weborganics.co.uk
  */
 class Transformr
@@ -41,8 +41,8 @@ class Transformr
 		$this->output = isset($_GET['output']) ? $_GET['output'] : 'rdf';
 		$this->template = 'app/template/';
 		$this->xsl = 'app/xsl/';
-		$this->version = '1.0';
-		$this->updated = array('Friday, 7th May 2010', '2010-05-07T10:49:00+01:00');
+		$this->version = '1.1';
+		$this->updated = array('Tuesday, 11th May 2010', '2010-05-11T01:15:00+01:00');
 		$this->check_php_version('5.2.0', 'Transformr'); 
 		header("X-Application: Transformr ".$this->version );
 		$this->required = array('arc/ARC2', 'extension/class.hqr', 'extension/class.encoded');
