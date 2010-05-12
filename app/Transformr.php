@@ -161,12 +161,6 @@ class Transformr
 			return $this->as_rdf($this->url, $document, $this->output);
 		break;
 
-		case 'mrss':
-			header("Content-type: application/rss+xml");
-			$xsl_filename = $this->xsl ."extract-rdf.xsl";
-			return $this->transform_xsl($this->url, $xsl_filename);
-		break;
-
 		case 'erdf':
 			$xsl_filename = $this->xsl ."extract-rdf.xsl";
 			$document = $this->transform_xsl($this->url, $xsl_filename);
@@ -217,9 +211,9 @@ class Transformr
 	{
 	if( strrchr($url, 'http://') ) {
 		
-		$html = $this->get_file_contents($url);
-		
 		if (strrchr($url, '#')) $fragment = array_pop(explode('#', $url));
+		
+		$html = $this->get_file_contents($url);
 		
 		$dom = new DOMDocument('1.0');
 		$dom->preserveWhiteSpace = true;
@@ -272,8 +266,6 @@ class Transformr
 	private function return_qrcode($url)
 	{
 		$hqr = new hQR;
-		$hqr->url = $url;
-		header("Content-Type: text/html; charset=UTF-8");
 		include $this->template ."head.php";
 		include $this->template ."content-qr.php";
 	}

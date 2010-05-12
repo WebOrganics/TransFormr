@@ -25,7 +25,7 @@
 	<option value="hcard">hCard</option>
 	<option value="hcard-rdf">hCard RDF</option>
 	<option value="hatom">hAtom2Atom</option>
-	<option value="rss2">hAtom RSS2</option>
+	<option value="hatom-rss2">hAtom RSS2</option>
 	<option value="geo">Geo KML</option>
 	<option value="hcalendar">hCalendar</option>
 	<option value="hcalendar-rdf">hCalendar RDF</option>

@@ -40,7 +40,7 @@
 </xsl:param>
 
 <xsl:param name="parser">
-	<xsl:text>http://transformr.co.uk/?type=rss2&amp;url=</xsl:text>
+	<xsl:text>http://microform.at/?type=hatom-rss2&amp;url=</xsl:text>
 </xsl:param>
 
 <xsl:template match="/">

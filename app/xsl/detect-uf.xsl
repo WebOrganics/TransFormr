@@ -44,8 +44,6 @@
 <xsl:param name="rdfa" select="descendant::*/attribute::about|descendant::*/attribute::property"/>
 <xsl:param name="xfn" select="descendant::*[contains(concat(' ',normalize-space(@profile),' '),' http://gmpg.org/xfn/11 ') or contains(concat(' ',normalize-space(@profile),' '),' http://gmpg.org/xfn/1 ')]"/>
 <xsl:param name="erdf" select="descendant::*[contains(concat(' ',normalize-space(@profile),' '),' http://purl.org/NET/erdf/profile ')]"/>
-<xsl:param name="grddl" select="descendant::*[contains(concat(' ',normalize-space(@profile),' '),' http://www.w3.org/2003/g/data-view ')]"/>
-<xsl:param name="dataset" select="descendant::*[contains(concat(' ',normalize-space(@rel),' '),' dataset ')]"/>
 <xsl:output 
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
     doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" encoding="utf-8"  media-type="text/html;charset=utf-8" method="xml" indent="yes"/>
@@ -111,7 +109,7 @@
 <xsl:template name="classes">
 <ul>
 <xsl:if test="$hcard">
-	<li><p>hCard <a href="{$transformr}?type=hcard&amp;url={$base-encoded}">vCard</a> | <a href="{$transformr}?type=hcard-rdf&amp;url={$base-encoded}">RDF</a></p></li>
+	<li><p>hCard <a href="{$transformr}?type=hcard&amp;url={$base-encoded}">vCard</a> | <a href="{$transformr}?type=hcard-rdf&amp;url={$base-encoded}">RDF</a>| <a href="{$transformr}?type=hcard2qrcode&amp;url={$base-encoded}">QRCode</a></p></li>
 </xsl:if>
 <xsl:if test="$hatom">
 	<li><p>hAtom <a href="{$transformr}?type=hatom&amp;url={$base-encoded}">Atom</a> | <a href="{$transformr}?type=hatom-rss2&amp;url={$base-encoded}">RSS2</a></p></li>
@@ -137,9 +135,6 @@
 </xsl:if>
 <xsl:if test="$erdf">
 	<li><p>eRDF <a href="{$transformr}?type=erdf&amp;url={$base-encoded}">RDF</a></p></li>
-</xsl:if>
-<xsl:if test="$dataset">
-	<li><p>JSON Dataset <a href="{$transformr}?type=dataset&amp;url={$base-encoded}">RDF</a></p></li>
 </xsl:if>
 </ul>
 </xsl:template>

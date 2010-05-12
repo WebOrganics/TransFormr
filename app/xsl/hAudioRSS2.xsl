@@ -41,7 +41,7 @@
 <xsl:param name="date" select="''"/>
 
 <xsl:param name="parser">
-	<xsl:text>http://transformr.co.uk/haudio-rss/</xsl:text>
+	<xsl:text>http://microform.at/haudio-rss/</xsl:text>
 </xsl:param>
 
 <xsl:param name="start" select="descendant::xhtml:*[contains(concat(' ',normalize-space(@class),' '),' haudio ') and descendant::xhtml:*[contains(concat(' ',normalize-space(@class),' '),' item ')]]"/>
