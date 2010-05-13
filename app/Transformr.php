@@ -1,6 +1,6 @@
 <?php
 /*
- * TransFormr Version: 1.1, Tuesday, 11th May 2010
+ * TransFormr Version: 1.2, Wednesday, 12th May 2010
  * Contact: Martin McEvoy info@weborganics.co.uk
  */
 class Transformr
@@ -39,15 +39,16 @@ class Transformr
 		$this->url = isset($_GET['url']) ? str_replace('%23','#', trim($_GET['url'])) : '' ;
 		$this->type = isset($_GET['type']) ? $_GET['type'] : '';
 		$this->output = isset($_GET['output']) ? $_GET['output'] : 'rdf';
+		$this->query = isset($_GET['q']) ? $_GET['q'] : '';
 		$this->template = 'app/template/';
 		$this->xsl = 'app/xsl/';
-		$this->version = '1.1';
-		$this->updated = array('Tuesday, 11th May 2010', '2010-05-11T01:15:00+01:00');
+		$this->version = '1.2';
+		$this->updated = array('Wednesday, 12th May 2010', '2010-05-12T21:15:00+01:00');
 		$this->check_php_version('5.2.0', 'Transformr'); 
-		header("X-Application: Transformr ".$this->version );
 		$this->required = array('arc/ARC2', 'extension/class.hqr', 'extension/class.encoded');
 		$this->a = $this->config_ns();
 		ini_set('display_errors',  0 );
+		header("X-Application: Transformr ".$this->version );
 	}
 	
 	public function transform() 
@@ -55,6 +56,21 @@ class Transformr
 		foreach ( $this->required as $require ) {
 			require_once($require.'.php');
 		}
+		return ($this->query !='') ? $this->json_query($this->query) : $this->transformr_types();
+	}
+	
+	private function json_query($data) 
+	{
+		$data = json_decode(utf8_encode($data));
+		
+		!$data ? die('query not well formed please validate your query at <a href="http://www.jsonlint.com/">http://www.jsonlint.com/</a>') : $data;
+		
+		$this->url = $data->url;
+		
+		$this->type = $data->type;
+		
+		isset($data->output) ? $this->output = $data->output : null;
+		
 		return $this->transformr_types();
 	}
 	
@@ -246,7 +262,8 @@ class Transformr
 			$xslt->setParameter('','version', $this->version);
 			$xslt->importStyleSheet(DomDocument::load($xsl_filename));
 			
-			return $xslt->transformToXML(DomDocument::loadXML($doc));
+			if(!DomDocument::loadXML($doc)) return $this->error_location('invalidDoc');
+			else return $xslt->transformToXML(DomDocument::loadXML($doc));
 		}
 	}
 	elseif ($url == 'referer' && getenv("HTTP_REFERER") != '') {
@@ -258,7 +275,7 @@ class Transformr
 		return $this->transform_xsl($referer.'#'.$url, $xsl_filename);	
 	}
 	else {
-		header("Location: ".$this->path."?error=noURL");
+		return $this->error_location('noURL');
 		exit;
 	  }
 	}
@@ -429,38 +446,39 @@ class Transformr
 	
 	protected function valid_schema() 
 	{	
-	$valid = '<grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
-    <start>
-        <element>
-            <anyName/>
-            <ref name="xhtmlID"/>
-        </element>
-    </start>
-    <define name="xhtmlID">
-        <zeroOrMore>
-            <choice>
-                <element>
-                    <anyName/>
-                    <ref name="xhtmlID"/>
-                </element>
-                <attribute name="id">
-                    <data type="ID"/>
-                </attribute>
-                <zeroOrMore>
-                    <attribute><anyName/></attribute>
-                </zeroOrMore>
-                <text/>
-            </choice>
-        </zeroOrMore>
-    </define>
-	</grammar>';
-	
-	return $valid;
+		$valid = '<grammar xmlns="http://relaxng.org/ns/structure/1.0" datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+		<start>
+			<element>
+				<anyName/>
+				<ref name="xhtmlID"/>
+			</element>
+		</start>
+		<define name="xhtmlID">
+			<zeroOrMore>
+				<choice>
+					<element>
+						<anyName/>
+						<ref name="xhtmlID"/>
+					</element>
+					<attribute name="id">
+						<data type="ID"/>
+					</attribute>
+					<zeroOrMore>
+						<attribute><anyName/></attribute>
+					</zeroOrMore>
+					<text/>
+				</choice>
+			</zeroOrMore>
+		</define>
+		</grammar>';
+		
+		return $valid;
 	}
 	
-	private function return_html_frag($content, $title) {
+	private function return_html_frag($content, $title) 
+	{
 	
-$result = <<<HTML
+		$result = <<<HTML
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
@@ -472,7 +490,23 @@ $result = <<<HTML
 </html>
 HTML;
 	
-	return $result;
+		return $result;
+	}
+	
+	private function error_location($error = '') 
+	{
+	
+		$exit = $this->path;
+	
+		$result = <<<ERR
+<script language="text/javascript">
+	<!-- 
+		location.replace("$exit?error=$error");
+	-->
+</script>
+ERR;
+
+		return $result;
 	}
  }
 ?>
