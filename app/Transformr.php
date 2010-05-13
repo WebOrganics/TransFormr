@@ -61,7 +61,7 @@ class Transformr
 	
 	private function json_query($data) 
 	{
-		$data = json_decode(utf8_encode($data));
+		$data = json_decode(utf8_encode(urldecode($data)));
 		
 		!$data ? die('query not well formed please validate your query at <a href="http://www.jsonlint.com/">http://www.jsonlint.com/</a>') : $data;
 		
