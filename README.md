@@ -1,4 +1,4 @@
-# TransFormr version 1.1
+# TransFormr version 1.2
 
 TransFormr is a simple toolkit that uses PHP and XSLT for extracting and transforming microformats <http://microformats.org/>.
 
