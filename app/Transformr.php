@@ -39,13 +39,13 @@ class Transformr
 		$this->url = isset($_GET['url']) ? str_replace('%23','#', trim($_GET['url'])) : '' ;
 		$this->type = isset($_GET['type']) ? $_GET['type'] : '';
 		$this->output = isset($_GET['output']) ? $_GET['output'] : 'rdf';
-		$this->query = isset($_REQUEST['q']) ? stripslashes($_REQUEST["q"]) : '';
+		$this->query = isset($_GET['q']) ? stripslashes($_GET["q"]) : '';
 		$this->template = 'app/template/';
 		$this->xsl = 'app/xsl/';
 		$this->version = '1.2';
 		$this->updated = array('Wednesday, 12th May 2010', '2010-05-12T21:15:00+01:00');
 		$this->check_php_version('5.2.0', 'Transformr'); 
-		$this->required = array('extension/arc/ARC2', 'extension/class.hqr', 'extension/class.encoded');
+		$this->required = array('arc/ARC2', 'extension/class.hqr', 'extension/class.encoded');
 		$this->a = $this->config_ns();
 		ini_set('display_errors',  0 );
 		header("X-Application: Transformr ".$this->version );
@@ -235,7 +235,7 @@ class Transformr
 		$dom->preserveWhiteSpace = true;
 		$dom->formatOutput = true;
 		
-		!$dom->loadXML($html) ? $dom->loadXML($this->tidy_html($html, $url, $this->tidy_option)) : $dom->loadXML($html);
+		$dom->loadXML($this->tidy_html($html, $url, $this->tidy_option));
 		
 		$title = $dom->getElementsByTagName('title')->item(0)->nodeValue;
 		
