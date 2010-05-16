@@ -204,35 +204,102 @@
 	</choose>    
   </template>
 
+  <!-- return namespace @prefix -->
+  <template name="return-prefix-ns">
+  <param name="prefix"/>
+  <param name="name"/>
+  
+  <variable name="nsname"><value-of select="$name"/><text>: </text></variable>
+  
+  <if test="substring-after($prefix, $nsname)">
+    <choose>
+  		<when test="contains(substring-after($prefix, $nsname),' ')">
+			<value-of select="normalize-space(substring-before(substring-after($prefix, $nsname),' '))"/>	  				
+  		</when>
+  		<otherwise><value-of select="substring-after($prefix, $nsname)"/></otherwise>
+  	</choose>
+  </if>
+  </template>
+
   <!-- return namespace of a qname -->
   <template name="return-ns" >
     <param name="qname" />
+	
     <variable name="ns_prefix" select="substring-before($qname,':')" />
-    <if test="string-length($ns_prefix)>0"> <!-- prefix must be explicit -->
-      <variable name="name" select="substring-after($qname,':')" />
-      <value-of select="ancestor-or-self::*/namespace::*[name()=$ns_prefix][position()=1]" />
-    </if>
-    <if test="string-length($ns_prefix)=0 and ancestor-or-self::*/namespace::*[name()=''][position()=1]"> <!-- no prefix -->
-		<variable name="name" select="substring-after($qname,':')" />
-		<value-of select="ancestor-or-self::*/namespace::*[name()=''][position()=1]" />
-    </if>
-  </template>
 
+	<choose>
+		<when test="string-length($ns_prefix)>0 and ancestor-or-self::*/namespace::*[name()=$ns_prefix][1]"> <!-- prefix must be explicit -->
+			<variable name="name" select="substring-after($qname,':')" />
+			<value-of select="ancestor-or-self::*/namespace::*[name()=$ns_prefix][1]" />
+		</when>
+	
+		<when test="string-length($ns_prefix)>0 and ancestor-or-self::*/attribute::prefix[1]"> <!-- @prefix  -->
+			<variable name="name" select="substring-after($qname,':')" />
+			<call-template name="return-prefix-ns">
+				<with-param name="prefix" select="ancestor-or-self::*/attribute::prefix[1]"/>
+				<with-param name="name" select="$ns_prefix"/>
+			</call-template>
+		</when>
+	
+		<when test="string-length($ns_prefix)=0 and ancestor-or-self::*/namespace::*[name()=''][1]"> <!-- no prefix -->
+			<variable name="name" select="substring-after($qname,':')" />
+			<value-of select="ancestor-or-self::*/namespace::*[name()=''][1]" />
+		</when>
+	
+		<when test="string-length($ns_prefix)=0 and self::*/attribute::vocab"> <!-- self @vocab  -->
+			<variable name="name" select="$qname" />
+			<value-of select="self::*/attribute::vocab" />
+		</when>
+	
+		<when test="string-length($ns_prefix)=0 and ancestor::*/attribute::vocab[1]"> <!-- first ancestor  @vocab  -->
+			<variable name="name" select="$qname" />
+			<value-of select="ancestor::*/attribute::vocab[1]" />
+		</when>
+	</choose>
+	
+  </template>
 
   <!-- expand namespace of a qname -->
   <template name="expand-ns" >
     <param name="qname" />
     <variable name="ns_prefix" select="substring-before($qname,':')" />
-    <if test="string-length($ns_prefix)>0"> <!-- prefix must be explicit -->
-		<variable name="name" select="substring-after($qname,':')" />
-		<variable name="ns_uri" select="ancestor-or-self::*/namespace::*[name()=$ns_prefix][position()=1]" />
-		<value-of select="concat($ns_uri,$name)" />
-    </if>
-    <if test="string-length($ns_prefix)=0 and ancestor-or-self::*/namespace::*[name()=''][position()=1]"> <!-- no prefix -->
-		<variable name="name" select="substring-after($qname,':')" />
-		<variable name="ns_uri" select="ancestor-or-self::*/namespace::*[name()=''][position()=1]" />
-		<value-of select="concat($ns_uri,$name)" />
-    </if>
+	<variable name="no_prefix" select="$qname" />
+	
+	<choose>
+		<when test="string-length($ns_prefix)>0 and ancestor-or-self::*/namespace::*[name()=$ns_prefix][1]"> <!-- prefix must be explicit -->
+			<variable name="name" select="substring-after($qname,':')" />
+			<variable name="ns_uri" select="ancestor-or-self::*/namespace::*[name()=$ns_prefix][1]" />
+			<value-of select="concat($ns_uri,$name)" />
+		</when>
+	
+		<when test="string-length($ns_prefix)=0 and ancestor-or-self::*/namespace::*[name()=''][1]"> <!-- no prefix -->
+			<variable name="name" select="substring-after($qname,':')" />
+			<variable name="ns_uri" select="ancestor-or-self::*/namespace::*[name()=''][1]" />
+			<value-of select="concat($ns_uri,$name)" />
+		</when>
+	
+		<when test="string-length($ns_prefix)>0 and ancestor-or-self::*/attribute::prefix[1]"> <!-- @prefix -->
+			<variable name="name" select="substring-after($qname,':')" />
+			<call-template name="return-prefix-ns">
+				<with-param name="prefix" select="ancestor-or-self::*/attribute::prefix[1]"/>
+				<with-param name="name" select="$ns_prefix"/>
+			</call-template>
+			<value-of select="$name" />
+		</when>
+	
+		<when test="string-length($ns_prefix)=0 and self::*/attribute::vocab">  <!-- self @vocab  -->
+			<variable name="name" select="$qname" />
+			<variable name="ns_uri" select="self::*/attribute::vocab" />
+			<value-of select="concat($ns_uri,$name)" />
+		</when>
+
+		<when test="string-length($ns_prefix)=0 and ancestor::*/attribute::vocab[1]">  <!-- first  ancestor @vocab  -->
+			<variable name="name" select="$qname" />
+			<variable name="ns_uri" select="ancestor::*/attribute::vocab[1]" />
+			<value-of select="concat($ns_uri,$name)" />
+		</when>
+	
+	</choose>
   </template>
 
   <!-- determines the CURIE / URI of a node -->
@@ -306,9 +373,13 @@
   <template name="get-relrev-ns">
   	<param name="qname" />
 	<variable name="ns_prefix" select="substring-before(translate($qname,'[]',''),':')" />
+	<variable name="no_prefix" select="$qname" />
 	<choose>
 	  <when test="string-length($ns_prefix)>0">
 		<call-template name="return-ns"><with-param name="qname" select="$qname"/></call-template>
+	   </when>
+	   <when test="string-length($no_prefix)>0">
+		 <call-template name="return-ns"><with-param name="qname" select="$qname"/></call-template>
 	   </when>
 	   <!-- returns default_voc if the predicate is a reserved value -->
 	   <otherwise>
@@ -321,10 +392,14 @@
   <!-- returns the namespace for a data property -->
   <template name="get-property-ns">
   	<param name="qname" />
+	<variable name="no_prefix" select="$qname" />
 	<variable name="ns_prefix" select="substring-before(translate($qname,'[]',''),':')" />
 	<choose>
 	  <when test="string-length($ns_prefix)>0">
 		<call-template name="return-ns"><with-param name="qname" select="$qname"/></call-template>
+	   </when>
+	   <when test="string-length($no_prefix)>0">
+		 <call-template name="return-ns"><with-param name="qname" select="$qname"/></call-template>
 	   </when>
 	   <!-- returns default_voc otherwise -->
 	   <otherwise><value-of select="$default_voc" /></otherwise>

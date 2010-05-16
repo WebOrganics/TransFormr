@@ -1,4 +1,4 @@
-# TransFormr version 1.2
+# TransFormr version 1.2.1
 
 TransFormr is a simple toolkit that uses PHP and XSLT for extracting and transforming microformats <http://microformats.org/>.
 
@@ -20,7 +20,7 @@ Microformats that are supported by this transformr but are classed as *Experimen
 	
 Non microformats supported by this transformer are:
 	
-* RDFa <http://rdfa.info/>
+* RDFa 1.0 + 1.1 @prefix @vocab <http://rdfa.info/>
 * eRDF <http://research.talis.com/2005/erdf/wiki/Main/RdfInHtml>
 * OGP ( Open Graph Protocol ) <http://opengraphprotocol.org/>
 	
@@ -98,6 +98,7 @@ The output property is optional and may be omitted from a Query, example
 
 ## Notes
 
+* 1.2.1 Adds @prefix and @profile to RDFa2RDFXML.xsl.
 * 1.2 Implements JSON Query.
 * 1.1 some bugs fixed, new hcard 2 qrcode api
 * 1.0 New code, added some configurations, ogp-rdf transformation added, xoxo-opml transformation added, updated version of ARC2 2010-04-26
