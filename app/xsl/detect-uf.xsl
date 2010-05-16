@@ -70,7 +70,7 @@
 <div class="heading">
 <h1>
 	<a href="{$transformr}">
-		<img style="border:0;" src="{$transformr}images/transformr.png" alt="TransFormr"/>
+		<img style="border:0;" src="{$transformr}images/microformat.png" alt="Microformat TransFormer"/>
 	</a>
 </h1>
 <q class="subtitle" cite="http://www.hp.com/hpinfo/execteam/speeches/fiorina/04openworld.html">

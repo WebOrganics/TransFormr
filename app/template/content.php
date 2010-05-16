@@ -10,14 +10,14 @@
 	</a>
 </div>
 <div class="heading" style="clear:both;">
-<h1><a href="<?php echo $this->path ; ?>" title="Microformats Transformer"><img src="images/transformr.png" alt="Microformats Transformer"></a></h1>
+<h1><a href="<?php echo $this->path ; ?>" title="Microformat Transformer"><img src="images/microformat.png" alt="Microformat Transformer"></a></h1>
 <q class="subtitle" cite="http://www.hp.com/hpinfo/execteam/speeches/fiorina/04openworld.html">The goal is to transform data into information and information into insight.</q>
 </div>
 
 <form id="form" onsubmit="return Validate(this);" action="" method="get">
 <fieldset>
-<legend>Transform a url</legend>
-<p><label for="type">Microformat type: <select tabindex="1" id="type" name="type">
+<legend>trans<span style="color:#838383">form</span> a url</legend>
+<p><label for="type">microformat type: <select tabindex="1" id="type" name="type">
 <optgroup label="Default">
 	<option selected="selected" value="detect">Detect all</option>
 </optgroup>
