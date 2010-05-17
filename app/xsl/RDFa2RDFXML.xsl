@@ -6,7 +6,7 @@
     xmlns:rdf  ="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 
 
-<!-- Version 0.20 by Fabien.Gandon@sophia.inria.fr -->
+<!-- Version 0.20.1 by Fabien.Gandon@sophia.inria.fr -->
 <!-- This software is distributed under either the CeCILL-C license or the GNU Lesser General Public License version 3 license. -->
 <!-- This program is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License -->
 <!-- as published by the Free Software Foundation version 3 of the License or under the terms of the CeCILL-C license. -->
@@ -14,6 +14,9 @@
 <!-- warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. -->
 <!-- See the GNU Lesser General Public License version 3 at http://www.gnu.org/licenses/  -->
 <!-- and the CeCILL-C license at http://www.cecill.info/licences/Licence_CeCILL-C_V1-en.html for more details -->
+
+<!-- RDFa 1.1 @vocab and @prefix support added by Martin McEvoy info@weborganics.co.uk -->
+<!-- Updated on Sunday 16th May 2010 -->
 
 
 <output indent="yes" method="xml" media-type="application/rdf+xml" encoding="UTF-8" omit-xml-declaration="yes"/>
@@ -649,10 +652,12 @@
 	        <when test="$datatype='http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral'">
 	         <choose>
 	         	<when test="$attrib='true'"> <!-- content is in an attribute -->
+	         	  <attribute name="rdf:datatype"><value-of select="$datatype" /></attribute>
 	         	  <value-of select="normalize-space(string($object))" />
 	            </when>
 	         	<otherwise> <!-- content is in the element and may include some tags -->
-	         	 <attribute name="rdf:datatype"><value-of select="$datatype" /></attribute>
+	         	 <!-- On a property element, only one of the attributes rdf:parseType or rdf:datatype is permitted.
+	         	 <attribute name="rdf:datatype"><value-of select="$datatype" /></attribute> -->
 	         	 <attribute name="rdf:parseType"><value-of select="'Literal'" /></attribute>
 				 <for-each select="$object/node()"> 
 					<call-template name="recursive-copy" />
