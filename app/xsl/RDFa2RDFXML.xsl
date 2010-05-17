@@ -231,6 +231,12 @@
     <variable name="ns_prefix" select="substring-before($qname,':')" />
 
 	<choose>
+	
+		<when test="$ns_prefix = 'http' or $ns_prefix = 'https'">
+			<variable name="name" select="$ns_prefix" />
+			<value-of select="substring-after($qname,$ns_prefix)" />
+		</when>
+		
 		<when test="string-length($ns_prefix)>0 and ancestor-or-self::*/namespace::*[name()=$ns_prefix][1]"> <!-- prefix must be explicit -->
 			<variable name="name" select="substring-after($qname,':')" />
 			<value-of select="ancestor-or-self::*/namespace::*[name()=$ns_prefix][1]" />
@@ -659,18 +665,16 @@
 	        <when test="$datatype='http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral'">
 	         <choose>
 	         	<when test="$attrib='true'"> <!-- content is in an attribute -->
-	         	  <attribute name="rdf:datatype"><value-of select="$datatype" /></attribute>
+	         	  <attribute name="rdf:datatype"><value-of select="'http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral'" /></attribute>
 	         	  <value-of select="normalize-space(string($object))" />
 	            </when>
 	         	<otherwise> <!-- content is in the element and may include some tags -->
-	         	 <!-- On a property element, only one of the attributes rdf:parseType or rdf:datatype is permitted. -->
 	         	<attribute name="rdf:datatype"><value-of select="'http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral'" /></attribute>
-	         	<!--   <attribute name="rdf:parseType"><value-of select="'Literal'" /></attribute> -->
-				<text disable-output-escaping="yes">&lt;![CDATA[</text>
-					<for-each select="$object/node()"> 
-						<call-template name="recursive-copy" />
-					</for-each>
-				 <text disable-output-escaping="yes">]]&gt;</text>
+					<text disable-output-escaping="yes">&lt;![CDATA[</text>
+						<for-each select="$object/node()"> 
+							<call-template name="recursive-copy" />
+						</for-each>
+					<text disable-output-escaping="yes">]]&gt;</text>
 				</otherwise>
 			 </choose>
 	        </when>
