@@ -229,10 +229,17 @@
     <param name="qname" />
 	
     <variable name="ns_prefix" select="substring-before($qname,':')" />
+	
+	<variable name="is-reserved"><call-template name="check-reserved"><with-param name="nonprefixed" select="$qname" /></call-template></variable>
 
 	<choose>
 	
-		<when test="$ns_prefix = 'http' or $ns_prefix = 'https'">
+		<when test="$is-reserved = 'true'">  <!-- reserved word  -->
+			<variable name="name" select="$qname" />
+			<value-of select="$default_voc" />
+		</when>
+		
+		<when test="$ns_prefix = 'http' or $ns_prefix = 'https'"> <!-- A url -->
 			<variable name="name" select="$ns_prefix" />
 			<value-of select="substring-after($qname,$ns_prefix)" />
 		</when>
@@ -273,10 +280,16 @@
     <param name="qname" />
     <variable name="ns_prefix" select="substring-before($qname,':')" />
 	<variable name="no_prefix" select="$qname" />
-	
+	<variable name="is-reserved"><call-template name="check-reserved"><with-param name="nonprefixed" select="$no_prefix" /></call-template></variable>
+
 	<choose>
-	
-		<when test="$ns_prefix = 'http' or $ns_prefix = 'https'">
+		<when test="$is-reserved = 'true'"> <!-- reserved word -->
+			<variable name="name" select="$no_prefix" />
+			<variable name="ns_uri" select="$default_voc" />
+			<value-of select="concat($ns_uri,$name)" />
+		</when>
+		
+		<when test="$ns_prefix = 'http' or $ns_prefix = 'https'"> <!-- A url -->
 			<variable name="name" select="$ns_prefix" />
 			<variable name="ns_uri" select="substring-after($qname,$ns_prefix)" />
 			<value-of select="concat($name,$ns_uri)" />
