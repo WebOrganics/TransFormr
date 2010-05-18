@@ -239,7 +239,7 @@
 			<value-of select="$default_voc" />
 		</when>
 		
-		<when test="$ns_prefix = 'http' or $ns_prefix = 'https'"> <!-- A url -->
+		<when test="$ns_prefix = 'http' or $ns_prefix = 'https'"> <!-- url -->
 			<variable name="name" select="$ns_prefix" />
 			<value-of select="substring-after($qname,$ns_prefix)" />
 		</when>
@@ -267,6 +267,11 @@
 			<value-of select="self::*/attribute::vocab" />
 		</when>
 	
+		<when test="string-length($ns_prefix)=0 and parent::*/attribute::vocab"> <!-- parent @vocab  -->
+			<variable name="name" select="$qname" />
+			<value-of select="parent::*/attribute::vocab" />
+		</when>
+		
 		<when test="string-length($ns_prefix)=0 and ancestor::*/attribute::vocab[1]"> <!-- first ancestor  @vocab  -->
 			<variable name="name" select="$qname" />
 			<value-of select="ancestor::*/attribute::vocab[1]" />
@@ -289,7 +294,7 @@
 			<value-of select="concat($ns_uri,$name)" />
 		</when>
 		
-		<when test="$ns_prefix = 'http' or $ns_prefix = 'https'"> <!-- A url -->
+		<when test="$ns_prefix = 'http' or $ns_prefix = 'https'"> <!-- url -->
 			<variable name="name" select="$ns_prefix" />
 			<variable name="ns_uri" select="substring-after($qname,$ns_prefix)" />
 			<value-of select="concat($name,$ns_uri)" />
@@ -319,6 +324,12 @@
 		<when test="string-length($ns_prefix)=0 and self::*/attribute::vocab">  <!-- self @vocab  -->
 			<variable name="name" select="$qname" />
 			<variable name="ns_uri" select="self::*/attribute::vocab" />
+			<value-of select="concat($ns_uri,$name)" />
+		</when>
+
+		<when test="string-length($ns_prefix)=0 and parent::*/attribute::vocab">  <!-- parent @vocab  -->
+			<variable name="name" select="$qname" />
+			<variable name="ns_uri" select="parent::*/attribute::vocab" />
 			<value-of select="concat($ns_uri,$name)" />
 		</when>
 
@@ -691,8 +702,7 @@
 				</otherwise>
 			 </choose>
 	        </when>
-	        <when test="string-length($datatype)>0">
-	        	<!-- there is a datatype other than XMLLiteral -->
+	        <when test="string-length($datatype)>0"> <!-- there is a datatype other than XMLLiteral -->
 	         <attribute name="rdf:datatype"><value-of select="$datatype" /></attribute>
 	         <choose>
 	         	<when test="$attrib='true'"> <!-- content is in an attribute -->
