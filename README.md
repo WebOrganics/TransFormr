@@ -98,7 +98,7 @@ The output property is optional and may be omitted from a Query, example
 
 ## Notes
 
-* 1.2.1 Adds @prefix and @vocab to RDFa2RDFXML.xsl.
+* 1.2.1 Adds @prefix and @vocab support to RDFa2RDFXML.xsl.
 * 1.2 Implements JSON Query.
 * 1.1 some bugs fixed, new hcard 2 qrcode api
 * 1.0 New code, added some configurations, ogp-rdf transformation added, xoxo-opml transformation added, updated version of ARC2 2010-04-26
@@ -111,8 +111,6 @@ The output property is optional and may be omitted from a Query, example
 ### Many thanks to:
 
 * Matthias Pfefferle ( <http://microform.at/> ) 
-* Fabien Gandon ( Facebook Open Graph Protocol, OGPGRDDL.xsl and RDFa2RDFXML.xsl)
+* Fabien Gandon ( OGPGRDDL.xsl and RDFa2RDFXML.xsl, <http://fabien.info/>)
 * Ben Ward ( X2V, <http://github.com/BenWard/x2v> )
-* Benjamin Nowack ( ARC2 rdf parsing and translations )
-* Luke Arno, Benjamin Carlyle and Robert Bachmann ( hAtom to Atom )
-* Norman Walsh ( hCard 2 RDF conversion )
+* Benjamin Nowack ( ARC2, <http://arc.semsol.org/> )
