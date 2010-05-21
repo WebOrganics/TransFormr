@@ -1,4 +1,4 @@
-# TransFormr version 1.2.1
+# TransFormr version 1.3
 
 TransFormr is a simple toolkit that uses PHP and XSLT for extracting and transforming microformats <http://microformats.org/>.
 
@@ -98,6 +98,7 @@ The output property is optional and may be omitted from a Query, example
 
 ## Notes
 
+* 1.3 fixes @prefix and @vocab support for RDFa plus one or two minor bugs.
 * 1.2.1 Adds @prefix and @vocab support to RDFa2RDFXML.xsl.
 * 1.2 Implements JSON Query.
 * 1.1 some bugs fixed, new hcard 2 qrcode api
