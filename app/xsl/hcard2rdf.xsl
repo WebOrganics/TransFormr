@@ -452,12 +452,18 @@ http://www.w3.org/2006/vcard/ns# ontology.</dc:description>
   <xsl:variable name="type" select=".//h:*[@class='type']"/>
   <xsl:variable name="value" select=".//h:*[@class='value']"/>
   <xsl:variable name="lv" select=".//h:*[@class]"/>
+  
+  <xsl:variable name="values">
+	<xsl:for-each select="$value">
+		<xsl:value-of select="."/>
+	</xsl:for-each>
+  </xsl:variable>
 
   <xsl:choose>
     <xsl:when test="$type and $value">
       <xsl:call-template name="tel">
-	<xsl:with-param name="type" select="string($type)"/>
-	<xsl:with-param name="value" select="string($value)"/>
+		<xsl:with-param name="type" select="string($type)"/>
+		<xsl:with-param name="value" select="string($values)"/>
       </xsl:call-template>
     </xsl:when>
     <xsl:when test="$lv">

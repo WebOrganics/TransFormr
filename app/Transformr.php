@@ -1,12 +1,17 @@
 <?php
 /*
- * TransFormr Version: 1.3, Thursday, 20th May 2010
- * Contact: Martin McEvoy info@weborganics.co.uk
- */
+TransFormr Version: 2.0, updated Thursday, 3rd June 2010
+Contact: Martin McEvoy info@weborganics.co.uk
+
+*/
 class Transformr
 {
-	public $tidy_option = '';
-	public $use_curl = '';
+	var $tidy_option = '';
+	var $use_curl = '';
+	var $use_store = '';
+	var $reset_tables = '';
+	var $store_size = '';
+	var $dump_location = '';
 	
  	function set_path()
 	{
@@ -42,40 +47,37 @@ class Transformr
 		$this->query = isset($_GET['q']) ? stripslashes($_GET["q"]) : '';
 		$this->template = 'app/template/';
 		$this->xsl = 'app/xsl/';
-		$this->version = '1.3';
-		$this->updated = array('Thursday, 20th May 2010', '2010-05-20T12:00:28+01:00');
+		$this->version = '2.0';
+		$this->updated = array('Thursday, 3rd June 2010', '2010-06-03T01:45:28+01:00');
 		$this->check_php_version('5.2.0', 'Transformr'); 
-		$this->required = array('arc/ARC2', 'extension/class.hqr', 'extension/class.encoded');
-		$this->a = $this->config_ns();
+		$this->required = array('arc/ARC2', 'extension/class.hqr', 'extension/class.encoded', 'config' => 'config');
 		ini_set('display_errors',  0 );
 		header("X-Application: Transformr ".$this->version );
 	}
 	
-	public function transform() 
+	public function transform($settings = '') 
 	{
-		foreach ( $this->required as $require ) {
-			require_once($require.'.php');
-		}
-		return ($this->query !='') ? $this->json_query($this->query) : $this->transformr_types();
+		define('_Transformr', true);
+		if ($settings !='') foreach ( $settings as $setting => $value ) $this->$setting = $value;
+		$this->a = $this->config_ns($settings = '');
+		foreach ( $this->required as $require ) require_once($require.'.php');
+		return ( $this->query !='' ? $this->json_query($this->query) : $this->transformr_types() );
 	}
 	
-	private function json_query($data) 
+	protected function json_query($data) 
 	{
 		$data = json_decode(utf8_encode($data));
-		
 		!$data ? die('query not well formed please validate your query at <a href="http://www.jsonlint.com/">http://www.jsonlint.com/</a>') : $data;
-		
 		$this->url = $data->url;
-		
 		$this->type = $data->type;
-		
 		isset($data->output) ? $this->output = $data->output : '';
-		
 		return $this->transformr_types();
 	}
 	
 	private function transformr_types() 
 	{	
+		$arc = ARC2::getComponent('RDFTranformrPlugin', $this->a);
+	
 		if ($this->type) 
 		{ 
 			header("Cache-Control: no-cache, must-revalidate");
@@ -94,7 +96,7 @@ class Transformr
 		case 'hcard-rdf':
 			$xsl_filename = $this->xsl ."hcard2rdf.xsl";
 			$document = $this->transform_xsl($this->url, $xsl_filename);
-			return $this->as_rdf($this->url, $document, $this->output);
+			return $arc->to_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'hatom':
@@ -107,6 +109,12 @@ class Transformr
 			header("Content-type: application/rss+xml");
 			$xsl_filename = $this->xsl ."hAtom2RSS2.xsl";
 			return $this->transform_xsl($this->url, $xsl_filename);
+		break;
+		
+		case 'hatom-sioc':
+			$xsl_filename = $this->xsl ."hAtom2SIOC.xsl";
+			$document = $this->transform_xsl($this->url, $xsl_filename);
+			return $arc->to_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'geo':
@@ -128,21 +136,13 @@ class Transformr
 		case 'hcalendar-rdf':
 			$xsl_filename = $this->xsl ."glean-hcal.xsl";
 			$document = $this->transform_xsl($this->url, $xsl_filename);
-			return $this->as_rdf($this->url, $document, $this->output);
+			return $arc->to_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'hreview':
 			$xsl_filename = $this->xsl ."hreview2rdfxml.xsl";
 			$document = $this->transform_xsl($this->url, $xsl_filename);
-			return $this->as_rdf($this->url, $document, $this->output);
-		break;
-		
-		case 'xoxo-opml':
-			$file = $this->rand_filename('opml');
-			header("Content-type: text/x-opml");
-			header('Content-Disposition: attachment; filename="'.$file.'"');
-			$xsl_filename = $this->xsl ."xoxo2opml.xsl";
-			return $this->transform_xsl($this->url, $xsl_filename);
+			return $arc->to_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'haudio-rss':
@@ -154,7 +154,7 @@ class Transformr
 		case 'mo-haudio':
 			$xsl_filename = $this->xsl ."Mo-hAudio.xsl";
 			$document = $this->transform_xsl($this->url, $xsl_filename);
-			return $this->as_rdf($this->url, $document, $this->output);
+			return $arc->to_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'haudio-xspf':
@@ -168,25 +168,25 @@ class Transformr
 		case 'hfoaf':
 			$xsl_filename = $this->xsl ."hFoaF.xsl";
 			$document = $this->transform_xsl($this->url, $xsl_filename);
-			return $this->as_rdf($this->url, $document, $this->output);
+			return $arc->to_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'ogp-rdf':
 			$xsl_filename = $this->xsl ."OGPGRDDL.xsl";
 			$document = $this->transform_xsl($this->url, $xsl_filename);
-			return $this->as_rdf($this->url, $document, $this->output);
+			return $arc->to_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'erdf':
 			$xsl_filename = $this->xsl ."extract-rdf.xsl";
 			$document = $this->transform_xsl($this->url, $xsl_filename);
-			return $this->as_rdf($this->url, $document, $this->output);
+			return $arc->to_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'rdfa':
 			$xsl_filename = $this->xsl ."RDFa2RDFXML.xsl";
 			$document = $this->transform_xsl($this->url, $xsl_filename);
-			return $this->as_rdf($this->url, $document, $this->output);
+			return $arc->to_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'detect':
@@ -196,6 +196,13 @@ class Transformr
 		
 		case 'hcard2qrcode':
 			return $this->return_qrcode($this->url);
+		break;
+
+		case 'dump':
+			header("Content-Type: text/html; charset=UTF-8");
+			include $this->template ."head.php";
+			include $this->template ."dump.php";
+			include $this->template ."foot.php";
 		break;
 
 		default:
@@ -209,7 +216,7 @@ class Transformr
 	
 	protected function get_file_contents($url)
 	{
-		if ( $this->use_curl != '' ) {
+		if ( $this->use_curl == 1 ) {
 		
 			$cache = curl_init();
 			curl_setopt($cache, CURLOPT_RETURNTRANSFER, true );
@@ -233,38 +240,36 @@ class Transformr
 		
 		$dom = new DOMDocument('1.0');
 		$dom->preserveWhiteSpace = true;
+		$dom->loadXML($this->tidy_html($html, $url, $this->tidy_option));
 		$dom->formatOutput = true;
 		
-		$dom->loadXML($this->tidy_html($html, $url, $this->tidy_option));
-		
 		$title = $dom->getElementsByTagName('title')->item(0)->nodeValue;
+		
+		if (!$dom->getElementsByTagName('html')->item(0)->getAttribute('xmlns') && $this->type !='rdfa')
+			$dom->getElementsByTagName('html')->item(0)->setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
 		
 		if (isset($fragment)) 
 		{
 			$dom->relaxNGValidateSource($this->valid_schema());
 			$element = $dom->getElementById($fragment);
 			$content = $dom->saveXML($element);
-			$doc = $this->return_html_frag($content, $title);	
+			$dom = $this->return_html_frag($content, $title);	
 		} 
-		else {
-			$doc = $dom->saveXML();
-		}
 		
 		if (!method_exists('xsltProcessor','transformToXML')) {
 			die( "Sorry PHP xslt functions unavailable" );
 		}
-		else {
-			$xslt = new xsltProcessor;
-			$xslt->setParameter('','transformr', $this->path);
-			$xslt->setParameter('','url', $url);
-			$xslt->setParameter('','base-uri', $url);
-			$xslt->setParameter('','doc-title', $title);
-			$xslt->setParameter('','version', $this->version);
-			$xslt->importStyleSheet(DomDocument::load($xsl_filename));
+		
+		$xslt = new xsltProcessor;
+		$xslt->setParameter('','transformr', $this->path);
+		$xslt->setParameter('','url', $url);
+		$xslt->setParameter('','base-uri', $url);
+		$xslt->setParameter('','doc-title', $title);
+		$xslt->setParameter('','version', $this->version);
+		if ( $this->use_store == 1 ) $xslt->setParameter('','endpoint-link', $this->path. 'endpoint/?');
+		$xslt->importStyleSheet(DomDocument::load($xsl_filename));
 			
-			if(!DomDocument::loadXML($doc)) return $this->error_location('invalidDoc');
-			else return $xslt->transformToXML(DomDocument::loadXML($doc));
-		}
+		return $xslt->transformToXML(DomDocument::loadXML($dom->saveXML()));
 	}
 	elseif ($url == 'referer' && getenv("HTTP_REFERER") != '') {
 		$referer = getenv("HTTP_REFERER");
@@ -275,8 +280,7 @@ class Transformr
 		return $this->transform_xsl($referer.'#'.$url, $xsl_filename);	
 	}
 	else {
-		return $this->error_location('noURL');
-		exit;
+		return $this->error('noURL');
 	  }
 	}
 	
@@ -286,92 +290,43 @@ class Transformr
 		include $this->template ."head.php";
 		include $this->template ."content-qr.php";
 	}
-
-	private function toRDFa($triples) {
-		ARC2::inc('RDFaSerializer');
-		$rdfa = new ARC2_RDFaSerializer($this->a, $this);
-		return ( isset($triples[0]) && isset($triples[0]['s']) ) ? $rdfa->getSerializedTriples($triples) : $rdfa->getSerializedIndex($triples);
-	}
-	
-	protected function as_rdf($url, $document, $output) 
-	{
-	$parser = ARC2::getRDFParser($this->a);
-	$parser->parse($url, $document);
-	$triples = $parser->getTriples();
-		
-		switch ($output) 
-		{
-			case 'ntriples':
-				$file = $this->rand_filename('nt');
-				header("Content-type: text/plain");
-				header("Content-Disposition: inline; filename=".$file);
-				$result = $parser->toNTriples($triples); 
-			break;
-			
-			case 'turtle':
-				$file = $this->rand_filename('ttl');
-				header("Content-type: text/turtle");
-				header("Content-Disposition: inline; filename=".$file);
-				$result = $parser->toTurtle($triples);
-			break;
-			
-			case 'rdfjson':	
-				$file = $this->rand_filename('json');
-				header("Content-type: application/json");
-				header("Content-Disposition: inline; filename=".$file);
-				$result = $parser->toRDFJSON($triples);
-			break;
-			
-			case 'rdf':	
-				$file = $this->rand_filename('rdf');
-				header("Content-type: application/rdf+xml");
-				header("Content-Disposition: inline; filename=".$file);
-				$result = $parser->toRDFXML($triples);
-			break;
-			
-			case 'html':	
-				$file = $this->rand_filename('html');
-				header("Content-type: text/html");
-				header("Content-Disposition: inline; filename=".$file);
-				$result = $parser->toHTML($triples);
-			break;
-			
-			case 'rdfa':	
-				$file = $this->rand_filename('html');
-				header("Content-type: text/html");
-				header("Content-Disposition: inline; filename=".$file);
-				$result = $this->toRDFa($triples);
-			break;
-		}
-		return $result;
-	}
 	
 	protected function tidy_html($html, $url, $tidy_option)
 	{	
-		if ($tidy_option == 'php' && !method_exists('tidy','cleanRepair') ) {
-			die("Sorry PHP Tidy function does not exist, try tidy_option = 'online' ");
+		if ($tidy_option == 'php' && !method_exists('tidy','cleanRepair') ) 
+		{
+			return $this->error('noPHPTidy');
 		}
-		elseif ( $tidy_option == 'php') {
+		elseif ( $tidy_option == 'php') 
+		{
 			$config = array(
 				'doctype'                     => 'strict',
 				'logical-emphasis'            => true,
 				'output-xml'                  => true,
-				'wrap'                        => 200
+				'wrap'                        => 200,
+				'clean'						  =>true
 			);
 			$tidy = new tidy;
 			$tidy->parseString($html, $config, 'utf8');
 			$tidy->cleanRepair();
-			$result = !$tidy ? die("Sorry unable to tidy this document using php tidy") : $tidy;
+			$result = !$tidy ? $this->error('tidyFail') : $tidy;
 		} 
-		elseif ($tidy_option == 'online') {		
+		elseif ($tidy_option == 'online') 
+		{		
 			$tidyURL = 'http://cgi.w3.org/cgi-bin/tidy?forceXML=on&docAddr='.$url;
 			$tidy = $this->get_file_contents($tidyURL);
-			$result = !$tidy ? die("Sorry online W3C tidy service unavailable") : $tidy;
+			$result = !$tidy ? $this->error('noW3CTidy') : $tidy;
 		}
-		else {
-			die("sorry Unable to tidy this document");
+		elseif ($tidy_option == 'dom') /* do our best */
+		{		
+			$newdoc = new DOMDocument('1.0');
+			$newdoc->preserveWhiteSpace = true;
+			!$newdoc->loadXML($html) ? @$newdoc->loadHTML($html) : @$newdoc->loadXML($html) ;
+			$newdoc->formatOutput = true;
+			$result = $newdoc->saveXML();
+			$result = str_replace(array("\r\n", "\r", "\n", "\t", "&#xD;"), '', $result);
 		}
-		return $result;	
+		return $result ? $result : $this->error('invalidDoc');	
 	}
 	
 	protected function rand_filename($ext = '') 
@@ -381,66 +336,40 @@ class Transformr
 	
 	protected function config_ns() 
 	{
-	$ns = array(
-		'rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-		'rdfs' => 'http://www.w3.org/2000/01/rdf-schema#',
-		'owl' => 'http://www.w3.org/2002/07/owl#',
-		'xsd' => 'http://www.w3.org/2001/XMLSchema#',
-		'foaf' => 'http://xmlns.com/foaf/0.1/',
-		'dc' => 'http://purl.org/dc/elements/1.1/',
-		'dc_terms' => 'http://purl.org/dc/terms/',
-		'dc_type' => 'http://purl.org/dc/dcmitype/',
-		'rss' => 'http://purl.org/rss/1.0/',
-		'taxo' => 'http://purl.org/rss/1.0/modules/taxonomy/',
-		'content' => 'http://purl.org/rss/1.0/modules/content/',
-		'sy' => 'http://purl.org/rss/1.0/modules/syndication/',
-		'cal' => 'http://www.w3.org/2002/12/cal/ical#',
-		'sioc' => 'http://rdfs.org/sioc/ns#',
-		'sioct' => 'http://rdfs.org/sioc/types#',
-		'doap' => 'http://usefulinc.com/ns/doap#',
-		'gr' => 'http://purl.org/goodrelations/v1#',
-		'geo' => 'http://www.w3.org/2003/01/geo/wgs84_pos#',
-		'gv' => 'http://data-vocabulary.org/',
-		'wot' => 'http://xmlns.com/wot/0.1/',
-		'mo' => 'http://purl.org/ontology/mo/',
-		'frbr' => 'http://purl.org/vocab/frbr/core#',
-		'vs' => 'http://www.w3.org/2003/06/sw-vocab-status/ns#',
-		'tl' => 'http://purl.org/NET/c4dm/timeline.owl#',
-		'time' => 'http://www.w3.org/2006/time#',
-		'contact' => 'http://www.w3.org/2000/10/swap/pim/contact#',
-		'bio' => 'http://vocab.org/bio/0.1/',
-		'rel' => 'http://purl.org/vocab/relationship/',
-		'rev' => 'http://purl.org/stuff/rev#',
-		'voc' => 'http://webns.net/mvcb/',
-		'air' => 'http://www.daml.org/2001/10/html/airport-ont#',
-		'aff' => 'http://purl.org/vocab/affiliations/0.1/',
-		'cc' => 'http://creativecommons.org/ns#',
-		'money' => 'http://www.purl.org/net/rdf-money/',
-		'media' => 'http://purl.org/microformat/hmedia/',
-		'audio' => 'http://purl.org/net/haudio#',
-		'xhv' => 'http://www.w3.org/1999/xhtml/vocab#',
-		'xfn' => 'http://gmpg.org/xfn/11#',
-		'dbp' => ' http://dbpedia.org/property/',
-		'dbpr' => 'http://dbpedia.org/resource/',
-		'talk' => 'http://www.w3.org/2004/08/Presentations.owl#',
-		'doc' => 'http://www.w3.org/2000/10/swap/pim/doc#',
-		'act' => 'http://www.w3.org/2001/sw/',
-		'org' => 'http://www.w3.org/2001/04/roadmap/org#',
-		'vc' => 'http://www.w3.org/2001/vcard-rdf/3.0#',
-		'vcard' => 'http://www.w3.org/2006/vcard/ns#',
-		'bibo' => 'http://purl.org/ontology/bibo/',
-		'mf' => 'http://poshrdf.org/ns/mf#',
-		'posh' => 'http://poshrdf.org/ns/posh/',
-		'label' => 'http://www.w3.org/2004/12/q/contentlabel#',
-		'icra' => 'http://www.icra.org/rdfs/vocabularyv03#',
-		'uri' => 'http://www.w3.org/2006/uri#',
-		'ogp' => 'http://opengraphprotocol.org/schema/'
+	
+	require_once( $this->required["config"] .'.php' );
+	
+	$params = array (
+		'use_store' => $this->use_store,
+		'store_size' => $this->store_size,
+		'reset_tables' => $this->reset_tables,
+		'dump_location' => $this->dump_location,
+		'store_path' => $this->path,
+		'document_type' => $this->type
 	);
+	
 	return array(
+	
 		'ns' => $ns, 
+		'store_settings' => $params,
+		
 		'auto_extract' => 0, 
 		'serializer_type_nodes' => 1, 
-		'bnode_prefix' => 'gen'.substr(md5(uniqid(rand())), 0, 4) 
+		'bnode_prefix' => 'gen'.substr(md5(uniqid(rand())), 0, 4),
+		
+		/* MySQL database settings */
+		'db_host' => $host,
+		'db_user' => $user,
+		'db_pwd' => $pwd,
+		'db_name' => $name,
+
+		/* ARC2 store settings */
+		'store_name' => 'transformr',
+
+		/* SPARQL endpoint settings */
+		'endpoint_features' => array(
+			'dump', 'insert', 'delete'
+		)
 	  );
     }
 	
@@ -477,36 +406,53 @@ class Transformr
 	
 	private function return_html_frag($content, $title) 
 	{
-	
-		$result = <<<HTML
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-<head>
-	<title>$title</title>
-</head>
-	<body>
-		$content
-	</body>
-</html>
-HTML;
-	
+		$result = '
+			<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+			<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+			<head>
+				<title>'.$title.'</title>
+			</head>
+				<body>' . $content. '</body>
+			</html> ';
+		
+		$result = DomDocument::loadXML($result);
+		$result->formatOutput = true;
+		
 		return $result;
 	}
 	
-	private function error_location($error = '') 
+	private function error($error = '', $result ='') 
 	{
-	
-		$exit = $this->path;
-	
-		$result = <<<ERR
-<script language="text/javascript">
-	<!-- 
-		location.replace("$exit?error=$error");
-	-->
-</script>
-ERR;
-
-		return $result;
+		switch($error) 
+		{
+			case 'invalidDoc':
+				$error = "Sorry Unable to load document ". $this->url;
+			break;
+			
+			case 'noURL':
+				$error = "Sorry URL: ". $this->url ." is Invalid";
+			break;
+			
+			case 'invalidID':
+				$error = "Sorry ID from : ". $this->url." does not exist";
+			break;
+			
+			case 'noPHPTidy':
+				$error = "Sorry PHP Tidy function does not exist, try tidy_option = 'online' ";
+			break;
+			
+			case 'noW3CTidy':
+				$error = "Sorry online W3C tidy service unavailable at this time";
+			break;
+			
+			case 'tidyFail':
+				$error = "Sorry failed to tidy document ". $this->url." using php tidy";
+			break;
+			
+		}
+		include $this->template ."head.php";
+		include $this->template ."content.php";
+		include $this->template ."foot.php";
 	}
  }
 ?>

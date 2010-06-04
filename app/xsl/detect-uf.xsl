@@ -4,7 +4,7 @@
 		xmlns="http://www.w3.org/1999/xhtml"
 		xmlns:xs="http://www.w3.org/2001/XMLSchema"
 		xmlns:dc="http://purl.org/dc/elements/1.1/"
-                version="1.0"
+        version="1.0"
 		exclude-result-prefixes="xhtml xs dc">
 
 <xsl:import href="url-encode.xsl" />
@@ -14,6 +14,8 @@
 <xsl:param name="base-uri" select="''"/>
 
 <xsl:param name="doc-title" select="''"/>
+
+<xsl:param name="endpoint-link" select="''"/>
 
 <xsl:param name="base-encoded">
 	<xsl:call-template name="url-encode">
@@ -54,7 +56,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 	<head profile="http://gmpg.org/xfn/11">
-	<title>TransFormr - <xsl:value-of select="$title"/></title>
+	<title>Microform.at Transformer - <xsl:value-of select="$title"/></title>
 	<meta name="description" content="Microformats Transformer"/>
 	<link rel="stylesheet" type="text/css" media="screen" href="{$transformr}stylesheets/user.css" />
 <xsl:if test="$hfoaf">
@@ -62,20 +64,30 @@
 </xsl:if>
 <xsl:if test="$hatom">
 	<link type="application/atom+xml" title="Atom" href="{$transformr}hatom/{$base-uri}" rel="alternate"/>
-	<link type="application/rss+xml" title="RSS2" href="{$transformr}rss2/{$base-uri}" rel="alternate"/>
+	<link type="application/rss+xml" title="RSS2" href="{$transformr}hatom-rss2/{$base-uri}" rel="alternate"/>
+	<link type="application/rdf+xml" title="SIOC" href="{$transformr}hatom-sioc/{$base-uri}" rel="alternate"/>
 </xsl:if>
 <link rel="default-slice" type="application/x-hatom" href="{$transformr}detect/#content"/>
 	</head>
 <body>
+<div class="butt">
+	<small> 
+		<a href="http://wiki.github.com/WebOrganics/TransFormr" rel="nofollow">Wiki</a> | 
+		<a href="http://github.com/WebOrganics/TransFormr" rel="nofollow">Source</a> | 
+		<a href="http://github.com/WebOrganics/TransFormr/issues" rel="nofollow">Issues</a> 
+		<xsl:if test="$endpoint-link !=''">
+			| <a href="{$endpoint-link}" title="Sparql Endpoint">Endpoint</a> |  
+			<a href="{$transformr}?type=dump" title="Store Dumps">Store Dumps</a>    
+		</xsl:if>
+	</small> 
+</div>
 <div class="heading">
 <h1>
 	<a href="{$transformr}">
 		<img style="border:0;" src="{$transformr}images/microformat.png" alt="Microformat TransFormer"/>
 	</a>
 </h1>
-<q class="subtitle" cite="http://www.hp.com/hpinfo/execteam/speeches/fiorina/04openworld.html">
-	The goal is to transform data into information and information into insight.
-</q>
+<q class="subtitle" cite="http://www.hp.com/hpinfo/execteam/speeches/fiorina/04openworld.html">The goal is to transform data into information and information into insight.</q>
 </div>
 <div class="hslice" id="content">
  <h2 class="entry-title">
@@ -109,10 +121,10 @@
 <xsl:template name="classes">
 <ul>
 <xsl:if test="$hcard">
-	<li><p>hCard <a href="{$transformr}?type=hcard&amp;url={$base-encoded}">vCard</a> | <a href="{$transformr}?type=hcard-rdf&amp;url={$base-encoded}">RDF</a>| <a href="{$transformr}?type=hcard2qrcode&amp;url={$base-encoded}">QRCode</a></p></li>
+	<li><p>hCard <a href="{$transformr}?type=hcard&amp;url={$base-encoded}">vCard</a> | <a href="{$transformr}?type=hcard-rdf&amp;url={$base-encoded}">RDF</a> | <a href="{$transformr}?type=hcard2qrcode&amp;url={$base-encoded}">QRCode</a></p></li>
 </xsl:if>
 <xsl:if test="$hatom">
-	<li><p>hAtom <a href="{$transformr}?type=hatom&amp;url={$base-encoded}">Atom</a> | <a href="{$transformr}?type=hatom-rss2&amp;url={$base-encoded}">RSS2</a></p></li>
+	<li><p>hAtom <a href="{$transformr}?type=hatom&amp;url={$base-encoded}">Atom</a> | <a href="{$transformr}?type=hatom-rss2&amp;url={$base-encoded}">RSS2</a> | <a href="{$transformr}?type=hatom-sioc&amp;url={$base-encoded}">RDF</a></p></li>
 </xsl:if>
 <xsl:if test="$hfoaf">
 	<li><p>hFoaF <a href="{$transformr}?type=hfoaf&amp;url={$base-encoded}">RDF</a></p></li>

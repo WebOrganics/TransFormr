@@ -1,4 +1,5 @@
 <?php
+defined( '_Transformr' ) or die( 'Restricted access' );
 /**
 	hQR is a small class to convert hCard to QR-Taggs
 	author: Matthias Pfefferle

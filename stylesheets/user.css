@@ -1,13 +1,11 @@
 body {
-	font: small/1.4 Verdana, Arial, sans-serif;
+	font: 14px Verdana, Arial, sans-serif;
 	margin:0 auto;
 	padding:0;
 	text-align:center;
 	width:760px;
-	background-color:transparent;
-	background-image:url("/images/transformr.png");
-	background-position:0 0;
-	background-repeat:no-repeat;
+	background: #fff url('../images/bg_body.gif') 0 0 repeat-x;
+	color: #666;
 }
 h1 {
 	color:#679A06;
@@ -15,14 +13,13 @@ h1 {
 	padding:5px 10px 10px;
 }
 h2, h3, legend {
-	/* color:#679A06; */
 	margin:0px;
 }
 .content h2 {
 	clear:both; 
 	display:block;
 }
-p {
+p{
   line-height:10pt;
 }
 a {
@@ -32,12 +29,21 @@ a {
 a:hover {
 	background-color:#ECF6D2;
 }
+h1 a:hover { background-color:transparent;}
+
 .commands ul, .commands li {
   list-style-type:none;
 } 
 ul, li {
   list-style-type:square;
-} 
+}
+ol, ul, li { padding-left: 0px;}  
+ol li { 
+	border: 1px dotted #eee; 
+	padding: 3px 0; 
+	background-color:#FCFCFC; 
+	margin: 1px 0;
+}
 .hslice {
 	border:1px solid #679A06;
 	margin-top:30px;
@@ -56,6 +62,7 @@ ul, li {
 	-webkit-border-top-right-radius:5px;
 	-webkit-box-shadow: 0 2px 5px #CCCCCC;
 }
+.heading { clear: both; padding-top: 5px; }
 .homepage {
 	float:right;
 	margin:0pt;
@@ -65,22 +72,37 @@ ul, li {
 	color:#679A06;
 	margin:0px;
 	padding:5px;
+	font-variant:small-caps;
 }
 .subtitle a {
-	color:#FFFFFF;
-	font-weight:900;
+	color:#679A06;
 }
-input {
-  width:40%;
+
+input#url {
+  width:45%;
   -moz-box-shadow: inset 0 2px 4px rgba(0,0,0,.4);
   -webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,.4);
   box-shadow: inset 0 2px 4px #000;
 
 }
+
+label { margin-left:3px;}
 .errors {
-	border:1px dotted #AA0000;
+	border:1px solid #AA0000;
 	margin-bottom:10px;
 	padding:10px;
+	background-color: #FF9F9F;
+	padding:2px;
+	
+	-moz-border-radius-bottomleft:3px;
+	-moz-border-radius-bottomright:3px;
+	-moz-border-radius-topleft:3px;
+	-moz-border-radius-topright:3px;
+	
+	-webkit-border-bottom-left-radius:3px;
+	-webkit-border-bottom-right-radius:3px;
+	-webkit-border-top-left-radius:3px;
+	-webkit-border-top-right-radius:3px;
 }
 .errors h4, p.error {
 	color:#AA0000;
@@ -111,8 +133,9 @@ tt, code, kbd, samp {
   font-family:-moz-fixed;
 }
 legend{
-	font-size:22px;
+	font-size:20px;
 	text-align:left;
+	padding-top:5px;
 }
 fieldset {border:0;margin:0;}
 fieldset p {text-align:center;}
@@ -120,7 +143,7 @@ form {
 	width:740px;
 	background-color:transparent;
 	border:1px solid #679A06;
-	padding:5px;
+	padding:0 5px;
 	margin:30px auto;
 	
 	-moz-border-radius-bottomleft:5px;
@@ -156,3 +179,13 @@ input.Focus {
 input.Reset {
 	background-color: #FFFFFF;
 }
+p.hidden {
+	display:none;
+}
+.hide-button {
+	color:#AA0000;
+	float:left;
+	margin-left:5px;
+}
+.intro { text-align:left;} 
+.pad { padding:5px 0 0 0; }

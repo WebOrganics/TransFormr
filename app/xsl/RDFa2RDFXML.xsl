@@ -22,7 +22,8 @@
 <output indent="yes" method="xml" media-type="application/rdf+xml" encoding="UTF-8" omit-xml-declaration="yes"/>
 
 <!-- base of the current HTML doc -->
-<variable name='html_base' select="//*/h:head/h:base[position()=1]/@href"/>
+<variable name="html_base_no_ns" select="//*/head/base[position()=1]/@href"/>
+<variable name="html_base_ns" select="//*/h:head/h:base[position()=1]/@href"/>
 
 <!-- default HTML vocabulary namespace -->
 <variable name='default_voc' select="'http://www.w3.org/1999/xhtml/vocab#'"/>
@@ -32,12 +33,11 @@
 
 <param name='url' select="$base-uri"/>
 
-
-
 <!-- this contains the URL of the source document whether it was provided by the base or as a parameter e.g. http://example.org/bla/file.html-->
-<variable name='this' >
+<variable name="this">
 	<choose>
-		<when test="string-length($html_base)>0"><value-of select="$html_base"/></when>
+		<when test="string-length($html_base_ns)&gt;0"><value-of select="$html_base_ns"/></when>
+		<when test="string-length($html_base_no_ns)&gt;0"><value-of select="$html_base_no_ns"/></when>
 		<otherwise><value-of select="$url"/></otherwise>
 	</choose>
 </variable>
@@ -475,7 +475,7 @@
 	  <when test="$nonprefixed='p3pv1' or $nonprefixed='prev' or $nonprefixed='role' or $nonprefixed='section'">true</when>
 	  <when test="$nonprefixed='stylesheet' or $nonprefixed='subsection' or $nonprefixed='start' or $nonprefixed='top'">true</when>
 	  <when test="$nonprefixed='up'">true</when>
-	  <when test="$nonprefixed='made' or $nonprefixed='previous' or $nonprefixed='search'">true</when>  <!-- added because they are frequent -->
+	  <when test="$nonprefixed='made' or $nonprefixed='previous' or $nonprefixed='search' or $nonprefixed='me' or $nonprefixed='author'">true</when>  <!-- added because they are frequent -->
 	  <otherwise>false</otherwise>
 	</choose>
   </template>

@@ -1,4 +1,5 @@
 <?php
+defined( '_Transformr' ) or die( 'Restricted access' );
 /* html_convert_entities($string) -- convert named HTML entities to 
  * XML-compatible numeric entities.
  */

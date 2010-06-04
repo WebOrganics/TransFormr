@@ -41,15 +41,15 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 </xsl:choose>
 </xsl:param>
 
-<!-- Limit output to only one  -->
-<xsl:param name="limit">1</xsl:param>
+<!-- Limit output to first vcard  -->
+<xsl:param name="pos">1</xsl:param>
 
 <xsl:template match="/">
 <xsl:param name="about"/>
 <rdf:RDF>
 <xsl:choose>
     <xsl:when test="$vcard">
-	<xsl:for-each select="$vcard[position() &lt;= $limit]">
+	<xsl:for-each select="$vcard[position() &lt;= $pos]">
 		<PersonalProfileDocument rdf:about="{$about}">
 			<xsl:if test="$title">
 				<dc:title><xsl:value-of select="$title"/></dc:title>
@@ -151,7 +151,7 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 	</xsl:if>
 </xsl:template>
 
-<!--  mbox_sha1sum => class="email"/@id -->
+<!--  mbox_sha1sum => class="email"/ sha1:email @id -->
 <xsl:template name="sha1">
 <xsl:param name="uid" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' email ')]"/>
 	<xsl:if test="$uid">
@@ -289,12 +289,6 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 </xsl:call-template>
 </xsl:template>
 
-<xsl:template name="social">
-<xsl:call-template name="social-Links">
-	<xsl:with-param name="rel-me" select='"me"'/>
-</xsl:call-template>
-</xsl:template>
-
 
 <xsl:template name="rel-Links">
 <xsl:param name="rel"/>
@@ -306,11 +300,11 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 </xsl:template>
 
 
-<!-- Various action templates -->
+<!-- build social network links -->
 
-<xsl:template name="social-Links">
+<xsl:template name="social">
 <xsl:param name="rel-me"/>
-  <xsl:for-each select="/*//*[contains(concat(' ', @rel, ' '), concat(' ', $rel-me, ' '))]">
+  <xsl:for-each select="/*//*[contains(concat(' ', @rel, ' '), concat(' ', 'me', ' '))] | /*//*[contains(concat(' ', @class, ' '), concat(' ', 'url', ' '))]">
   	<xsl:choose>
 		<xsl:when test="substring-after(@href,'twitter.com')">
 			<xsl:call-template name="has-account">
@@ -327,15 +321,17 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 			<xsl:call-template name="has-account">
 				<xsl:with-param name="accountpage" select='@href'/>
 				<xsl:with-param name="servicepage">
-					<xsl:if test="substring-after(@href,'flickr.com/people/')">
+				<xsl:choose>
+					<xsl:when test="substring-after(@href,'flickr.com/people/')">
 						<xsl:text>flickr.com/people/</xsl:text>
-					</xsl:if>
-					<xsl:if test="substring-after(@href,'flickr.com/photos/')">
+					</xsl:when>
+					<xsl:when test="substring-after(@href,'flickr.com/photos/')">
 						<xsl:text>flickr.com/photos/</xsl:text>
-					</xsl:if>
-					<xsl:if test="substring-after(@href,'flickr.com/')">
+					</xsl:when>
+					<xsl:when test="substring-after(@href,'flickr.com/')">
 						<xsl:text>flickr.com/</xsl:text>
-					</xsl:if>
+					</xsl:when>
+				</xsl:choose>
 				</xsl:with-param>
 				<xsl:with-param name="serviceurl">
 					<xsl:text>http://flickr.com/</xsl:text>
@@ -409,14 +405,26 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 			</xsl:call-template>
 		</xsl:when>
 		
-		<xsl:when test="substring-after(@href,'alpha.libre.fm')">
+		<xsl:when test="substring-after(@href,'foursquare.com')">
 			<xsl:call-template name="has-account">
 				<xsl:with-param name="accountpage" select='@href'/>
 				<xsl:with-param name="servicepage">
-					<xsl:text>alpha.libre.fm/user/</xsl:text>
+					<xsl:text>foursquare.com/user/</xsl:text>
 				</xsl:with-param>
 				<xsl:with-param name="serviceurl">
-					<xsl:text>http://alpha.libre.fm/</xsl:text>
+					<xsl:text>http://foursquare.com/</xsl:text>
+				</xsl:with-param>
+			</xsl:call-template>
+		</xsl:when>
+		
+		<xsl:when test="substring-after(@href,'google.com/profiles')">
+			<xsl:call-template name="has-account">
+				<xsl:with-param name="accountpage" select='@href'/>
+				<xsl:with-param name="servicepage">
+					<xsl:text>google.com/profiles/</xsl:text>
+				</xsl:with-param>
+				<xsl:with-param name="serviceurl">
+					<xsl:text>http://www.google.com/profiles</xsl:text>
 				</xsl:with-param>
 			</xsl:call-template>
 		</xsl:when>
@@ -453,6 +461,8 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 	</xsl:element>
 </xsl:template>
 
+<!-- XFN person template -->
+
 <xsl:template name="knows">
   <xsl:for-each select="/*//*[contains(concat(' ', @rel, ' '), concat(' ', 'friend', ' '))]|/*//*[contains(concat(' ', @rel, ' '), concat(' ', 'colleague', ' '))]|/*//*[contains(concat(' ', @rel, ' '), concat(' ', 'acquaintance', ' '))]|/*//*[contains(concat(' ', @rel, ' '), concat(' ', 'co-worker', ' '))]|/*//*[contains(concat(' ', @rel, ' '), concat(' ', 'met', ' '))]|/*//*[contains(concat(' ', @rel, ' '), concat(' ', 'muse', ' '))]|/*//*[contains(concat(' ', @rel, ' '), concat(' ', 'contact', ' '))]">
   <xsl:element name='knows'>
@@ -475,6 +485,9 @@ $Description An attempt at enabling Social Network Portability using hCard and X
   </xsl:element>
   </xsl:for-each>
 </xsl:template>
+
+<!-- interests hatom to sioc:post template -->
+
 
 <!-- strip text -->
 <xsl:template match="*|text()"></xsl:template>
