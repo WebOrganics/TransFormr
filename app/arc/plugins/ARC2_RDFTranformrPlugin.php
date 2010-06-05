@@ -37,7 +37,7 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 		$store = ARC2::getStore($this->a);
 		$query = $store->query("CONSTRUCT { ?s ?p ?o } WHERE { GRAPH </" . $type ."/". $url ."> { ?s ?p ?o } }");
 		$parser = ARC2::getRDFParser($this->a);
-		$document = $parser->toRDFXML($query['result']);
+		$document = $parser->toNTriples($query['result']);
 		return $this->to_rdf($url, $document, $output, $this->use_store = 0);
 	}
 	

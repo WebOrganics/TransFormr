@@ -195,9 +195,14 @@
 <xsl:param name="content" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' entry-content ') or contains(concat(' ',normalize-space(@class),' '),' entry-summary ')][1]"/>
 	<xsl:if test="$content">
 		<xsl:element name='sioc:content'>
+		  	<xsl:attribute name="rdf:datatype">
+		     	<xsl:text>http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral</xsl:text>
+			</xsl:attribute>
+			<xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
           		<xsl:for-each select="$content">
-					<xsl:value-of select="."/>
+					<xsl:apply-templates mode="safe-html" />
           		</xsl:for-each>
+			<xsl:text disable-output-escaping="yes">]]&gt;</xsl:text>
 		</xsl:element>
 	</xsl:if>
 </xsl:template>
@@ -242,6 +247,52 @@
 			</xsl:otherwise>
 		</xsl:choose>
 </xsl:template>
+
+<!-- 
+
+ Safe HTML output Re-Used from hAtom2Atom.xsl by Luke Arno, Robert Bachmann and Benjamin Carlyle. 
+ 
+ The list of acceptable elements was taken from Mark Pilgrim's Universal Feed Parser.
+ 
+-->
+
+<xsl:template mode="safe-html" 
+              match="xhtml:a|xhtml:abbr|xhtml:acronym|xhtml:address|xhtml:area|xhtml:b|xhtml:big|xhtml:blockquote|xhtml:br|xhtml:button|
+					 xhtml:caption|xhtml:center|xhtml:cite|xhtml:code|xhtml:col|xhtml:colgroup|xhtml:dd|xhtml:del|xhtml:dfn|xhtml:dir|
+                     xhtml:div|xhtml:dl|xhtml:dt|xhtml:em|xhtml:fieldset|xhtml:font|xhtml:form|xhtml:h1|xhtml:h2|xhtml:h3|xhtml:h4|xhtml:h5|
+                     xhtml:h6|xhtml:hr|xhtml:i|xhtml:img|xhtml:input|xhtml:ins|xhtml:kbd|xhtml:label|xhtml:legend|xhtml:li|xhtml:map|xhtml:menu|
+                     xhtml:ol|xhtml:optgroup|xhtml:option|xhtml:p|xhtml:pre|xhtml:q|xhtml:s|xhtml:samp|xhtml:select|xhtml:small|xhtml:span|
+                     xhtml:strike|xhtml:strong|xhtml:sub|xhtml:sup|xhtml:table|xhtml:tbody|xhtml:td|xhtml:textarea|xhtml:tfoot|xhtml:th|
+                     xhtml:thead|xhtml:tr|xhtml:tt|xhtml:u|xhtml:ul|xhtml:var|a|abbr|acronym|address|area|b|big|blockquote|br|button|caption|
+                     center|cite|code|col|colgroup|dd|del|dfn|dir|div|dl|dt|em|fieldset|font|form|h1|h2|h3|h4|h5|h6|hr|i|img|input|ins|kbd|
+                     label|legend|li|map|menu|ol|optgroup|option|p|pre|q|s|samp|select|small|span|strike|strong|sub|sup|table|tbody|td|
+                     textarea|tfoot|th|thead|tr|tt|u|ul|var|@*">  
+
+	<xsl:copy>
+	<!--
+	 Copy the attributes listed bellow.
+	 The list of acceptable attributes was taken from Mark Pilgrim's Universal Feed Parser.
+	 (xml:lang and xml:base were added)
+	-->
+		<xsl:for-each select="@abbr|@accept|@accept-charset|@accesskey|@action|@align|@alt|@axis|@border|@cellpadding|@cellspacing|
+       						  @char|@charoff|@charset|@checked|@cite|@class|@clear|@cols|@colspan|@color|@compact|@coords|@datetime|
+                              @dir|@disabled|@enctype|@for|@frame|@headers|@height|@href|@hreflang|@hspace|@id|@ismap|@label|@lang|
+                              @longdesc|@maxlength|@media|@method|@multiple|@name|@nohref|@noshade|@nowrap|@prompt|@readonly|@rel|@rev|
+							  @rows|@rowspan|@rules|@scope|@selected|@shape|@size|@span|@src|@start|@summary|@tabindex|@target|@title|@type|
+                              @usemap|@valign|@value|@vspace|@width|@xml:lang|@xml:base">
+			<xsl:copy />
+		</xsl:for-each>
+		<xsl:apply-templates mode="safe-html" />
+	</xsl:copy>
+
+</xsl:template>
+
+<xsl:template mode="safe-html" match="text()">
+	<xsl:copy />
+</xsl:template>
+
+<!-- Inhibt all other elements -->
+<xsl:template mode="safe-html" match="*" />
 
 <!-- strip text -->
 <xsl:template match="text()|*"></xsl:template>
