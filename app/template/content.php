@@ -10,7 +10,7 @@
 	</small> 
 </div>
 <div class="heading">
-<h1><a href="<?php echo $this->path ; ?>" title="Microformat Transformer"><img src="<?php echo $this->path; ?>images/microformat.png" alt="Microformat Transformer"></a></h1>
+<h1><a href="<?php echo $this->path ; ?>" title="Microformat Transformer"><img src="<?php echo $this->path; ?>images/microformat.png" alt="Microformat Transformer"/></a></h1>
 <q class="subtitle" cite="http://www.hp.com/hpinfo/execteam/speeches/fiorina/04openworld.html">The goal is to transform data into information and information into insight.</q>
 </div>
 <form id="form" onsubmit="return Validate(this);" action="" method="get">
