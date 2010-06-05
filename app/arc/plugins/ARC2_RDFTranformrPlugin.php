@@ -7,21 +7,19 @@ class:    ARC2 RDF Tranformr Plugin
 author:   Martin McEvoy
 version:  2010-06-04
 */
-
 ARC2::inc('Class');
 
 class ARC2_RDFTranformrPlugin extends ARC2_Class {
 
-	
 	function __construct($a = '', &$caller) {
 		parent::__construct($a, $caller);
 		$setting = $a['store_settings'];
-		$this->use_store = $setting['use_store'];
-		$this->store_size = $setting['store_size'];
-		$this->reset_tables = $setting['reset_tables'];
-		$this->dump_location = $setting['dump_location'];
-		$this->path = $setting['store_path'];
-		$this->type = $setting['document_type'];
+		$this->use_store = $setting['use_store']; // 0 = false|1 = true 
+		$this->store_size = $setting['store_size']; // in mb eg: 99.00
+		$this->reset_tables = $setting['reset_tables']; // 0 = false|1 = true 
+		$this->dump_location = $setting['dump_location']; // folder to dump data to
+		$this->path = $setting['store_path']; // host url eg http://somehost.com/
+		$this->type = $setting['document_type']; // hfoaf, hcard-rdf ... etc
 	}
   
 	function ARC2_RDFTranformrPlugin($a = '', &$caller) {
@@ -48,7 +46,7 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 	{
 		$store = ARC2::getStore($this->a);
 		$count = $this->count_triples();
-		$offset = round($count/4*3); 
+		$offset = round($count/4*3); // around 25% 
 		$store->createBackup($this->dump_location. substr(md5(uniqid(rand())), 0, 8) .'.xml', 'SELECT * WHERE { GRAPH ?g { ?s ?p ?o . } } OFFSET '.$offset);
 		$store->query("DELETE CONSTRUCT { ?s ?p ?o . } WHERE { GRAPH ?g { ?s ?p ?o . } } OFFSET ".$offset);
 		$store->optimizeTables();
@@ -71,7 +69,8 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 		$store = ARC2::getStore($this->a);
 		if (!$store->isSetUp()) $store->setUp();
 		if ($this->reset_tables == 1) $store->reset();
-		if (rand(1, 25) == 1 && $this->store_size != '' ) {
+		/* around every 50th execute delete/insert check DB size */
+		if (rand(1, 50) == 1 && $this->store_size != '' ) {
 			if ( $this->store_size < $this->get_store_size() ) $this->store_dump();
 		}
 		$store->delete('', $this->path .$this->type .'/' .$url); 
