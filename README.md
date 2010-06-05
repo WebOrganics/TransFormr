@@ -30,7 +30,7 @@ You must have PHP version 5.2.0 or higher with XSLT enabled to run TransFormr.
 * Download the latest version of Transformr from <http://github.com/WebOrganics/TransFormr>.
 * Unpack the entire contents of the file called WebOrganics-TransFormr-XXXXX to your webserver either into its own directory or the the root of your directory (dedicated transformers only). 
 * Take a look at the settings in index.php and change to suit (everything should work fine without altering anything).
-* If you plan to use the ARC2 store, enter your database, user, pass and hosts settings in /app/config.php  and check that the dump folder is writable by the webserver ( chmod 0755 ).
+* If you plan to use the ARC2 store, enter your database, user, pass and hosts settings in /app/config.php  and check that the dump folder is writable by the webserver.
 * Surf your way to wherever you unpacked your file eg: http://example.com/transformr/ .
 * Enter a url, Have fun transforming some microformats ;)
 	
@@ -41,12 +41,11 @@ Main conversions are:
 * Detect => Detect all.
 * hCard => vCard (.vcf), RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.
 * hCalendar => iCal (.ics), RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.
-* hAtom => Atom, RDF.
+* hAtom => Atom.
 * hAtom + rel-enclosure => RSS2.
 * hReview => RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.
 * Geo => KML.
 * hAudio => RSS2.
-* XOXO => OPML.
 
 Experimental conversions are:
 
@@ -97,13 +96,17 @@ The output property is optional and may be omitted from a Query, example
 
 * index.php?q={ "url" : "http://somewebsite.com/", "type" : "hcard" }
 
+You can also use construct queries on the ARC2 store ( if enabled ), this will return a document already extracted to the store, example
+
+* index.php?q={"construct": {"url": "http://somewebsite.com/","type": "hatom-sioc","output": "ntriples"}}  
+
 ### By SPARQL Query.
 
 When you extract RDF using Transformr and the arc2 store is enabled, you can query the Transformr endpoint using sparql, example
 
-* /endpoint/?query=CONSTRUCT { ?s ?p ?o .} WHERE { GRAPH </type/http://somewebpage.com/> { ?s ?p ?o . } }
+* /endpoint/?query=CONSTRUCT { ?s ?p ?o } WHERE { GRAPH </type/http://someurl.com/> { ?s ?p ?o } }
 
-All graphs are relative to the store, "type" is the type of RDF you extracted e.g hfoaf, rdfa ... etc.
+All graphs are relative to the store, "type" is the type of RDF you extracted e.g hfoaf, rdfa ... etc, and the url of the page you extracted.
 
 ## Notes
 

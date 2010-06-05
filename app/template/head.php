@@ -2,11 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb">
 <head>
 <title>Microform.at Transformer</title>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type"/>
 <meta name="keywords" content="hCard Transformer,hAtom Transformer,hCalendar Transformer,Geo Transformer" />
-<meta name="description" content="A Microformats Transformer">
+<meta name="description" content="A Microformats Transformer"/>
 <link type="application/atom+xml" title="TransFormr Updates Feed" href="http://github.com/feeds/WebOrganics/commits/TransFormr/master" rel="alternate" />
 <link type="application/rdf+xml" title="DOAP" href="<?php echo $this->path; ?>doap.rdf" rel="meta" />
-<link rel="icon" href="<?php echo $this->path;?>favicon.ico" type="image/x-icon">
+<link rel="icon" href="<?php echo $this->path;?>favicon.ico" type="image/x-icon"/>
 <link rel="shortcut icon" href="<?php echo $this->path;?>favicon.ico" type="image/x-icon" />
 <link rel="stylesheet"  href="<?php echo $this->path; ?>stylesheets/user.css" media="all" />
 </head>

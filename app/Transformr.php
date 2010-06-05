@@ -68,10 +68,19 @@ class Transformr
 	{
 		$data = json_decode(utf8_encode($data));
 		!$data ? die('query not well formed please validate your query at <a href="http://www.jsonlint.com/">http://www.jsonlint.com/</a>') : $data;
-		$this->url = $data->url;
-		$this->type = $data->type;
-		isset($data->output) ? $this->output = $data->output : '';
-		return $this->transformr_types();
+		if ( isset($data->construct)) {
+			$arc = ARC2::getComponent('RDFTranformrPlugin', $this->a);
+			$this->url = $data->construct->url;
+			$this->type = $data->construct->type;
+			isset($data->construct->output) ? $this->output = $data->construct->output : '';
+			return $arc->construct_url($this->url, $this->type, $this->output);
+		}
+		else {
+			$this->url = $data->url;
+			$this->type = $data->type;
+			isset($data->output) ? $this->output = $data->output : '';
+			return $this->transformr_types();
+		}
 	}
 	
 	private function transformr_types() 
@@ -244,9 +253,6 @@ class Transformr
 		$dom->formatOutput = true;
 		
 		$title = $dom->getElementsByTagName('title')->item(0)->nodeValue;
-		
-		if (!$dom->getElementsByTagName('html')->item(0)->getAttribute('xmlns') && $this->type !='rdfa')
-			$dom->getElementsByTagName('html')->item(0)->setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
 		
 		if (isset($fragment)) 
 		{

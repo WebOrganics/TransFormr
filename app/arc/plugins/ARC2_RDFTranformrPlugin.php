@@ -7,10 +7,12 @@ class:    ARC2 RDF Tranformr Plugin
 author:   Martin McEvoy
 version:  2010-06-04
 */
+
 ARC2::inc('Class');
 
 class ARC2_RDFTranformrPlugin extends ARC2_Class {
 
+	
 	function __construct($a = '', &$caller) {
 		parent::__construct($a, $caller);
 		$setting = $a['store_settings'];
@@ -30,6 +32,15 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 		parent::__init();
 	}
 	
+	function construct_url($url ='', $type, $output) 
+	{
+		$store = ARC2::getStore($this->a);
+		$query = $store->query("CONSTRUCT { ?s ?p ?o } WHERE { GRAPH </" . $type ."/". $url ."> { ?s ?p ?o } }");
+		$parser = ARC2::getRDFParser($this->a);
+		$document = $parser->toRDFXML($query['result']);
+		return $this->to_rdf($url, $document, $output, $this->use_store = 0);
+	}
+	
 	/* plugin code */
 	function count_triples() 
 	{
@@ -41,6 +52,7 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 		}
 		return $count;
 	}
+	
 
 	function store_dump() 
 	{
