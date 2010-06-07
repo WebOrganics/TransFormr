@@ -899,7 +899,7 @@ class ARC2_StoreEndpoint extends ARC2_Store {
 
   function getHTMLFormDoc() {
     return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-      <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+      <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
       ' . $this->getHTMLDocHead() . '
       ' . $this->getHTMLDocBody() . '
       </html>
@@ -918,35 +918,24 @@ class ARC2_StoreEndpoint extends ARC2_Store {
   }
   
   function getHTMLDocTitle() {
-    return $this->v('endpoint_title', 'Microform.at - ARC SPARQL+ Endpoint', $this->a);
+    return $this->v('endpoint_title', 'ARC SPARQL+ Endpoint', $this->a);
   }
   
   function getHTMLDocHeading() {
-    return $this->v('endpoint_heading', 'Microform.at ARC SPARQL+ Endpoint (v' . ARC2::getVersion() . ')', $this->a);
+    return $this->v('endpoint_heading', 'ARC SPARQL+ Endpoint (v' . ARC2::getVersion() . ')', $this->a);
   }
   
   function getHTMLDocCSS() {
     $default = '
       body {
-        font: 14px Verdana, Arial, sans-serif;
+        font-size: 14px;
+      	font-family: Trebuchet MS, Verdana, Geneva, sans-serif;
         background: #fff url(?img=bg_body) top center repeat-x;
         padding: 5px 20px 20px 20px;
         color: #666;
       }
-      h1 { 
-		font-size: 1.6em; 
-		font-weight: normal;
-		color:#679A06;
-		margin:0px;
-		padding:5px 0px 10px; 
-	  }
-      a {
-	    color:#679A06;
-	    text-decoration:none;
-      }
-      a:hover {
-	    background-color:#ECF6D2;
-      }
+      h1 { font-size: 1.6em; font-weight: normal; }
+      a { color: #c00000; }
       th, td {
         border: 1px dotted #eee;
         padding: 2px 4px; 

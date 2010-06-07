@@ -3,15 +3,15 @@ defined( '_Transformr' ) or die( 'Restricted access' );
 
 /* Database configuration for storing RDF triples: */
 
-$host = 'localhost';
-$user = 'username';
-$pwd = 'password';
-$name = 'database name';
+$host = 'localhost'; // database host ( usually localhost )
+$user = 'username'; // database username 
+$pwd = 'password'; // database password
+$name = 'database name'; // database name 
+
+$writekey =''; // store write key for endpoint delete's ( make it hard to guess )
+$storeName ='transformr'; // your store name ( leave as is or personalize )
 
 /* try not to edit below here :) */
-
-!method_exists('ARC2','getStoreEndpoint') ? include_once('arc/ARC2.php') : '';
-
 $ns = array(
 	'rdf' => 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
 	'rdfs' => 'http://www.w3.org/2000/01/rdf-schema#',
@@ -73,4 +73,5 @@ $ns = array(
 	'cert' => 'http://www.w3.org/ns/auth/cert#',
 	'vann' => 'http://purl.org/vocab/vann/' 
 );
+!method_exists('ARC2','getStoreEndpoint') ? include_once(dirname(__FILE__).'/arc/ARC2.php') : '';
 ?>

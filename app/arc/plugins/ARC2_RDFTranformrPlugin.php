@@ -1,11 +1,11 @@
 <?php
 /*
-homepage: http://arc.semsol.org/
-license:  http://arc.semsol.org/license
-
 class:    ARC2 RDF Tranformr Plugin
 author:   Martin McEvoy
 version:  2010-06-04
+
+homepage: http://arc.semsol.org/
+license:  http://arc.semsol.org/license
 */
 
 ARC2::inc('Class');
@@ -32,10 +32,11 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 		parent::__init();
 	}
 	
-	function construct_url($url ='', $type, $output) 
+	function construct_url($url ='', $type='', $output) 
 	{
 		$store = ARC2::getStore($this->a);
-		$query = $store->query("CONSTRUCT { ?s ?p ?o } WHERE { GRAPH </" . $type ."/". $url ."> { ?s ?p ?o } }");
+		if ($type =='') $query = $store->query("CONSTRUCT { ?s ?p ?o } WHERE { GRAPH ?g { ?s ?p ?o } FILTER(REGEX(?g, \"". $url ."\")) }");
+		else $query = $store->query("CONSTRUCT { ?s ?p ?o } WHERE { GRAPH </" . $type ."/". $url ."> { ?s ?p ?o } }");
 		$parser = ARC2::getRDFParser($this->a);
 		$document = $parser->toNTriples($query['result']);
 		return $this->to_rdf($url, $document, $output, $this->use_store = 0);

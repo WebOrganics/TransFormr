@@ -1,8 +1,7 @@
 <?php
 /*
-TransFormr Version: 2.0, updated Thursday, 3rd June 2010
+TransFormr Version: 2.1, updated Monday, 7th June 2010
 Contact: Martin McEvoy info@weborganics.co.uk
-
 */
 class Transformr
 {
@@ -45,10 +44,10 @@ class Transformr
 		$this->type = isset($_GET['type']) ? $_GET['type'] : '';
 		$this->output = isset($_GET['output']) ? $_GET['output'] : 'rdf';
 		$this->query = isset($_GET['q']) ? stripslashes($_GET["q"]) : '';
-		$this->template = 'app/template/';
-		$this->xsl = 'app/xsl/';
-		$this->version = '2.0';
-		$this->updated = array('Thursday, 3rd June 2010', '2010-06-03T01:45:28+01:00');
+		$this->template = dirname(__FILE__).'/template/';
+		$this->xsl = dirname(__FILE__).'/xsl/';
+		$this->version = '2.1';
+		$this->updated = array('Monday, 7th June 2010', '2010-06-07T01:45:28+01:00');
 		$this->check_php_version('5.2.0', 'Transformr'); 
 		$this->required = array('arc/ARC2', 'extension/class.hqr', 'extension/class.encoded', 'config' => 'config');
 		ini_set('display_errors',  0 );
@@ -60,7 +59,8 @@ class Transformr
 		define('_Transformr', true);
 		if ($settings !='') foreach ( $settings as $setting => $value ) $this->$setting = $value;
 		$this->a = $this->config_ns($settings = '');
-		foreach ( $this->required as $require ) require_once($require.'.php');
+		foreach ( $this->required as $require ) require_once(dirname(__FILE__).'/'.$require.'.php');
+		$this->ARC2 = ARC2::getComponent('RDFTranformrPlugin', $this->a);
 		return ( $this->query !='' ? $this->json_query($this->query) : $this->transformr_types() );
 	}
 	
@@ -69,11 +69,10 @@ class Transformr
 		$data = json_decode(utf8_encode($data));
 		!$data ? die('query not well formed please validate your query at <a href="http://www.jsonlint.com/">http://www.jsonlint.com/</a>') : $data;
 		if ( isset($data->construct)) {
-			$arc = ARC2::getComponent('RDFTranformrPlugin', $this->a);
 			$this->url = $data->construct->url;
 			$this->type = $data->construct->type;
 			isset($data->construct->output) ? $this->output = $data->construct->output : '';
-			return $arc->construct_url($this->url, $this->type, $this->output);
+			return $this->ARC2->construct_url($this->url, $this->type, $this->output);
 		}
 		else {
 			$this->url = $data->url;
@@ -85,8 +84,6 @@ class Transformr
 	
 	private function transformr_types() 
 	{	
-		$arc = ARC2::getComponent('RDFTranformrPlugin', $this->a);
-	
 		if ($this->type) 
 		{ 
 			header("Cache-Control: no-cache, must-revalidate");
@@ -105,7 +102,7 @@ class Transformr
 		case 'hcard-rdf':
 			$xsl_filename = $this->xsl ."hcard2rdf.xsl";
 			$document = $this->transform_xsl($this->url, $xsl_filename);
-			return $arc->to_rdf($this->url, $document, $this->output);
+			return $this->ARC2->to_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'hatom':
@@ -123,7 +120,7 @@ class Transformr
 		case 'hatom-sioc':
 			$xsl_filename = $this->xsl ."hAtom2SIOC.xsl";
 			$document = $this->transform_xsl($this->url, $xsl_filename);
-			return $arc->to_rdf($this->url, $document, $this->output);
+			return $this->ARC2->to_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'geo':
@@ -131,7 +128,7 @@ class Transformr
 			header("Content-type: application/vnd.google-earth.kml+xml");
 			header('Content-Disposition: attachment; filename="'.$file.'"');
 			$xsl_filename = $this->xsl ."xhtml2kml.xsl";
-			return $this->transform_xsl($this->url, $xsl_filename);
+			return $this->ARC2->transform_xsl($this->url, $xsl_filename);
 		break;
 
 		case 'hcalendar':
@@ -139,31 +136,31 @@ class Transformr
 			header("Content-type: text/x-vcalendar");
 			header('Content-Disposition: attachment; filename="'.$file.'"');
 			$xsl_filename = $this->xsl ."xhtml2vcal.xsl";
-			return $this->transform_xsl($this->url, $xsl_filename);
+			return $this->ARC2->transform_xsl($this->url, $xsl_filename);
 		break;
 
 		case 'hcalendar-rdf':
 			$xsl_filename = $this->xsl ."glean-hcal.xsl";
 			$document = $this->transform_xsl($this->url, $xsl_filename);
-			return $arc->to_rdf($this->url, $document, $this->output);
+			return $this->ARC2->to_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'hreview':
 			$xsl_filename = $this->xsl ."hreview2rdfxml.xsl";
 			$document = $this->transform_xsl($this->url, $xsl_filename);
-			return $arc->to_rdf($this->url, $document, $this->output);
+			return $this->ARC2->to_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'haudio-rss':
 			header("Content-type: application/xml");
 			$xsl_filename = $this->xsl ."hAudioRSS2.xsl";
-			return $this->transform_xsl($this->url, $xsl_filename);
+			return $this->ARC2->transform_xsl($this->url, $xsl_filename);
 		break;
 
 		case 'mo-haudio':
 			$xsl_filename = $this->xsl ."Mo-hAudio.xsl";
 			$document = $this->transform_xsl($this->url, $xsl_filename);
-			return $arc->to_rdf($this->url, $document, $this->output);
+			return $this->ARC2->to_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'haudio-xspf':
@@ -177,25 +174,25 @@ class Transformr
 		case 'hfoaf':
 			$xsl_filename = $this->xsl ."hFoaF.xsl";
 			$document = $this->transform_xsl($this->url, $xsl_filename);
-			return $arc->to_rdf($this->url, $document, $this->output);
+			return $this->ARC2->to_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'ogp-rdf':
 			$xsl_filename = $this->xsl ."OGPGRDDL.xsl";
 			$document = $this->transform_xsl($this->url, $xsl_filename);
-			return $arc->to_rdf($this->url, $document, $this->output);
+			return $this->ARC2->to_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'erdf':
 			$xsl_filename = $this->xsl ."extract-rdf.xsl";
 			$document = $this->transform_xsl($this->url, $xsl_filename);
-			return $arc->to_rdf($this->url, $document, $this->output);
+			return $this->ARC2->to_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'rdfa':
 			$xsl_filename = $this->xsl ."RDFa2RDFXML.xsl";
 			$document = $this->transform_xsl($this->url, $xsl_filename);
-			return $arc->to_rdf($this->url, $document, $this->output);
+			return $this->ARC2->to_rdf($this->url, $document, $this->output);
 		break;
 
 		case 'detect':
@@ -252,6 +249,9 @@ class Transformr
 		$dom->loadXML($this->tidy_html($html, $url, $this->tidy_option));
 		$dom->formatOutput = true;
 		
+		if (!$dom->getElementsByTagName('html')->item(0)->getAttribute('xmlns') && $this->type !='rdfa')
+			$dom->getElementsByTagName('html')->item(0)->setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+				
 		$title = $dom->getElementsByTagName('title')->item(0)->nodeValue;
 		
 		if (isset($fragment)) 
@@ -294,7 +294,7 @@ class Transformr
 	{
 		$hqr = new hQR;
 		include $this->template ."head.php";
-		include $this->template ."content-qr.php";
+		include $this->template ."qrcode.php";
 	}
 	
 	protected function tidy_html($html, $url, $tidy_option)
@@ -343,7 +343,7 @@ class Transformr
 	protected function config_ns() 
 	{
 	
-	require_once( $this->required["config"] .'.php' );
+	require_once(dirname(__FILE__).'/'. $this->required["config"] .'.php' );
 	
 	$params = array (
 		'use_store' => $this->use_store,
@@ -370,12 +370,7 @@ class Transformr
 		'db_name' => $name,
 
 		/* ARC2 store settings */
-		'store_name' => 'transformr',
-
-		/* SPARQL endpoint settings */
-		'endpoint_features' => array(
-			'dump', 'insert', 'delete'
-		)
+		'store_name' => $storeName
 	  );
     }
 	

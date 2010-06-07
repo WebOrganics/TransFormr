@@ -1,4 +1,4 @@
-# TransFormr version 2.0
+# TransFormr version 2.1
 
 TransFormr is a simple toolkit that uses PHP and XSLT for extracting and transforming microformats <http://microformats.org/>.
 
@@ -62,9 +62,13 @@ Other non microformat conversions
 
 ## Transformr Conversion urls
 
-### Types are :
+### RDF output Options: 
 
-detect, hcard, hcard-rdf, hatom, hatom-rss2, geo, hcalendar, hcalendar-rdf, hreview, xoxo-opml, haudio-rss, mo-haudio, haudio-xspf, hfoaf, mrss, ogp-rdf, erdf, rdfa, hcard2qrcode and hatom-sioc.
+	ntriples, rdfa, turtle, rdfjson, and html (microdata)
+	
+### Transformation Types are :
+
+detect, hcard, hcard-rdf, hatom, hatom-rss2, geo, hcalendar, hcalendar-rdf, hreview, haudio-rss, mo-haudio, haudio-xspf, hfoaf, mrss, ogp-rdf, erdf, rdfa, hcard2qrcode and hatom-sioc.
 
 #### Non RDF conversions,
 
@@ -110,6 +114,7 @@ All graphs are relative to the store, "type" is the type of RDF you extracted e.
 
 ## Notes
 
+* 2.1 Endpoint has new template using ARC2_EndpointTemplatPlugin, and DELETE FROM <...> functionality. 
 * 2.0 adds ARC2 storage and hAtom2SIOC transformation. 
 * 1.3 fixes @prefix and @vocab support for RDFa plus one or two minor bugs.
 * 1.2.1 Adds @prefix and @vocab support to RDFa2RDFXML.xsl.
