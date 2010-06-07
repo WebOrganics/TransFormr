@@ -128,9 +128,8 @@ class ARC2_StoreTemplatePlugin extends ARC2_StoreEndpoint {
           <dd>
             <label for="output"><select id="output" name="output">
 			<optgroup label="Options">
-			  <option value="htmltab" ' . ($sel == 'html' ?  $sel_code : '') . '>HTML Table</option>
-              <option value="" ' . ($sel == '' ?  $sel_code : '') . '>Sparql Results</option>
-              <option value="xml" ' . ($sel == 'xml' ? $sel_code : '') . '>XML</option>
+			  <option value="htmltab" ' . (!$sel ?  $sel_code : '') . '>HTML Table</option>
+              <option value="xml" ' . ($sel == 'xml' ? $sel_code : '') . '>Sparql Results</option>
               <option value="json" ' . ($sel == 'json' ? $sel_code : '') . '>JSON</option>
               <option value="plain" ' . ($sel == 'plain' ? $sel_code : '') . '>Plain</option>
               <option value="php_ser" ' . ($sel == 'php_ser' ? $sel_code : '') . '>Serialized PHP</option>
