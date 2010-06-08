@@ -71,7 +71,8 @@ $ns = array(
 	'geoname' => 'http://www.geonames.org/ontology/',
 	'rsa' => 'http://www.w3.org/ns/auth/rsa#',
 	'cert' => 'http://www.w3.org/ns/auth/cert#',
-	'vann' => 'http://purl.org/vocab/vann/' 
+	'vann' => 'http://purl.org/vocab/vann/',
+	'resume' => 'http://rdfs.org/resume-rdf/#' 
 );
 !method_exists('ARC2','getStoreEndpoint') ? include_once(dirname(__FILE__).'/arc/ARC2.php') : '';
 ?>

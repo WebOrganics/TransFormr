@@ -11,7 +11,7 @@
     version="1.0">
 
 <!-- 
-$Id: hFoaf.xsl,$Version 0.5 *stable* Friday November 6th 2009 15:15pm martin McEvoy.
+$Id: hFoaf.xsl,$Version 0.6 *stable* Wednesday June 9th 2010 00:47am  $author: martin McEvoy.
 $Description An attempt at enabling Social Network Portability using hCard and XFN a GRDDL profile Inspired by dan connolly's grokXFN.xsl. http://www.w3.org/2003/12/rdf-in-xhtml-xslts/grokXFN.xsl 
 -->
 
@@ -24,6 +24,8 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 <xsl:param name="vcard" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' vcard ') and descendant::*[contains(concat(' ',normalize-space(@rel),' '),' me ')]]"/>
 
 <xsl:param name="rel-me" select="descendant::*[contains(concat(' ',normalize-space(@rel),' '),' me ')]"/>
+
+<xsl:param name="url-rel-me" select="descendant::*[contains(concat(' ',normalize-space(@rel),' '),' me ') and contains(concat(' ',normalize-space(@class),' '),' url ')]"/>
 
 <xsl:param name="title" select="descendant::*[name() = 'title']"/>
 
@@ -128,12 +130,12 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 	</xsl:if>
 </xsl:template>
 
-<!-- homepage => @rel="me" -->
+<!-- homepage => @class="url" and @rel="me" -->
 <xsl:template name="homepage">
-	<xsl:if test="$rel-me">
+	<xsl:if test="$url-rel-me">
 		<xsl:element name='homepage'>
 			<xsl:attribute name='rdf:resource'>
-	  			<xsl:value-of select="$rel-me/@href"/>
+	  			<xsl:value-of select="$url-rel-me/@href"/>
 			</xsl:attribute>
 		</xsl:element>
 	</xsl:if>
