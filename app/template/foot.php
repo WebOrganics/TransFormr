@@ -43,7 +43,6 @@ function urlReset()
 function hideThis()
 {
   document.getElementById('error').setAttribute('class', 'hidden');
-  location.href='<?php echo $this->path; ?>';
 }	
 
 function observeEvents() 

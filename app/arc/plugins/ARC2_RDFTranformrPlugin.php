@@ -32,17 +32,18 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 		parent::__init();
 	}
 	
+	/*  */
+	
 	function construct_url($url ='', $type='', $output) 
 	{
 		$store = ARC2::getStore($this->a);
 		if ($type =='') $query = $store->query("CONSTRUCT { ?s ?p ?o } WHERE { GRAPH ?g { ?s ?p ?o } FILTER(REGEX(?g, \"". $url ."\")) }");
 		else $query = $store->query("CONSTRUCT { ?s ?p ?o } WHERE { GRAPH </" . $type ."/". $url ."> { ?s ?p ?o } }");
 		$parser = ARC2::getRDFParser($this->a);
-		$document = $parser->toNTriples($query['result']);
+		$document = $parser->toTurtle($query['result']);
 		return $this->to_rdf($url, $document, $output, $this->use_store = 0);
 	}
 	
-	/* plugin code */
 	function count_triples() 
 	{
 		$store = ARC2::getStore($this->a);
@@ -59,7 +60,7 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 	{
 		$store = ARC2::getStore($this->a);
 		$count = $this->count_triples();
-		$offset = round($count/4*3); // around 25% 
+		$offset = round($count/4*3);
 		$store->createBackup($this->dump_location. substr(md5(uniqid(rand())), 0, 8) .'.xml', 'SELECT * WHERE { GRAPH ?g { ?s ?p ?o . } } OFFSET '.$offset);
 		$store->query("DELETE CONSTRUCT { ?s ?p ?o . } WHERE { GRAPH ?g { ?s ?p ?o . } } OFFSET ".$offset);
 		$store->optimizeTables();
@@ -82,7 +83,6 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 		$store = ARC2::getStore($this->a);
 		if (!$store->isSetUp()) $store->setUp();
 		if ($this->reset_tables == 1) $store->reset();
-		/* around every 50th execute delete/insert check DB size */
 		if (rand(1, 50) == 1 && $this->store_size != '' ) {
 			if ( $this->store_size < $this->get_store_size() ) $this->store_dump();
 		}
@@ -101,8 +101,7 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 		$parser = ARC2::getRDFParser($this->a);
 		$parser->parse($url, $document);
 		$triples = $parser->getTriples();
-	
-		if ( $this->use_store == 1 ) $this->store_rdf($url, $parser->toNTriples($triples)); 	
+		if ( $this->use_store == 1 ) $this->store_rdf($url, $parser->toTurtle($triples));
 		
 		switch ($output) 
 		{

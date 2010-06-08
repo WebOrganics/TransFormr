@@ -12,53 +12,29 @@ class Transformr
 	var $store_size = '';
 	var $dump_location = '';
 	
- 	function set_path()
-	{
-		$this->script_dir = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
-		$this->base_dir = realpath(dirname(__FILE__)); 
-		$this->local_path = substr( $this->script_dir, strlen($this->base_dir));
-		$this->install_path = $this->local_path
-			? substr( dirname($_SERVER['SCRIPT_NAME']), 0, -strlen($this->local_path) )
-			: dirname($_SERVER['SCRIPT_NAME']);
-		if ($this->install_path == "/" || $this->install_path == "\\") 
-			return "http://".$_SERVER['HTTP_HOST']."/";
-		else 
-			return "http://".$_SERVER['HTTP_HOST'].$this->install_path."/";
-	}
-	
-	private function check_php_version($version ='', $name ='') 
-	{
-		$this->php_min_version = $version;
-		$this->server_php_version = phpversion();
-		$php_self = $this->server_php_version;
-		$min_php = $this->php_min_version;
-		$php_version = version_compare($this->server_php_version, $this->php_min_version, '>=');
-		$upgrade_php = '<p>Sorry PHP Upgrade needed, <em>'.$name.'</em> requires PHP '.$min_php.' or newer. Your current PHP version is '.$php_self.'</p>';
-		if (!$php_version) die("$upgrade_php");
-	}
-	
 	function __construct() 
 	{
+		define('_Transformr', true);
+		ini_set('display_errors',  0 );
 		$this->path = $this->set_path();
+		$this->version = '2.1';
+		$this->updated = array('Monday, 7th June 2010', '2010-06-07T01:45:28+01:00');
+		$this->check_php_version('5.2.0', 'Transformr'); 
+		
 		$this->url = isset($_GET['url']) ? str_replace('%23','#', trim($_GET['url'])) : '' ;
 		$this->type = isset($_GET['type']) ? $_GET['type'] : '';
 		$this->output = isset($_GET['output']) ? $_GET['output'] : 'rdf';
 		$this->query = isset($_GET['q']) ? stripslashes($_GET["q"]) : '';
 		$this->template = dirname(__FILE__).'/template/';
 		$this->xsl = dirname(__FILE__).'/xsl/';
-		$this->version = '2.1';
-		$this->updated = array('Monday, 7th June 2010', '2010-06-07T01:45:28+01:00');
-		$this->check_php_version('5.2.0', 'Transformr'); 
-		$this->required = array('arc/ARC2', 'extension/class.hqr', 'extension/class.encoded', 'config' => 'config');
-		ini_set('display_errors',  0 );
+		$this->required = array('arc/ARC2', 'extension/class.hqr', 'extension/class.encoded');
 		header("X-Application: Transformr ".$this->version );
 	}
 	
 	public function transform($settings = '') 
 	{
-		define('_Transformr', true);
 		if ($settings !='') foreach ( $settings as $setting => $value ) $this->$setting = $value;
-		$this->a = $this->config_ns($settings = '');
+		$this->a = $this->config_ns();
 		foreach ( $this->required as $require ) require_once(dirname(__FILE__).'/'.$require.'.php');
 		$this->ARC2 = ARC2::getComponent('RDFTranformrPlugin', $this->a);
 		return ( $this->query !='' ? $this->json_query($this->query) : $this->transformr_types() );
@@ -249,9 +225,6 @@ class Transformr
 		$dom->loadXML($this->tidy_html($html, $url, $this->tidy_option));
 		$dom->formatOutput = true;
 		
-		if (!$dom->getElementsByTagName('html')->item(0)->getAttribute('xmlns') && $this->type !='rdfa')
-			$dom->getElementsByTagName('html')->item(0)->setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
-				
 		$title = $dom->getElementsByTagName('title')->item(0)->nodeValue;
 		
 		if (isset($fragment)) 
@@ -274,7 +247,11 @@ class Transformr
 		$xslt->setParameter('','version', $this->version);
 		if ( $this->use_store == 1 ) $xslt->setParameter('','endpoint-link', $this->path. 'endpoint/?');
 		$xslt->importStyleSheet(DomDocument::load($xsl_filename));
-			
+		
+		if (!DomDocument::loadXML($dom->saveXML()))	
+		{
+			$dom = DomDocument::loadXML($this->tidy_html($html, $url, $this->tidy_option, 'output-xml')); // reload as plain vanilla xml
+		}
 		return $xslt->transformToXML(DomDocument::loadXML($dom->saveXML()));
 	}
 	elseif ($url == 'referer' && getenv("HTTP_REFERER") != '') {
@@ -297,8 +274,10 @@ class Transformr
 		include $this->template ."qrcode.php";
 	}
 	
-	protected function tidy_html($html, $url, $tidy_option)
+	protected function tidy_html($html, $url, $tidy_option, $output ='')
 	{	
+		$output = $output == '' ? ($this->type !='rdfa' ? 'output-xhtml' : 'output-xml') : $output ;
+		
 		if ($tidy_option == 'php' && !method_exists('tidy','cleanRepair') ) 
 		{
 			return $this->error('noPHPTidy');
@@ -308,7 +287,7 @@ class Transformr
 			$config = array(
 				'doctype'                     => 'strict',
 				'logical-emphasis'            => true,
-				'output-xml'                  => true,
+				"$output"                     => true,
 				'wrap'                        => 200,
 				'clean'						  =>true
 			);
@@ -343,7 +322,7 @@ class Transformr
 	protected function config_ns() 
 	{
 	
-	require_once(dirname(__FILE__).'/'. $this->required["config"] .'.php' );
+	require_once(dirname(__FILE__).'/config.php' );
 	
 	$params = array (
 		'use_store' => $this->use_store,
@@ -422,35 +401,41 @@ class Transformr
 		return $result;
 	}
 	
+ 	private function set_path()
+	{
+		$this->script_dir = realpath(dirname($_SERVER['SCRIPT_FILENAME']));
+		$this->base_dir = realpath(dirname(__FILE__)); 
+		$this->local_path = substr( $this->script_dir, strlen($this->base_dir));
+		$this->install_path = $this->local_path
+			? substr( dirname($_SERVER['SCRIPT_NAME']), 0, -strlen($this->local_path) )
+			: dirname($_SERVER['SCRIPT_NAME']);
+		if ($this->install_path == "/" || $this->install_path == "\\") 
+			return "http://".$_SERVER['HTTP_HOST']."/";
+		else 
+			return "http://".$_SERVER['HTTP_HOST'].$this->install_path."/";
+	}
+	
+	private function check_php_version($version ='', $name ='') 
+	{
+		$this->php_min_version = $version;
+		$this->server_php_version = phpversion();
+		$php_self = $this->server_php_version;
+		$min_php = $this->php_min_version;
+		$php_version = version_compare($this->server_php_version, $this->php_min_version, '>=');
+		$upgrade_php = '<p>Sorry PHP Upgrade needed, <em>'.$name.'</em> requires PHP '.$min_php.' or newer. Your current PHP version is '.$php_self.'</p>';
+		if (!$php_version) die("$upgrade_php");
+	}
+	
 	private function error($error = '', $result ='') 
 	{
-		switch($error) 
-		{
-			case 'invalidDoc':
-				$error = "Sorry Unable to load document ". $this->url;
-			break;
-			
-			case 'noURL':
-				$error = "Sorry URL: ". $this->url ." is Invalid";
-			break;
-			
-			case 'invalidID':
-				$error = "Sorry ID from : ". $this->url." does not exist";
-			break;
-			
-			case 'noPHPTidy':
-				$error = "Sorry PHP Tidy function does not exist, try tidy_option = 'online' ";
-			break;
-			
-			case 'noW3CTidy':
-				$error = "Sorry online W3C tidy service unavailable at this time";
-			break;
-			
-			case 'tidyFail':
-				$error = "Sorry failed to tidy document ". $this->url." using php tidy";
-			break;
-			
-		}
+	// headers already sent, use javascript to replace location ##hack
+	?>
+	<script language="javascript">
+	<!-- 
+		location.replace("?error=<?php echo $error ?>&url=<?php echo $this->url ?>");
+	-->
+	</script>
+	<?php
 		include $this->template ."head.php";
 		include $this->template ."content.php";
 		include $this->template ."foot.php";
