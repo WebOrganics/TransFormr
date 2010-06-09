@@ -42,17 +42,17 @@ class ARC2_StoreTemplatePlugin extends ARC2_StoreEndpoint {
   }
 
   function getHTMLDocHead() {
-    return '<meta name="keywords" content="hCard Transformer,hAtom Transformer,hCalendar Transformer,Geo Transformer" />
+    return '<head>
+		<meta name="keywords" content="hCard Transformer,hAtom Transformer,hCalendar Transformer,Geo Transformer" />
 		<meta name="description" content="A Microformats Transformer"/>
 		<link type="application/atom+xml" title="TransFormr Updates Feed" href="http://github.com/feeds/WebOrganics/commits/TransFormr/master" rel="alternate" />
 		<link type="application/rdf+xml" title="DOAP" href="../doap.rdf" rel="meta" />
 		<link rel="icon" href="../favicon.ico" type="image/x-icon"/>
 		<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon" />
-		<head>
-    		<title>' . $this->getHTMLDocTitle() . '</title>
-    		<style type="text/css">
+    	<title>' . $this->getHTMLDocTitle() . '</title>
+    	<style type="text/css">
         ' . $this->getHTMLDocCSS() . '
-    		</style>
+    	</style>
     	</head>
     ';
   }
@@ -109,8 +109,8 @@ class ARC2_StoreTemplatePlugin extends ARC2_StoreEndpoint {
 	   <label for="query"><textarea id="query" name="query" rows="20" cols="80">' . $q . '</textarea></label>
         ' . $this->getHTMLDocOptions() . '
         <div class="form-buttons">
-          <label for="submit"><input name="submit" type="submit" value="Send Query" /></label>
-          <label for="reset"><input name="reset" type="reset" value="Reset" /></label>
+          <label for="submit"><input id="submit" name="submit" type="submit" value="Send Query" /></label>
+          <label for="reset"><input id="reset" name="reset" type="reset" value="Reset" /></label>
         </div>
 		</fieldset>
       </form>
@@ -154,7 +154,7 @@ class ARC2_StoreTemplatePlugin extends ARC2_StoreEndpoint {
           
           <dt>Show results inline: </dt>
           <dd>
-            <label for="show_inline"><input type="checkbox" name="show_inline" value="1" ' . ($this->p('show_inline') ? ' checked="checked"' : '') . ' /></label>
+            <label for="show_inline"><input id="show_inline" type="checkbox" name="show_inline" value="1" ' . ($this->p('show_inline') ? ' checked="checked"' : '') . ' /></label>
           </dd>
           
         </dl>
