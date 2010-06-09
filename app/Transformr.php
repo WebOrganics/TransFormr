@@ -220,6 +220,10 @@ class Transformr
 		
 		$html = $this->get_file_contents($url);
 		
+		// insert fullstop so tidy does not clean empty span @class="value-title"
+		$html = trim(preg_replace('/<\s*span class=\"value-title\"(.*?)>(.*?)<\/\s*?span[^>\w]*?>/', 
+			'<span class="value-title"$1>.</span>', $html));
+			
 		$dom = new DOMDocument('1.0');
 		$dom->preserveWhiteSpace = true;
 		$dom->loadXML($this->tidy_html($html, $url, $this->tidy_option));
