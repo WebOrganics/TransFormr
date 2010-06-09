@@ -179,7 +179,7 @@
 <xsl:param name="url" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' url ')][1]"/>
 	<xsl:if test="$name">
 		<xsl:element name='sioc:has_creator'>
-			<xsl:element name='foaf:Person'>
+			<xsl:element name='sioc:UserAccount'>
 				<xsl:element name="foaf:name">
 					<xsl:value-of select="normalize-space($name)"/>
 				</xsl:element>
