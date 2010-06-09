@@ -21,11 +21,11 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 		   media-type="application/rdf+xml"/>
 
 <!-- find first occurrence of a hcard with rel="me" there should only be one-->
-<xsl:param name="vcard" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' vcard ') and descendant::*[contains(concat(' ',normalize-space(@rel),' '),' me ')]]"/>
+<xsl:param name="vcard" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' vcard ') and descendant::*[contains(concat(' ',normalize-space(@rel),' '),' me ')]] | descendant::*[contains(concat(' ',normalize-space(@class),' '),' vcard ') and descendant::*[contains(concat(' ',normalize-space(@class),' '),' uid ')]]"/>
 
 <xsl:param name="rel-me" select="descendant::*[contains(concat(' ',normalize-space(@rel),' '),' me ')]"/>
 
-<xsl:param name="url-rel-me" select="descendant::*[contains(concat(' ',normalize-space(@rel),' '),' me ') and contains(concat(' ',normalize-space(@class),' '),' url ')]"/>
+<xsl:param name="url-rel-me" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' url ') and contains(concat(' ',normalize-space(@rel),' '),' me ')]"/>
 
 <xsl:param name="title" select="descendant::*[name() = 'title']"/>
 
@@ -71,6 +71,7 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 			<xsl:call-template name="mailbox"/>
 			<xsl:call-template name="sha1"/>
 			<xsl:call-template name="photo"/>
+			<xsl:call-template name="interests"/>
 			<xsl:call-template name="geo"/>
 			<xsl:call-template name="social"/>
 			<xsl:call-template name="friends"/>
@@ -191,13 +192,27 @@ $Description An attempt at enabling Social Network Portability using hCard and X
   </xsl:if>
 </xsl:template>
 
+<!-- interests @rel tag. thank you @Sarven -->
+<xsl:template name="interests">
+<xsl:param name="tag" select="descendant::*[contains(concat(' ',normalize-space(@rel),' '),' tag ')]"/>
+<xsl:if test="$tag">
+	<xsl:for-each select="$tag">
+		<xsl:element name='interest'>
+			<xsl:attribute name='rdf:resource'>
+				<xsl:value-of select="@href"/>
+			</xsl:attribute>
+		</xsl:element>
+	</xsl:for-each>
+</xsl:if>
+</xsl:template>
+
 <!-- geo:Point =>  @class="geo"  geo:lat @class="latitude"/@title  geo:long @class="longitude"/@title -->
 <xsl:template name="geo">
 <xsl:param name="location" select="//*[contains(concat(' ',normalize-space(@class),' '),' geo ')]"/>
 <xsl:param name="long" select="//*[contains(concat(' ',normalize-space(@class),' '),' longitude ')]"/>
 <xsl:param name="lat" select="//*[contains(concat(' ',normalize-space(@class),' '),' latitude ')]"/>
 	<xsl:if test="$location">
-	<xsl:for-each select="$location">
+	<xsl:for-each select="$location[position() &lt;= $pos]">
   		<xsl:element name='based_near'>
   		<xsl:element name='geo:Point'>
 			<rdf:type rdf:resource="http://www.w3.org/2000/10/swap/pim/contact#ContactLocation"/>
@@ -306,7 +321,7 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 
 <xsl:template name="social">
 <xsl:param name="rel-me"/>
-  <xsl:for-each select="/*//*[contains(concat(' ', @rel, ' '), concat(' ', 'me', ' '))] | /*//*[contains(concat(' ', @class, ' '), concat(' ', 'url', ' '))]">
+  <xsl:for-each select="/*//*[contains(concat(' ', @rel, ' '), concat(' ', 'me', ' '))][position() &lt;= $pos]">
   	<xsl:choose>
 		<xsl:when test="substring-after(@href,'twitter.com')">
 			<xsl:call-template name="has-account">
@@ -487,9 +502,6 @@ $Description An attempt at enabling Social Network Portability using hCard and X
   </xsl:element>
   </xsl:for-each>
 </xsl:template>
-
-<!-- interests hatom to sioc:post template -->
-
 
 <!-- strip text -->
 <xsl:template match="*|text()"></xsl:template>
