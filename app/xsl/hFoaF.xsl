@@ -31,16 +31,9 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 
 <xsl:param name="base-uri" select="''"/>
 
-<!-- Get id from hcard else me  -->
+<!-- generate id  -->
 <xsl:param name="id">
-<xsl:choose>
-	<xsl:when test="$vcard/@id" >
-	  <xsl:value-of select="$vcard/@id" />
-	</xsl:when>
-	<xsl:otherwise>
-		<xsl:text>me</xsl:text>
-	</xsl:otherwise>
-</xsl:choose>
+	<xsl:value-of select="generate-id()"/>
 </xsl:param>
 
 <!-- Limit output to first vcard  -->
