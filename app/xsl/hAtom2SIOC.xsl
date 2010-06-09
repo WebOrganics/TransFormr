@@ -43,7 +43,7 @@
 
 <rdf:RDF xml:base="{$base-uri}">
 <xsl:if test="$entry">
-	<xsl:element name='foaf:Document'>
+	<xsl:element name='rdf:Description'>
 		<xsl:attribute name="rdf:about">
 			<xsl:value-of select="$base-uri" />
 		</xsl:attribute>
@@ -54,7 +54,7 @@
 			<xsl:value-of select="$meta"/>
 		</xsl:element>
 		<xsl:for-each select='$entry'>
-			<xsl:element name='foaf:topic'>
+			<xsl:element name='sioc:has_container'>
 				<xsl:choose>
 					<xsl:when test="@id">
 						<xsl:attribute name="rdf:resource">

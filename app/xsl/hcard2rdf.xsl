@@ -673,7 +673,7 @@ http://www.w3.org/2006/vcard/ns# ontology.</dc:description>
 
       <xsl:if test="$f != 0">
 	<xsl:element name="v:{$propCC}">
-	  <xsl:value-of select="."/>
+	  <xsl:value-of select="normalize-space(.)"/>
 	</xsl:element>
       </xsl:if>
     </xsl:when>
@@ -693,7 +693,7 @@ http://www.w3.org/2006/vcard/ns# ontology.</dc:description>
 
       <xsl:if test="$f != 0">
 	<xsl:element name="v:{$prop}">
-	  <xsl:value-of select="."/>
+	  <xsl:value-of select="normalize-space(.)"/>
 	</xsl:element>
       </xsl:if>
     </xsl:otherwise>
@@ -783,7 +783,7 @@ http://www.w3.org/2006/vcard/ns# ontology.</dc:description>
 	<xsl:value-of select="translate($first, $lcLetters, $ucLetters)"/>
       </xsl:when>
       <xsl:otherwise>
-	<xsl:value-of select="$first"/>
+	<xsl:value-of select="normalize-space($first)"/>
       </xsl:otherwise>
     </xsl:choose>
 
@@ -796,7 +796,7 @@ http://www.w3.org/2006/vcard/ns# ontology.</dc:description>
 	</xsl:call-template>
       </xsl:when>
       <xsl:otherwise>
-	<xsl:value-of select="$rest"/>
+	<xsl:value-of select="normalize-space($rest)"/>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:if>
