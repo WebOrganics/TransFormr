@@ -251,6 +251,7 @@ class Transformr
 		if (!DomDocument::loadXML($dom->saveXML()))	
 		{
 			$dom = DomDocument::loadXML($this->tidy_html($html, $url, $this->tidy_option, 'output-xml')); // reload as plain vanilla xml
+			if (!$dom) return $this->error('invalidDoc');
 		}
 		return $xslt->transformToXML(DomDocument::loadXML($dom->saveXML()));
 	}
