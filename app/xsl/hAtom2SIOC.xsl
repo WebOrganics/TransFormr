@@ -47,6 +47,11 @@
 		<xsl:attribute name="rdf:about">
 			<xsl:value-of select="$base-uri" />
 		</xsl:attribute>
+		<xsl:element name="rdf:type">
+			<xsl:attribute name="rdf:resource">
+				<xsl:value-of select="'http://rdfs.org/sioc/types#Weblog'"/>
+			</xsl:attribute>
+		</xsl:element>
 		<xsl:element name='dc:title'>
 			<xsl:value-of select="normalize-space(descendant::*[name() = 'title'])"/>
 		</xsl:element>
@@ -54,7 +59,7 @@
 			<xsl:value-of select="$meta"/>
 		</xsl:element>
 		<xsl:for-each select='$entry'>
-			<xsl:element name='sioc:has_container'>
+			<xsl:element name='sioc:container_of'>
 				<xsl:choose>
 					<xsl:when test="@id">
 						<xsl:attribute name="rdf:resource">
