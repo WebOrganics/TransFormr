@@ -1,7 +1,10 @@
 <?php
 /*
-TransFormr Version: 2.1, updated Monday, 7th June 2010
-Contact: Martin McEvoy info@weborganics.co.uk
+TransFormr Version: 2.1
+author:   Martin McEvoy
+updated:  Monday, 7th June 2010
+homepage: http://github.com/WebOrganics/TransFormr
+licence: see files/gpl-3.0.txt
 */
 class Transformr
 {
@@ -17,8 +20,8 @@ class Transformr
 		define('_Transformr', true);
 		ini_set('display_errors',  0 );
 		$this->path = $this->set_path();
-		$this->version = '2.1';
-		$this->updated = array('Monday, 7th June 2010', '2010-06-07T01:45:28+01:00');
+		$this->version = '2.1.1';
+		$this->updated = array('Saturday, 12th June 2010', '2010-12-07T12:15:28+01:00');
 		$this->check_php_version('5.2.0', 'Transformr'); 
 		
 		$this->url = isset($_GET['url']) ? str_replace('%23','#', trim($_GET['url'])) : '' ;
@@ -44,10 +47,10 @@ class Transformr
 	{
 		$data = json_decode(utf8_encode($data));
 		!$data ? die('query not well formed please validate your query at <a href="http://www.jsonlint.com/">http://www.jsonlint.com/</a>') : $data;
-		if ( isset($data->construct)) {
-			$this->url = $data->construct->url;
-			$this->type = $data->construct->type;
-			isset($data->construct->output) ? $this->output = $data->construct->output : '';
+		if ( isset($data->describe)) {
+			$this->url = $data->describe->url;
+			$this->type = $data->describe->type;
+			isset($data->describe->output) ? $this->output = $data->describe->output : '';
 			return $this->ARC2->construct_url($this->url, $this->type, $this->output);
 		}
 		else {
@@ -222,14 +225,18 @@ class Transformr
 		
 		// insert fullstop so tidy does not clean empty span @class="value-title"
 		$html = trim(preg_replace('/<\s*span class=\"value-title\"(.*?)>(.*?)<\/\s*?span[^>\w]*?>/', 
-			'<span class="value-title"$1>.</span>', $html));
+			'<span class="value-title"$1>.$2</span>', $html));
 			
 		$dom = new DOMDocument('1.0');
 		$dom->preserveWhiteSpace = true;
 		$dom->loadXML($this->tidy_html($html, $url, $this->tidy_option));
 		$dom->formatOutput = true;
+		$dom->normalizeDocument();
 		
 		$title = $dom->getElementsByTagName('title')->item(0)->nodeValue;
+		
+		if (!$dom->getElementsByTagName('html')->item(0)->getAttribute('xmlns'))
+			$dom->getElementsByTagName('html')->item(0)->setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
 		
 		if (isset($fragment)) 
 		{
@@ -249,7 +256,7 @@ class Transformr
 		$xslt->setParameter('','base-uri', $url);
 		$xslt->setParameter('','doc-title', $title);
 		$xslt->setParameter('','version', $this->version);
-		if ( $this->use_store == 1 ) $xslt->setParameter('','endpoint-link', $this->path. 'endpoint/?');
+		if ( $this->use_store == 1 ) $xslt->setParameter('','endpoint-link', $this->path. 'sparql/endpoint?');
 		$xslt->importStyleSheet(DomDocument::load($xsl_filename));
 		
 		if (!DomDocument::loadXML($dom->saveXML()))	
@@ -281,42 +288,45 @@ class Transformr
 	
 	protected function tidy_html($html, $url, $tidy_option, $output ='')
 	{	
-		$output = $output == '' ? ($this->type !='rdfa' ? 'output-xhtml' : 'output-xml') : $output ;
+		$output = $output == '' ? 'output-xhtml' : $output ;
 		
-		if ($tidy_option == 'php' && !method_exists('tidy','cleanRepair') ) 
+		if ( $tidy_option == 'php') 
 		{
-			return $this->error('noPHPTidy');
-		}
-		elseif ( $tidy_option == 'php') 
-		{
-			$config = array(
-				'doctype'                     => 'strict',
-				'logical-emphasis'            => true,
-				"$output"                     => true,
-				'wrap'                        => 200,
-				'clean'						  =>true
-			);
-			$tidy = new tidy;
-			$tidy->parseString($html, $config, 'utf8');
-			$tidy->cleanRepair();
-			$result = !$tidy ? $this->error('tidyFail') : $tidy;
+			if ( !method_exists('tidy','cleanRepair') ) 
+			{
+				return $this->error('noPHPTidy');
+			} 
+			else {
+				$config = array(
+					'doctype'                     => 'strict',
+					'logical-emphasis'            => true,
+					"$output"                     => true,
+					'wrap'                        => 200,
+					'clean'						  =>true
+				);
+				$tidy = new tidy;
+				$tidy->parseString($html, $config, 'utf8');
+				$tidy->cleanRepair();
+				$result = !$tidy ? $this->error('tidyFail') : $tidy;
+			}
 		} 
+		elseif ($tidy_option == 'dom') 
+		{
+			$newdoc = new DOMDocument();
+			$newdoc->preserveWhiteSpace = true;
+			!$newdoc->loadXML($html) ? @$newdoc->loadHTML($html) : $newdoc->loadXML($html) ;
+			$newdoc->formatOutput = true;
+			$newdoc->normalizeDocument();
+			$result = $newdoc->saveXML();
+			$result = str_replace(array("\r\n", "\r", "\n", "\t", "&#xD;"), '', $result);
+		}
 		elseif ($tidy_option == 'online') 
 		{		
 			$tidyURL = 'http://cgi.w3.org/cgi-bin/tidy?forceXML=on&docAddr='.$url;
 			$tidy = $this->get_file_contents($tidyURL);
 			$result = !$tidy ? $this->error('noW3CTidy') : $tidy;
 		}
-		elseif ($tidy_option == 'dom') /* do our best */
-		{		
-			$newdoc = new DOMDocument('1.0');
-			$newdoc->preserveWhiteSpace = true;
-			!$newdoc->loadXML($html) ? @$newdoc->loadHTML($html) : @$newdoc->loadXML($html) ;
-			$newdoc->formatOutput = true;
-			$result = $newdoc->saveXML();
-			$result = str_replace(array("\r\n", "\r", "\n", "\t", "&#xD;"), '', $result);
-		}
-		return $result ? $result : $this->error('invalidDoc');	
+		return $result;	
 	}
 	
 	protected function rand_filename($ext = '') 
@@ -326,22 +336,18 @@ class Transformr
 	
 	protected function config_ns() 
 	{
-	
 	require_once(dirname(__FILE__).'/config.php' );
 	
-	$params = array (
+	return array(
+	
+		'ns' => $ns, 
+		
 		'use_store' => $this->use_store,
 		'store_size' => $this->store_size,
 		'reset_tables' => $this->reset_tables,
 		'dump_location' => $this->dump_location,
 		'store_path' => $this->path,
-		'document_type' => $this->type
-	);
-	
-	return array(
-	
-		'ns' => $ns, 
-		'store_settings' => $params,
+		'document_type' => $this->type,
 		
 		'auto_extract' => 0, 
 		'serializer_type_nodes' => 1, 

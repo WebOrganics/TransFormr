@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- hAtom to SIOC XSLT version: 0.1  -->
+<!-- hAtom to SIOC XSLT version: 0.2  -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
@@ -39,14 +39,23 @@
 	</xsl:choose>
 </xsl:param>
 
+<xsl:param name="abs-url">
+	<xsl:choose>
+		<xsl:when test="substring-before($base-uri,'#')">
+			<xsl:value-of select="substring-before($base-uri,'#')"/>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:value-of select="$base-uri"/>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:param>
+
 <xsl:template match="/">
 
-<rdf:RDF xml:base="{$base-uri}">
+<rdf:RDF xml:base="{$abs-url}">
 <xsl:if test="$entry">
 	<xsl:element name='rdf:Description'>
-		<xsl:attribute name="rdf:about">
-			<xsl:value-of select="$base-uri" />
-		</xsl:attribute>
+		<xsl:attribute name="rdf:about"><xsl:value-of select="$abs-url" /></xsl:attribute>
 		<xsl:element name="rdf:type">
 			<xsl:attribute name="rdf:resource">
 				<xsl:value-of select="'http://rdfs.org/sioc/types#Weblog'"/>
@@ -63,7 +72,7 @@
 				<xsl:choose>
 					<xsl:when test="@id">
 						<xsl:attribute name="rdf:resource">
-							<xsl:value-of select="$base-uri" />
+							<xsl:value-of select="$abs-url" />
 							<xsl:text>#</xsl:text>
 							<xsl:value-of select="@id" />
 						</xsl:attribute>
@@ -91,7 +100,7 @@
 	<xsl:choose>
 		<xsl:when test="@id">
 			<xsl:attribute name="rdf:about">
-				<xsl:value-of select="$base-uri" />
+				<xsl:value-of select="$abs-url"/>
 				<xsl:text>#</xsl:text>
 				<xsl:value-of select="@id" />
 			</xsl:attribute>
@@ -176,7 +185,7 @@
 <!-- author -->
 <xsl:template name="author-name">
 <xsl:param name="name" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' author ') or contains(concat(' ',normalize-space(@class),' '),' fn ')]"/>
-<xsl:param name="url" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' url ')][1]"/>
+<xsl:param name="url" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' url ')]"/>
 	<xsl:if test="$name">
 		<xsl:element name='sioc:has_creator'>
 			<xsl:element name='sioc:UserAccount'>
@@ -186,7 +195,7 @@
 				<xsl:if test="$url">
 					<xsl:element name="foaf:homepage">
 						<xsl:attribute name="rdf:resource">
-							<xsl:value-of select="normalize-space($url)"/>
+							<xsl:value-of select="$url/@href"/>
 						</xsl:attribute>
 					</xsl:element>
 				</xsl:if>

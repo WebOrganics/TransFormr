@@ -1,4 +1,4 @@
-# TransFormr version 2.1
+# TransFormr version 2.1.1
 
 TransFormr is a simple toolkit that uses PHP and XSLT for extracting and transforming microformats <http://microformats.org/>.
 
@@ -100,15 +100,15 @@ The output property is optional and may be omitted from a Query, example
 
 * index.php?q={ "url" : "http://somewebsite.com/", "type" : "hcard" }
 
-You can also use construct queries on the ARC2 store ( if enabled ), this will return a document already extracted to the store, example
+You can also use describe queries on the ARC2 store ( if enabled ), this will return a document already extracted to the store, example
 
-* index.php?q={"construct": {"url": "http://somewebsite.com/","type": "hatom-sioc","output": "ntriples"}}  
+* index.php?q={"describe": {"url": "http://somewebsite.com/","type": "hatom-sioc","output": "ntriples"}}  
 
 ### By SPARQL Query.
 
-When you extract RDF using Transformr and the arc2 store is enabled, you can query the Transformr endpoint using sparql, example
+When you extract RDF using Transformr and the arc2 store is enabled, you can query the Transformr using the sparql endpoint, example
 
-* /endpoint/?query=CONSTRUCT { ?s ?p ?o } WHERE { GRAPH </type/http://someurl.com/> { ?s ?p ?o } }
+* sparql/endpoint?query=CONSTRUCT { ?s ?p ?o } WHERE { GRAPH </type/http://someurl.com/> { ?s ?p ?o } }
 
 All graphs are relative to the store, "type" is the type of RDF you extracted e.g hfoaf, rdfa ... etc, and the url of the page you extracted.
 

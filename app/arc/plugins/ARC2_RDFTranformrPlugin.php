@@ -1,11 +1,12 @@
 <?php
 /*
-class:    ARC2 RDF Tranformr Plugin
+ARC2 RDF Tranformr Plugin
+
 author:   Martin McEvoy
 version:  2010-06-04
-
-homepage: http://arc.semsol.org/
+homepage: http://github.com/WebOrganics/TransFormr
 license:  http://arc.semsol.org/license
+
 */
 
 ARC2::inc('Class');
@@ -14,14 +15,15 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 
 	
 	function __construct($a = '', &$caller) {
+		
 		parent::__construct($a, $caller);
-		$setting = $a['store_settings'];
-		$this->use_store = $setting['use_store']; // 0 = false|1 = true 
-		$this->store_size = $setting['store_size']; // in mb eg: 99.00
-		$this->reset_tables = $setting['reset_tables']; // 0 = false|1 = true 
-		$this->dump_location = $setting['dump_location']; // folder to dump data to
-		$this->path = $setting['store_path']; // host url eg http://somehost.com/
-		$this->type = $setting['document_type']; // hfoaf, hcard-rdf ... etc
+		
+		$this->use_store = $a['use_store']; // 0 = false|1 = true 
+		$this->store_size = $a['store_size']; // in mb eg: 99.00
+		$this->reset_tables = $a['reset_tables']; // 0 = false|1 = true 
+		$this->dump_location = $a['dump_location']; // folder to dump data to
+		$this->path = $a['store_path']; // host url eg http://somehost.com/
+		$this->type = $a['document_type']; // hfoaf, hcard-rdf ... etc
 	}
   
 	function ARC2_RDFTranformrPlugin($a = '', &$caller) {
@@ -38,7 +40,7 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 	{
 		$store = ARC2::getStore($this->a);
 		if ($type =='') $query = $store->query("CONSTRUCT { ?s ?p ?o } WHERE { GRAPH ?g { ?s ?p ?o } FILTER(REGEX(?g, \"". $url ."\")) }");
-		else $query = $store->query("CONSTRUCT { ?s ?p ?o } WHERE { GRAPH </" . $type ."/". $url ."> { ?s ?p ?o } }");
+		else $query = $store->query("DESCRIBE ?s FROM </" . $type ."/". $url ."> WHERE { ?s ?p ?o. }");
 		$parser = ARC2::getRDFParser($this->a);
 		$document = $parser->toTurtle($query['result']);
 		return $this->to_rdf($url, $document, $output, $this->use_store = 0);

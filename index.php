@@ -8,7 +8,7 @@ $transformer = new Transformr;
 /* settings please also edit /app/config.php to set MySql user, pass, host and database name */
 $settings = array(
 	/* pick one. php, online or dom */
-	'tidy_option' => 'php',
+	'tidy_option' => 'dom',
 	/* 0 to use file_get_contents */
 	'use_curl' => 1,
 	/* 0 to disable ARC2 store */

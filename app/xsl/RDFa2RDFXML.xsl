@@ -236,7 +236,7 @@
 	
 		<when test="$is-reserved = 'true'">  <!-- reserved word  -->
 			<variable name="name" select="$qname" />
-			<value-of select="$default_voc" />
+			<value-of select="'http://www.w3.org/1999/xhtml/vocab#'" />
 		</when>
 		
 		<when test="$ns_prefix = 'http' or $ns_prefix = 'https'"> <!-- url -->
@@ -257,7 +257,7 @@
 			</call-template>
 		</when>
 	
-		<when test="string-length($ns_prefix)=0 and ancestor-or-self::*/namespace::*[name()=''][1]"> <!-- no prefix -->
+		<when test="string-length($ns_prefix)=0 and ancestor-or-self::*/namespace::*[name()=''][1] and namespace::*[name()=''] != 'http://www.w3.org/1999/xhtml'"> <!-- no prefix -->
 			<variable name="name" select="substring-after($qname,':')" />
 			<value-of select="ancestor-or-self::*/namespace::*[name()=''][1]" />
 		</when>
@@ -290,7 +290,7 @@
 	<choose>
 		<when test="$is-reserved = 'true'"> <!-- reserved word -->
 			<variable name="name" select="$no_prefix" />
-			<variable name="ns_uri" select="$default_voc" />
+			<variable name="ns_uri" select="'http://www.w3.org/1999/xhtml/vocab#'" />
 			<value-of select="concat($ns_uri,$name)" />
 		</when>
 		
@@ -306,7 +306,7 @@
 			<value-of select="concat($ns_uri,$name)" />
 		</when>
 	
-		<when test="string-length($ns_prefix)=0 and ancestor-or-self::*/namespace::*[name()=''][1]"> <!-- no prefix -->
+		<when test="string-length($ns_prefix)=0 and ancestor-or-self::*/namespace::*[name()=''][1] and namespace::*[name()=''] != 'http://www.w3.org/1999/xhtml'"> <!-- no prefix -->
 			<variable name="name" select="substring-after($qname,':')" />
 			<variable name="ns_uri" select="ancestor-or-self::*/namespace::*[name()=''][1]" />
 			<value-of select="concat($ns_uri,$name)" />
@@ -468,15 +468,17 @@
   <template name="check-reserved">
   	<param name="nonprefixed" />
   	<choose>
-	  <when test="$nonprefixed='alternate' or $nonprefixed='appendix' or $nonprefixed='bookmark' or $nonprefixed='cite'">true</when>
-	  <when test="$nonprefixed='chapter' or $nonprefixed='contents' or $nonprefixed='copyright' or $nonprefixed='first'">true</when>
-	  <when test="$nonprefixed='glossary' or $nonprefixed='help' or $nonprefixed='icon' or $nonprefixed='index'">true</when>
-	  <when test="$nonprefixed='last' or $nonprefixed='license' or $nonprefixed='meta' or $nonprefixed='next'">true</when>
-	  <when test="$nonprefixed='p3pv1' or $nonprefixed='prev' or $nonprefixed='role' or $nonprefixed='section'">true</when>
-	  <when test="$nonprefixed='stylesheet' or $nonprefixed='subsection' or $nonprefixed='start' or $nonprefixed='top'">true</when>
-	  <when test="$nonprefixed='up'">true</when>
-	  <when test="$nonprefixed='made' or $nonprefixed='previous' or $nonprefixed='search' or $nonprefixed='me' or $nonprefixed='author'">true</when>  <!-- added because they are frequent -->
-	  <otherwise>false</otherwise>
+	  <when test="$nonprefixed='up' or $nonprefixed='previous' or $nonprefixed='search' or
+				  $nonprefixed='alternate' or $nonprefixed='appendix' or $nonprefixed='bookmark' or $nonprefixed='cite' or
+				  $nonprefixed='chapter' or $nonprefixed='contents' or $nonprefixed='copyright' or $nonprefixed='first' or
+				  $nonprefixed='glossary' or $nonprefixed='help' or $nonprefixed='icon' or $nonprefixed='index' or 
+				  $nonprefixed='last' or $nonprefixed='license' or $nonprefixed='meta' or $nonprefixed='next' or
+				  $nonprefixed='p3pv1' or $nonprefixed='prev' or $nonprefixed='role' or $nonprefixed='section' or 
+				  $nonprefixed='subsection' or $nonprefixed='start' or $nonprefixed='top' or
+				  $nonprefixed='made' or $nonprefixed='home' or $nonprefixed='me' or $nonprefixed='author'">
+		<value-of select="'true'"/>
+	</when>
+	  <otherwise><value-of select="'false'"/></otherwise>
 	</choose>
   </template>
 

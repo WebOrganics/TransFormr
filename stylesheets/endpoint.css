@@ -109,6 +109,7 @@ th, td {
 	background-color: #fcfcfc;
 	width:760px;
 	margin: 0 auto;
+	overflow:auto;
 }
 legend { display:none;}
 fieldset { border:0px; margin:0; padding:0; }

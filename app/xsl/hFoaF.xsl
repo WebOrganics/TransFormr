@@ -45,13 +45,13 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 <xsl:choose>
     <xsl:when test="$vcard">
 	<xsl:for-each select="$vcard[position() &lt;= $pos]">
-		<PersonalProfileDocument rdf:about="{$about}">
+		<Document rdf:about="{$about}">
 			<xsl:if test="$title">
 				<dc:title><xsl:value-of select="$title"/></dc:title>
 			</xsl:if>
 			<maker rdf:nodeID="{$id}"/>
     		<primaryTopic rdf:nodeID="{$id}"/>
-		</PersonalProfileDocument>
+		</Document>
  	 	<xsl:element name='Person'>
 			<xsl:attribute name="rdf:nodeID">
 	  			<xsl:value-of select="$id" />
