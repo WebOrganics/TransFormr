@@ -17,7 +17,7 @@
 		<a href="http://github.com/WebOrganics/TransFormr" rel="nofollow">Source</a> | 
 		<a href="http://github.com/WebOrganics/TransFormr/issues" rel="nofollow">Issues</a> 
 		<?php if ($this->use_store == 1 ) 
-			echo ' | <a href="'.$this->path.'endpoint/?" title="Sparql Endpoint">Endpoint</a> | ';
+			echo ' | <a href="'.$this->path.'sparql/endpoint?" title="Sparql Endpoint">Endpoint</a> | ';
 			echo '<a href="'.$this->path.'?type=dump" title="Store Dumps">Store Dumps</a> ';
 			
 		?>
