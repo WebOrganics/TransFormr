@@ -3,7 +3,7 @@ body {
 	margin:0 auto;
 	padding:0;
 	text-align:center;
-	width:760px;
+	width:770px;
 	background: #fff url('../images/bg_body.gif') 0 0 repeat-x;
 	color: #666;
 }
@@ -135,12 +135,11 @@ tt, code, kbd, samp {
 legend{
 	font-size:20px;
 	text-align:left;
-	padding-top:5px;
+	padding-top:10px;
 }
 fieldset {border:0;margin:0;}
 fieldset p {text-align:center;}
 form {	
-	width:740px;
 	background-color:transparent;
 	border:1px solid #679A06;
 	padding:0 5px;

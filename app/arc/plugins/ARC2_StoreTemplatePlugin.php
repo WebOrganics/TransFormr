@@ -180,7 +180,6 @@ function getNTriplesDescribeResultDoc($r) {
   function getHTMLDocBody() {
     return '<body>
 	' . $this->getHTMLHeader() . '
-        <div id="content">
 		<div class="intro">
           <p>
             <a href="?">This interface</a> implements 
@@ -192,8 +191,9 @@ function getNTriplesDescribeResultDoc($r) {
             Max. number of results : ' . $this->v('endpoint_max_limit', '<em>unrestricted</em>', $this->a) . '
           </p>
         </div>
+        <div id="content">
         ' . $this->getHTMLDocForm() .'
-        ' . ($this->p('show_inline') ? $this->query_result : '') . '
+        ' . ($this->p('show_inline') ? '<div id="results">'.$this->query_result. '</div>' : '') . '
     </div>
   </body>';
   }
@@ -258,8 +258,10 @@ function getNTriplesDescribeResultDoc($r) {
       <div class="options-2">
         Change HTTP method: 
             <a href="javascript:;" onclick="javascript:document.getElementById(\'sparql-form\').method=\'get\'">GET</a> 
-            <a href="javascript:;" onclick="javascript:document.getElementById(\'sparql-form\').method=\'post\'">POST</a> 
-       </div>';
+            <a href="javascript:;" onclick="javascript:document.getElementById(\'sparql-form\').method=\'post\'">POST</a>'
+			.($this->p('show_inline') ? ', or jump to <a href="#results">Results</a>' : '') .'
+       </div>
+	   ';
   }
   
   /*  */

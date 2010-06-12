@@ -2,7 +2,7 @@ body {
 	font: 14px Verdana, Arial, sans-serif;
 	margin:0 auto;
 	padding:0;
-	width:760px;
+	width:770px;
 	background: #fff url('../images/bg_body.gif') 0 0 repeat-x;
 	color: #666;
 }
@@ -55,7 +55,7 @@ h1 a:hover { background-color:transparent;}
 	color:#679A06;
 }
 #content { clear:both; margin-top: 30px }
-.intro { margin: 15px 0px; }
+.intro { margin: 15px 0px; clear:both;}
 .upcase { text-transform:uppercase;}
 th, td {
 	border: 1px dotted #eee;
