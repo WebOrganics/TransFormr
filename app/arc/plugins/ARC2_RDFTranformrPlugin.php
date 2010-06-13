@@ -47,7 +47,7 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 		else $query = $store->query("DESCRIBE ?s FROM </" . $type ."/". $url ."> WHERE { ?s ?p ?o. }");
 		$parser = ARC2::getRDFParser($this->a);
 		$document = $parser->toTurtle($query['result']);
-		return $this->to_rdf($url, $document, $output, false);
+		return $this->to_rdf($url, $document, $output, 1);
 	}
 	
 	function count_triples() 
@@ -130,7 +130,7 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 		$parser = ARC2::getRDFParser($this->a);
 		$parser->parse($url, $document);
 		$triples = $parser->getTriples();
-		if ( $this->use_store == 1 && $store != false ) $this->store_rdf($url, $parser->toTurtle($triples));
+		if ( $this->use_store == 1 && $store == '' ) $this->store_rdf($url, $parser->toTurtle($triples));
 		
 		switch ($output) 
 		{
