@@ -55,7 +55,7 @@
 <rdf:RDF xml:base="{$abs-url}">
 <xsl:if test="$entry">
 	<xsl:element name='rdf:Description'>
-		<xsl:attribute name="rdf:about"><xsl:value-of select="$abs-url" /></xsl:attribute>
+		<xsl:attribute name="rdf:about"><xsl:value-of select="$abs-url" /><xsl:value-of select="'#'" /></xsl:attribute>
 		<xsl:element name="rdf:type">
 			<xsl:attribute name="rdf:resource">
 				<xsl:value-of select="'http://rdfs.org/sioc/types#Weblog'"/>
