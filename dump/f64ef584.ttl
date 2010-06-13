@@ -1,0 +1,31 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix sioct: <http://rdfs.org/sioc/types#> .
+@prefix dc11: <http://purl.org/dc/elements/1.1/> .
+@prefix sioc: <http://rdfs.org/sioc/ns#> .
+@prefix dc: <http://purl.org/dc/terms/> .
+
+_:id1316320 rdf:type foaf:Person ;
+            foaf:name "Donna Mckno" ;
+            foaf:weblog <http://www.donnamckno.co.uk/> .
+
+_:id1316336 rdf:type foaf:Person ;
+            foaf:name "Josh Wood" ;
+            foaf:weblog <http://labs.utopian.net/blogs/josh/> .
+
+<http://weborganics.co.uk/#> rdf:type sioct:Weblog ;
+                             dc11:title "WebOrganics - The Web, Naturally!" ;
+                             dc11:description "From: http://weborganics.co.uk/" ;
+                             sioc:container_of <http://weborganics.co.uk/#first-post> .
+
+<http://weborganics.co.uk/#first-post> rdf:type sioc:Post ;
+                                       dc11:title "Transformr 0.5 is live" ;
+                                       dc:modified "2009-11-24T12:14:35+01:00" ;
+                                       dc:created "2009-11-24T12:14:35+01:00" ;
+                                       sioc:link <http://weborganics.co.uk/articles/show/transformr-0-5-is-live> ;
+                                       sioc:has_creator _:gen52f61 ;
+                                       sioc:content "Transformr version 0.5 is live. The 0.5 update introduces a set of performance tweaks and the ability to parse HTML fragments. Transformr should be also a lot easier to install on your on your own server chiefly because Transformr no longer uses the PHP tidy package, which for some reason is not included with a lot of hosting packages. Don't worry Transformr will still parse your malformed html because tidy does still exist to some extent via the W3C online Tidy service, but only when it fails to parse the source document. For best results though validate your document first (sorry I wasnt preaching). At the moment Transformr will transform the following microformats: hCard. hCalendar. hReview. hAtom. geo. The following microformats are also supported but are classed as experimental and shouldn't really be used in a production environment because support may be removed or changed at some point (but its up to you) they are: hAudio. hMedia. XFN. rel-enclosure. I am planning to write some stuff about the url conversions over on the new Transformr Wiki over the next couple of weeks, and some insights about what Transformr will support in future, like file uploads, tiny url's and microformats by direct input. What's also new for this version (0.5.X) is the source code has moved from Google Code to GitHub, because SVN is so complex compared GIT, which is amazingly simple shame I never got round to it sooner oh well. You grab a copy of the code at http://github.com/WebOrganics/TransFormr, and have fun" ;
+                                       sioc:topic "microformats, transformr" .
+
+_:gen52f61 rdf:type sioc:UserAccount ;
+           foaf:name "Martin" .
