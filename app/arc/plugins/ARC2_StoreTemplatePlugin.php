@@ -57,10 +57,10 @@ class ARC2_StoreTemplatePlugin extends ARC2_StoreEndpoint {
     $index = $r['result'];
     $ser = ARC2::getNTriplesSerializer($this->a);
     $dur = $r['query_time'];
-    return $ser->getSerializedIndex($index) . "\n" . '# query time: ' . $dur . "\n"; 
+    return  '# query time: ' . $dur . "\r\n" . $ser->getSerializedIndex($index) . "\n"; 
   }
   
-    function getRDFaConstructResultDoc($r) {
+   function getRDFaConstructResultDoc($r) {
     $this->setHeader('content-type', 'Content-Type: text/html');
     $index = $r['result'];
 	ARC2::inc('RDFaSerializer');
@@ -102,7 +102,7 @@ function getNTriplesDescribeResultDoc($r) {
     $index = $r['result'];
     $ser = ARC2::getNTriplesSerializer($this->a);
     $dur = $r['query_time'];
-    return $ser->getSerializedIndex($index) . "\n". '# query time: ' . $dur . "\n";
+    return '# query time: ' . $dur . "\r\n" . $ser->getSerializedIndex($index) . "\n";
   }
 
    function getRDFaDescribeResultDoc($r) {
