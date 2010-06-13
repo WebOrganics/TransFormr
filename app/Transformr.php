@@ -1,9 +1,10 @@
 <?php
 /*
-TransFormr Version: 2.1
+TransFormr Version: 2.1.1
 author:   Martin McEvoy
-updated:  Monday, 7th June 2010
+updated:  Saturday, 12th June 2010
 homepage: http://github.com/WebOrganics/TransFormr
+web-service: http://microform.at/
 licence: see files/gpl-3.0.txt
 */
 class Transformr
@@ -15,10 +16,12 @@ class Transformr
 	var $store_size = '';
 	var $dump_location = '';
 	
+	var $backup_type = '';
+	
 	function __construct() 
 	{
 		define('_Transformr', true);
-		ini_set('display_errors',  0 );
+		error_reporting(0);
 		$this->path = $this->set_path();
 		$this->version = '2.1.1';
 		$this->updated = array('Saturday, 12th June 2010', '2010-12-07T12:15:28+01:00');
@@ -338,6 +341,13 @@ class Transformr
 	{
 	require_once(dirname(__FILE__).'/config.php' );
 	
+	if ($this->backup_type !='') {
+		if ($this->backup_type == 'rdf') $ext = 'rdf';
+		elseif ($this->backup_type == 'ntriples') $ext = 'nt';
+		else $ext = 'ttl';
+	} 
+	else $ext = 'xml';
+	
 	return array(
 	
 		'ns' => $ns, 
@@ -346,8 +356,10 @@ class Transformr
 		'store_size' => $this->store_size,
 		'reset_tables' => $this->reset_tables,
 		'dump_location' => $this->dump_location,
-		'store_path' => $this->path,
+		'store_root' => $this->path,
 		'document_type' => $this->type,
+		'backup_type' => $this->backup_type,
+		'extension' => $ext,
 		
 		'auto_extract' => 0, 
 		'serializer_type_nodes' => 1, 

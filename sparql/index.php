@@ -1,6 +1,6 @@
 <?php
 define('_Transformr', true);
-ini_set('display_errors',  1 );
+ini_set('display_errors',  0 );
 include_once('../app/config.php');
 
 $arc_config = array(
