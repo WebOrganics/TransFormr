@@ -1,6 +1,6 @@
 <div style="text-align:left; margin: 30px 0;">
 <h2>Microform.at Store Dumps</h2>
-<p>This page lists all the <a href="http://www.wasab.dk/morten/blog/archives/2008/04/04/introducing-spog"><span title="Subject Predicate Object (Graph)">SPO(G)</span></a> store dumps (if any) made by the transformr store.</p>
+<p>This page lists all the <?php echo $this->backup_type != '' ? ucfirst($this->backup_type) : 'SPOG' ; ?> store dumps (if any) made by the transformr store.</p>
 <?php 
 function get_dump_directory($folder){
     $c=0;
@@ -15,6 +15,7 @@ function get_dump_directory($folder){
     }
     else return 3;// invalid dir
 }
+
 $dir = @opendir($this->dump_location); // touch 
 echo "<ol>\n";
 if ($this->use_store == 1 ) {

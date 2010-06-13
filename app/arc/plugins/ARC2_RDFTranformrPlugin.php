@@ -3,7 +3,7 @@
 ARC2 RDF Tranformr Plugin
 
 author:   Martin McEvoy
-version:  2010-06-04
+version:  2010-06-13
 homepage: http://github.com/WebOrganics/TransFormr
 license:  http://arc.semsol.org/license
 
@@ -18,12 +18,16 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 		
 		parent::__construct($a, $caller);
 		
-		$this->use_store = $a['use_store']; // 0 = false|1 = true 
-		$this->store_size = $a['store_size']; // in mb eg: 99.00
-		$this->reset_tables = $a['reset_tables']; // 0 = false|1 = true 
-		$this->dump_location = $a['dump_location']; // folder to dump data to
-		$this->path = $a['store_path']; // host url eg http://somehost.com/
-		$this->type = $a['document_type']; // hfoaf, hcard-rdf ... etc
+		$this->use_store = $a['use_store'];
+		$this->store_size = $a['store_size'];
+		$this->reset_tables = $a['reset_tables']; 
+
+		$this->path = $a['store_root'];
+		$this->dump_location = $a['dump_location'];
+		$this->type = $a['document_type']; 
+		
+		$this->backup_type = $a['backup_type'];
+		$this->ext = $a['extension'];
 	}
   
 	function ARC2_RDFTranformrPlugin($a = '', &$caller) {
@@ -43,7 +47,7 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 		else $query = $store->query("DESCRIBE ?s FROM </" . $type ."/". $url ."> WHERE { ?s ?p ?o. }");
 		$parser = ARC2::getRDFParser($this->a);
 		$document = $parser->toTurtle($query['result']);
-		return $this->to_rdf($url, $document, $output, $this->use_store = 0);
+		return $this->to_rdf($url, $document, $output, false);
 	}
 	
 	function count_triples() 
@@ -63,9 +67,32 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 		$store = ARC2::getStore($this->a);
 		$count = $this->count_triples();
 		$offset = round($count/4*3);
-		$store->createBackup($this->dump_location. substr(md5(uniqid(rand())), 0, 8) .'.xml', 'SELECT * WHERE { GRAPH ?g { ?s ?p ?o . } } OFFSET '.$offset);
+		
+		if ($this->backup_type != '') 
+			$this->saveBackup($this->dump_location. substr(md5(uniqid(rand())), 0, 8) .'.'.$this->ext, $this->backup_type, 'CONSTRUCT { ?s ?p ?o . } WHERE { GRAPH ?g { ?s ?p ?o . } } OFFSET '.$offset);
+		else 
+			$store->createBackup($this->dump_location. substr(md5(uniqid(rand())), 0, 8) .'.xml', 'SELECT * WHERE { GRAPH ?g { ?s ?p ?o . } } OFFSET '.$offset);
+		
 		$store->query("DELETE CONSTRUCT { ?s ?p ?o . } WHERE { GRAPH ?g { ?s ?p ?o . } } OFFSET ".$offset);
 		$store->optimizeTables();
+	}
+	
+	function saveBackup($path, $type ='', $q = '') 
+	{
+		$store = ARC2::getStore($this->a);
+		$parser = ARC2::getRDFParser($this->a);
+		
+		$query = $store->query($q);
+		
+		if ($type == 'turtle') $document = $parser->toTurtle($query['result']);
+		elseif ($type == 'ntriples') $document = $parser->toNTriples($query['result']);
+		elseif ($type == 'rdf') $document = $parser->toRDFXML($query['result']);
+		
+		if (!$fp = @fopen($path, 'w')) return $this->addError('Could not create backup file at ' . realpath($path));
+		else { 
+			fwrite($fp, $document);
+			@fclose($fp);
+		}
 	}
 
 	function get_store_size() 
@@ -98,12 +125,12 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 		return ( isset($triples[0]) && isset($triples[0]['s']) ) ? $rdfa->getSerializedTriples($triples) : $rdfa->getSerializedIndex($triples);
 	}
 	
-	function to_rdf($url, $document, $output) 
+	function to_rdf($url, $document, $output, $store ='') 
 	{
 		$parser = ARC2::getRDFParser($this->a);
 		$parser->parse($url, $document);
 		$triples = $parser->getTriples();
-		if ( $this->use_store == 1 ) $this->store_rdf($url, $parser->toTurtle($triples));
+		if ( $this->use_store == 1 && $store != false ) $this->store_rdf($url, $parser->toTurtle($triples));
 		
 		switch ($output) 
 		{
