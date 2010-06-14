@@ -226,8 +226,8 @@ class Transformr
 		
 		$html = $this->get_file_contents($url);
 		
-		// insert fullstop so tidy does not clean empty span
-		$html = trim(preg_replace('/<\s*span(.*?)>(.*?)<\/\s*?span[^>\w]*?>/', 
+		// insert fullstop so tidy does not clean empty span or span with just a space
+		$html = trim(preg_replace('/<\s*span(.*?)>\s<\/\s*?span[^>\w]*?>/', 
 			'<span$1>.$2</span>', $html));
 		$html = trim(preg_replace('/<\s*span(.*?)><\/\s*?span[^>\w]*?>/', 
 			'<span$1>.</span>', $html));
