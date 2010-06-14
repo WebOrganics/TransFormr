@@ -226,12 +226,11 @@ class Transformr
 		
 		$html = $this->get_file_contents($url);
 		
-		// insert fullstop so tidy does not clean empty span @class="value-title"
-		$html = trim(preg_replace('/<\s*span class=\"value-title\"(.*?)>(.*?)<\/\s*?span[^>\w]*?>/', 
-			'<span class="value-title"$1>.$2</span>', $html));
-		// insert fullstop on empty spans 
+		// insert fullstop so tidy does not clean empty span
+		$html = trim(preg_replace('/<\s*span(.*?)>(.*?)<\/\s*?span[^>\w]*?>/', 
+			'<span$1>.$2</span>', $html));
 		$html = trim(preg_replace('/<\s*span(.*?)><\/\s*?span[^>\w]*?>/', 
-			'<span class="value-title"$1>.</span>', $html));
+			'<span$1>.</span>', $html));
 			
 		$dom = new DOMDocument('1.0');
 		$dom->preserveWhiteSpace = true;
