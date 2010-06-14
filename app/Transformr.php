@@ -233,7 +233,7 @@ class Transformr
 			'<span$1>.</span>', $html));
 			
 		$dom = new DOMDocument('1.0');
-		$dom->preserveWhiteSpace = true;
+		$dom->preserveWhiteSpace = false;
 		$dom->loadXML($this->tidy_html($html, $url, $this->tidy_option));
 		$dom->formatOutput = true;
 		$dom->normalizeDocument();
@@ -321,6 +321,7 @@ class Transformr
 			$newdoc->preserveWhiteSpace = true;
 			!$newdoc->loadXML($html) ? @$newdoc->loadHTML($html) : $newdoc->loadXML($html) ;
 			$newdoc->formatOutput = true;
+			$newdoc->preserveWhiteSpace = false;
 			$newdoc->normalizeDocument();
 			$result = $newdoc->saveXML();
 			$result = str_replace(array("\r\n", "\r", "\n", "\t", "&#xD;"), '', $result);
