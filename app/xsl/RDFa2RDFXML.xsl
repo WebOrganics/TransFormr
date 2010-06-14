@@ -145,7 +145,8 @@
           <with-param name="object" select ="." />
           <with-param name="datatype">
           	<choose>
-          	  <when test="@datatype='' or not(@datatype)">http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral</when> <!-- enforcing XML literal -->
+			  <when test="@datatype=''">0</when> <!-- rdfa 1.1 enforcing plain literal -->
+          	  <when test="not(@datatype)">http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral</when> <!-- enforcing XML literal -->
           	  <otherwise><call-template name="expand-ns"><with-param name="qname" select="@datatype"/></call-template></otherwise>
           	</choose>
           </with-param>
@@ -257,7 +258,7 @@
 			</call-template>
 		</when>
 	
-		<when test="string-length($ns_prefix)=0 and ancestor-or-self::*/namespace::*[name()=''][1] and namespace::*[name()=''] != 'http://www.w3.org/1999/xhtml'"> <!-- no prefix -->
+		<when test="string-length($ns_prefix)=0 and ancestor-or-self::*/namespace::*[name()=''][1] and not (namespace::*[name()=''] = 'http://www.w3.org/1999/xhtml')"> <!-- no prefix -->
 			<variable name="name" select="substring-after($qname,':')" />
 			<value-of select="ancestor-or-self::*/namespace::*[name()=''][1]" />
 		</when>
@@ -306,7 +307,7 @@
 			<value-of select="concat($ns_uri,$name)" />
 		</when>
 	
-		<when test="string-length($ns_prefix)=0 and ancestor-or-self::*/namespace::*[name()=''][1] and namespace::*[name()=''] != 'http://www.w3.org/1999/xhtml'"> <!-- no prefix -->
+		<when test="string-length($ns_prefix)=0 and ancestor-or-self::*/namespace::*[name()=''][1] and not (namespace::*[name()=''] = 'http://www.w3.org/1999/xhtml')"> <!-- no prefix -->
 			<variable name="name" select="substring-after($qname,':')" />
 			<variable name="ns_uri" select="ancestor-or-self::*/namespace::*[name()=''][1]" />
 			<value-of select="concat($ns_uri,$name)" />

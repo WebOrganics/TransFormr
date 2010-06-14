@@ -229,6 +229,9 @@ class Transformr
 		// insert fullstop so tidy does not clean empty span @class="value-title"
 		$html = trim(preg_replace('/<\s*span class=\"value-title\"(.*?)>(.*?)<\/\s*?span[^>\w]*?>/', 
 			'<span class="value-title"$1>.$2</span>', $html));
+		// insert fullstop on empty spans 
+		$html = trim(preg_replace('/<\s*span(.*?)><\/\s*?span[^>\w]*?>/', 
+			'<span class="value-title"$1>.</span>', $html));
 			
 		$dom = new DOMDocument('1.0');
 		$dom->preserveWhiteSpace = true;
