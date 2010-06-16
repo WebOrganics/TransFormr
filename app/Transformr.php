@@ -110,7 +110,7 @@ class Transformr
 			header("Content-type: application/vnd.google-earth.kml+xml");
 			header('Content-Disposition: attachment; filename="'.$file.'"');
 			$xsl_filename = $this->xsl ."xhtml2kml.xsl";
-			return $this->ARC2->transform_xsl($this->url, $xsl_filename);
+			return $this->transform_xsl($this->url, $xsl_filename);;
 		break;
 
 		case 'hcalendar':
@@ -118,7 +118,7 @@ class Transformr
 			header("Content-type: text/x-vcalendar");
 			header('Content-Disposition: attachment; filename="'.$file.'"');
 			$xsl_filename = $this->xsl ."xhtml2vcal.xsl";
-			return $this->ARC2->transform_xsl($this->url, $xsl_filename);
+			return $this->transform_xsl($this->url, $xsl_filename);
 		break;
 
 		case 'hcalendar-rdf':
@@ -136,7 +136,7 @@ class Transformr
 		case 'haudio-rss':
 			header("Content-type: application/xml");
 			$xsl_filename = $this->xsl ."hAudioRSS2.xsl";
-			return $this->ARC2->transform_xsl($this->url, $xsl_filename);
+			return $this->transform_xsl($this->url, $xsl_filename);
 		break;
 
 		case 'mo-haudio':
