@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- hAtom to SIOC XSLT version: 0.2  -->
+<!-- hAtom to SIOC XSLT version: 0.3  -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
@@ -54,13 +54,8 @@
 
 <rdf:RDF xml:base="{$abs-url}">
 <xsl:if test="$entry">
-	<xsl:element name='foaf:Page'>
-		<xsl:attribute name="rdf:about"><xsl:value-of select="$abs-url" /><xsl:value-of select="'#'" /></xsl:attribute>
-		<xsl:element name="rdf:type">
-			<xsl:attribute name="rdf:resource">
-				<xsl:value-of select="'http://rdfs.org/sioc/types#Weblog'"/>
-			</xsl:attribute>
-		</xsl:element>
+	<xsl:element name='foaf:Document'>
+		<xsl:attribute name="rdf:about"><xsl:value-of select="$abs-url" /></xsl:attribute>
 		<xsl:element name='dc:title'>
 			<xsl:value-of select="normalize-space(descendant::*[name() = 'title'])"/>
 		</xsl:element>

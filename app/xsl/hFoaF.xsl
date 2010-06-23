@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- hCard and XFN to FOAF XSLT version: 0.8  -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
 	xmlns="http://xmlns.com/foaf/0.1/"
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	xmlns:xhtml="http://www.w3.org/1999/xhtml"
 	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
-	xmlns:xfn="http://gmpg.org/xfn/11#"
+	xmlns:xfn="http://vocab.sindice.com/xfn#"
 	xmlns:dc="http://purl.org/dc/elements/1.1/"
 	exclude-result-prefixes="xhtml"
     version="1.0">
-
-<!-- 
-$Id: hFoaf.xsl,$Version 0.6 *stable* Wednesday June 9th 2010 00:47am  $author: martin McEvoy.
-$Description An attempt at enabling Social Network Portability using hCard and XFN a GRDDL profile Inspired by dan connolly's grokXFN.xsl. http://www.w3.org/2003/12/rdf-in-xhtml-xslts/grokXFN.xsl 
--->
 
 <xsl:output method="xml" 
 		   indent="yes" 
@@ -33,7 +29,15 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 
 <!-- generate id  -->
 <xsl:param name="id">
-	<xsl:value-of select="generate-id()"/>
+<xsl:choose>
+	<xsl:when test="$vcard/@id">
+		<xsl:value-of select="$vcard/@id" />
+	</xsl:when>
+	<xsl:otherwise>
+		<xsl:value-of select="generate-id()"/>
+	</xsl:otherwise>
+</xsl:choose>
+	
 </xsl:param>
 
 <!-- Limit output to first vcard  -->
@@ -45,13 +49,13 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 <xsl:choose>
     <xsl:when test="$vcard">
 	<xsl:for-each select="$vcard[position() &lt;= $pos]">
-		<Document rdf:about="{$about}">
+		<PersonalProfileDocument rdf:about="{$about}">
 			<xsl:if test="$title">
 				<dc:title><xsl:value-of select="$title"/></dc:title>
 			</xsl:if>
 			<maker rdf:nodeID="{$id}"/>
     		<primaryTopic rdf:nodeID="{$id}"/>
-		</Document>
+		</PersonalProfileDocument>
  	 	<xsl:element name='Person'>
 			<xsl:attribute name="rdf:nodeID">
 	  			<xsl:value-of select="$id" />
@@ -88,7 +92,7 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 <xsl:param name="fn" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' fn ')]"/>
 	<xsl:if test="$fn">
 		<xsl:element name='name'>
-			<xsl:value-of select="$fn"/>
+			<xsl:value-of select="normalize-space($fn)"/>
 		</xsl:element>
 	</xsl:if>
 </xsl:template>
@@ -99,7 +103,7 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 <xsl:param name="firstname" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' given-name ')]"/>
 	<xsl:if test="$firstname">
 		<xsl:element name='givenname'>
-			<xsl:value-of select="$firstname"/>
+			<xsl:value-of select="normalize-space($firstname)"/>
 		</xsl:element>
 	</xsl:if>
 </xsl:template>
@@ -109,7 +113,7 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 <xsl:param name="surname" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' family-name ')]"/>
 	<xsl:if test="$surname">
 		<xsl:element name='family_name'>
-			<xsl:value-of select="$surname"/>
+			<xsl:value-of select="normalize-space($surname)"/>
 		</xsl:element>
 	</xsl:if>
 </xsl:template>
@@ -119,7 +123,7 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 <xsl:param name="nickname" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' nickname ')]"/>
 	<xsl:if test="$nickname">
 		<xsl:element name='nick'>
-			<xsl:value-of select="$nickname"/>
+			<xsl:value-of select="normalize-space($nickname)"/>
 		</xsl:element>
 	</xsl:if>
 </xsl:template>
@@ -484,7 +488,7 @@ $Description An attempt at enabling Social Network Portability using hCard and X
 	  					<xsl:value-of select="//img/@alt" />
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:value-of select="."/>
+						<xsl:value-of select="normalize-space(.)"/>
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:element>

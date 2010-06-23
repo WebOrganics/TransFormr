@@ -3,12 +3,12 @@
 <p>This page lists all the <?php echo $this->backup_type != '' ? strtoupper($this->backup_type) : 'SPOG' ; ?> store dumps (if any) made by the transformr store.</p>
 <?php 
 function get_dump_directory($folder){
-    $c=0;
+    $i=0;
     if(is_dir($folder) ){
         $files = opendir($folder);
         while ($file=readdir($files)){
-            $c++;
-            if ($c>2)
+            $i++;
+            if ($i>2)
                return 1; // dir contains something
         }
         return 0; // empty dir

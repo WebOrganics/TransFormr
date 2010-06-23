@@ -12,7 +12,7 @@ class hQR extends Transformr
 	// some vars
 	var	$tiny_url =	'http://tinyurl.com/api-create.php?url=';
 	var $url_vcard = '?type=hcard&url=';
-	var $url_local = 'app/extension/QRCode/generate.php?s=6&e=Q&d=';
+	var $url_local = 'app/include/QRCode/generate.php?s=6&e=Q&d=';
 	var $url_google = 'http://chart.apis.google.com/chart?chs=200x200&cht=qr&choe=UTF-8&chl=';
 	
 	function __construct() 

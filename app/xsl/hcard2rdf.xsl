@@ -46,9 +46,9 @@ http://www.w3.org/2006/vcard/ns# ontology.</dc:description>
   <xsl:if test="$vcard != 0">
     <v:VCard>
       <xsl:if test="@id">
-	<xsl:attribute name="rdf:ID">
-	  <xsl:value-of select="@id" />
-	</xsl:attribute>
+		<xsl:attribute name="rdf:ID">
+			<xsl:value-of select="@id" />
+		</xsl:attribute>
       </xsl:if>
       <xsl:apply-templates mode="extract-vcard"/>
     </v:VCard>

@@ -17,6 +17,7 @@
 	<option value="haudio-rss">hAudio RSS2</option>
 </optgroup>
 <optgroup label="Experimental">
+	<!-- <option value="microformats">All microformats</option> -->
 	<option value="mo-haudio">hAudio MO</option>
 	<option value="haudio-xspf">hAudio XSPF</option>
 	<option value="hfoaf">hFOAF</option>
@@ -27,6 +28,7 @@
 	<option value="rdfa">RDFa</option>
 	<option value="erdf">eRDF</option>
 	<option value="ogp-rdf">OGP</option>
+	<option value="dataset">JSON Dataset</option>
 </optgroup>
 </select></label> 
 <span id="urlfield">
@@ -34,37 +36,6 @@
 </span>
 <label for="submit"><button tabindex="3" id="submit" type="submit">Submit</button></label></p>
 <p class="pad">Drag this <span id="bookmark"></span>&nbsp;to your favorites.</p>
-<?php 
-if (isset($_GET['error']))
-{
-	switch($_GET['error']) 
-	{
-		case 'invalidDoc':
-			$error = 'Sorry Unable to load document ' . $this->url;
-		break;
-			
-		case 'noURL':
-			$error = 'Sorry URL: '. $this->url .' is Invalid';
-		break;
-			
-		case 'invalidID':
-			$error = 'Sorry ID from : '. $this->url.' does not exist';
-		break;
-			
-		case 'noPHPTidy':
-			$error = 'Sorry PHP Tidy function does not exist, try tidy_option = "online" ';
-		break;
-			
-		case 'noW3CTidy':
-			$error = 'Sorry online W3C tidy service is unavailable at this time';
-		break;
-			
-		case 'tidyFail':
-			$error = 'Sorry failed to tidy document '. $this->url. ' using php tidy';
-		break;
-	}
-	echo '<p id="error" class="errors" onclick="return hideThis();">'. $error .'</p>';
-}
-?>
+<?php include( 'errors.php' ); ?>
 </fieldset>
 </form>

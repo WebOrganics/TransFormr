@@ -1,7 +1,8 @@
 <?php
 define('_Transformr', true);
-ini_set('display_errors',  0 );
+
 include_once('../app/config.php');
+include_once('../app/arc/ARC2.php');
 
 $arc_config = array(
 
@@ -9,19 +10,14 @@ $arc_config = array(
   'db_user' => $user,
   'db_pwd' => $pwd,
   'db_name' => $name,
-
-  'store_name' => $storeName,
-
+  'store_name' => $storename,
   'endpoint_features' => array(
     'ask', 'select', 'describe', 'construct', 'delete'
   ),
-  
   'endpoint_timeout' => 60, 
   'endpoint_max_limit' => 1000, 
   'serializer_type_nodes' => 1,
-  'endpoint_write_key' => $writekey,
-  
-  'ns' => $ns,
+  'endpoint_write_key' => $writekey
 );
 
 /* init */
