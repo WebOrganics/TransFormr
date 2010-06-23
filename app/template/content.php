@@ -17,7 +17,6 @@
 	<option value="haudio-rss">hAudio RSS2</option>
 </optgroup>
 <optgroup label="Experimental">
-	<!-- <option value="microformats">All microformats</option> -->
 	<option value="mo-haudio">hAudio MO</option>
 	<option value="haudio-xspf">hAudio XSPF</option>
 	<option value="hfoaf">hFOAF</option>
@@ -28,7 +27,6 @@
 	<option value="rdfa">RDFa</option>
 	<option value="erdf">eRDF</option>
 	<option value="ogp-rdf">OGP</option>
-	<option value="dataset">JSON Dataset</option>
 </optgroup>
 </select></label> 
 <span id="urlfield">

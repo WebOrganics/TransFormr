@@ -114,8 +114,8 @@ All graphs are relative to the store, "type" is the type of RDF you extracted e.
 
 ## Notes
 
-* 2.2 Transform processes base@href for all xslt transformations, AR2 RDFTransformrPlugin and EndpointTemplatPlugin support around 350 namespaces, 
-  list is automaticaly downloaded from <http://prefix.cc/>, improved config.php .
+* 2.2 Transform processes base@href for all xslt transformations, AR2 RDFTransformrPlugin and EndpointTemplatePlugin support around 350 namespaces, 
+  list is automatically downloaded from <http://prefix.cc/>, improved config.php .
 * 2.1 Endpoint has new template using ARC2_EndpointTemplatPlugin, and DELETE FROM <...> functionality. 
 * 2.0 adds ARC2 storage and hAtom2SIOC transformation. 
 * 1.3 fixes @prefix and @vocab support for RDFa plus one or two minor bugs.
