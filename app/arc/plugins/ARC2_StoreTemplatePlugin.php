@@ -35,9 +35,9 @@ class ARC2_StoreTemplatePlugin extends ARC2_StoreEndpoint {
 		foreach ( $lines as $line ) 
 		{
 			$prefix = explode("	", $line);
-			if( $this->ns_exists($prefix['1'], $ns) == false ) // ignore dupe urls 
+			if( $this->ns_exists(trim($prefix['1']), $ns) == false ) // ignore dupe urls 
 			{
-				$ns[$prefix['0']] = $prefix['1'];
+				$ns[trim($prefix['0'])] = trim($prefix['1']);
 			}
 		}
 		return $ns;

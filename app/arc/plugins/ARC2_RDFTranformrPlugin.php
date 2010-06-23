@@ -43,7 +43,7 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 		$prefixes = dirname(__FILE__).'/namespaces.txt';
 		$lines = file($prefixes, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINE);
 		$ns = array();
-		if ( rand(1, 200) == 1) 
+		if ( rand(1, 100) == 1) 
 		{
 			$nsdoc = "http://prefix.cc/popular/all.file.txt";
 			$this->writePrefixes($prefixes, $nsdoc);
@@ -51,9 +51,9 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 		foreach ( $lines as $line ) 
 		{
 			$prefix = explode("	", $line);
-			if( $this->ns_exists($prefix['1'], $ns) == false ) // ignore dupe urls 
+			if( $this->ns_exists(trim($prefix['1']), $ns) == false ) // ignore dupe urls 
 			{
-				$ns[$prefix['0']] = $prefix['1'];
+				$ns[trim($prefix['0'])] = trim($prefix['1']);
 			}
 		}
 		return $ns;
