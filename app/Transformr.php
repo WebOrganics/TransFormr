@@ -239,8 +239,8 @@ class Transformr
 		
 		$title = $dom->getElementsByTagName('title')->item(0)->nodeValue;
 		
-		if(!is_null($dom->getElementsByTagName('base')->item(0)))
-			$url = $dom->getElementsByTagName('base')->item(0)->getAttribute('href'); // process base@href
+		/* if(!is_null($dom->getElementsByTagName('base')->item(0)))
+			$url = $dom->getElementsByTagName('base')->item(0)->getAttribute('href'); // process base@href */
 			
 		if (!$dom->getElementsByTagName('html')->item(0)->getAttribute('xmlns'))
 			$dom->getElementsByTagName('html')->item(0)->setAttribute('xmlns', 'http://www.w3.org/1999/xhtml'); //force xhtml NS
