@@ -7,6 +7,7 @@
 	xmlns:sioc="http://rdfs.org/sioc/ns#"
 	xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:dcterms="http://purl.org/dc/terms/"
+	xmlns:rss="http://purl.org/rss/1.0/"
 	xmlns:uri ="http://www.w3.org/2000/07/uri43/uri.xsl?template="
 	xmlns:xhtml="http://www.w3.org/1999/xhtml"
 	exclude-result-prefixes="uri"
@@ -24,6 +25,8 @@
 
 <!-- title of the current HTML doc set by Processor ( for fragment parsing ) -->
 <xsl:param name="doc-title" select="''"/>
+
+<xsl:param name="transformr" select="''"/>
 
 <xsl:param name="entry" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' hentry ')]"/>
 
@@ -61,6 +64,13 @@
 		</xsl:element>
 		<xsl:element name='dc:description'>
 			<xsl:value-of select="$meta"/>
+		</xsl:element>
+		<xsl:element name="rss:channel">
+			<xsl:attribute name="rdf:resource">
+				<xsl:value-of select="$transformr" />
+				<xsl:text>hatom-rss2/</xsl:text>
+				<xsl:value-of select="$abs-url" />
+			</xsl:attribute>
 		</xsl:element>
 		<xsl:for-each select='$entry'>
 			<xsl:element name='sioc:container_of'>
@@ -173,6 +183,11 @@
 					<xsl:with-param name="resource" select="$bookmark/@href"/>
 				</xsl:call-template>
 			</xsl:attribute>
+		</xsl:element>
+		<xsl:element name='rss:link'>
+			<xsl:call-template name="extract-resource">
+				<xsl:with-param name="resource" select="$bookmark/@href"/>
+			</xsl:call-template>
 		</xsl:element>
 	</xsl:if>
 </xsl:template>
