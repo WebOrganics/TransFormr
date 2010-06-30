@@ -40,7 +40,7 @@ class Transformr
 	{
 		if ($settings !='') foreach ( $settings as $setting => $value ) $this->$setting = $value;
 		$this->a = $this->config_ns();
-		foreach ( $this->required as $require ) require_once(dirname(__FILE__).'/'.$require.'.php');
+		foreach ( $this->required as $require ) require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.$require.'.php');
 		$this->ARC2 = ARC2::getComponent('RDFTranformrPlugin', $this->a);
 		return ( $this->query !='' ? $this->json_query($this->query) : $this->transformr_types() );
 	}
@@ -239,12 +239,6 @@ class Transformr
 		
 		$title = $dom->getElementsByTagName('title')->item(0)->nodeValue;
 		
-		/* if(!is_null($dom->getElementsByTagName('base')->item(0)))
-			$url = $dom->getElementsByTagName('base')->item(0)->getAttribute('href'); // process base@href */
-			
-		if (!$dom->getElementsByTagName('html')->item(0)->getAttribute('xmlns'))
-			$dom->getElementsByTagName('html')->item(0)->setAttribute('xmlns', 'http://www.w3.org/1999/xhtml'); //force xhtml NS
-		
 		if (isset($fragment)) 
 		{
 			$dom->relaxNGValidateSource($this->valid_schema());
@@ -343,7 +337,7 @@ class Transformr
 	
 	protected function config_ns() 
 	{
-	require_once(dirname(__FILE__).'/config.php' );
+	require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.'config.php' );
 	
 	if ($this->backup_type !='') 
 	{
@@ -370,8 +364,8 @@ class Transformr
 		/* MySQL database settings */
 		'db_host' => $host,
 		'db_user' => $user,
-		'db_pwd' => $pwd,
-		'db_name' => $name,
+		'db_pwd' => $passwd,
+		'db_name' => $dbname,
 
 		/* ARC2 store settings */
 		'store_name' => $storename
