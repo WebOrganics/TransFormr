@@ -239,6 +239,9 @@ class Transformr
 		
 		$title = $dom->getElementsByTagName('title')->item(0)->nodeValue;
 		
+		if ($this->type == 'rdfa' && !$dom->getElementsByTagName('html')->item(0)->getAttribute('xmlns'))
+			$dom->getElementsByTagName('html')->item(0)->setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+		
 		if (isset($fragment)) 
 		{
 			$dom->relaxNGValidateSource($this->valid_schema());
