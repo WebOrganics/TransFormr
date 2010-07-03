@@ -30,6 +30,8 @@ http://www.w3.org/2006/vcard/ns# ontology.</dc:description>
 
 <xsl:param name="use-camel-case" select="1"/>
 
+<xsl:param name='base-uri' select="''"/>
+
 <xsl:template match="/">
   <rdf:RDF>
     <xsl:apply-templates/>
@@ -46,7 +48,9 @@ http://www.w3.org/2006/vcard/ns# ontology.</dc:description>
   <xsl:if test="$vcard != 0">
     <v:VCard>
       <xsl:if test="@id">
-		<xsl:attribute name="rdf:ID">
+		<xsl:attribute name="rdf:about">
+			<xsl:value-of select="$base-uri" />
+			<xsl:value-of select="'#'" />
 			<xsl:value-of select="@id" />
 		</xsl:attribute>
       </xsl:if>

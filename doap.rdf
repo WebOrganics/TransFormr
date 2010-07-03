@@ -15,66 +15,73 @@
 			</foaf:Person>
 		</maintainer>
 		<maintainer>
-				<foaf:Person>
-					<foaf:name>Matthias Pfefferle</foaf:name>
-					<foaf:homepage rdf:resource="http://pfefferle.org" />
-				</foaf:Person>
+			<foaf:Person>
+				<foaf:name>Matthias Pfefferle</foaf:name>
+				<foaf:homepage rdf:resource="http://pfefferle.org" />
+			</foaf:Person>
 		</maintainer>
 		<release>
-      <Version>
-        <name>Version 2.2</name>
-        <revision>2.2</revision>
-        <created>2010-21-07</created>
-      </Version>
-    </release>
+			<Version>
+				<name>Version 2.3</name>
+				<revision>2.3</revision>
+				<created>2010-07-03</created>
+			</Version>
+		</release>
 		<release>
-      <Version>
-        <name>Version 2.1</name>
-        <revision>2.1</revision>
-        <created>2010-06-07</created>
-      </Version>
-    </release>
+			<Version>
+				<name>Version 2.2</name>
+				<revision>2.2</revision>
+				<created>2010-06-21</created>
+			</Version>
+		</release>
 		<release>
-      <Version>
-        <name>Version 2.0</name>
-        <revision>2.0</revision>
-        <created>2010-06-04</created>
-      </Version>
-    </release>
+			<Version>
+				<name>Version 2.1</name>
+				<revision>2.1</revision>
+				<created>2010-06-07</created>
+			</Version>
+		</release>
 		<release>
-      <Version>
-        <name>Version 1.3</name>
-        <revision>1.3</revision>
-        <created>2010-05-20</created>
-      </Version>
-    </release>
+			<Version>
+				<name>Version 2.0</name>
+				<revision>2.0</revision>
+				<created>2010-06-04</created>
+			</Version>
+		</release>
 		<release>
-      <Version>
-        <name>Version 1.2</name>
-        <revision>1.2</revision>
-        <created>2010-05-13</created>
-      </Version>
-    </release>
+			<Version>
+				<name>Version 1.3</name>
+				<revision>1.3</revision>
+				<created>2010-05-20</created>
+			</Version>
+		</release>
 		<release>
-      <Version>
-        <name>Version 1.1</name>
-        <revision>1.1</revision>
-        <created>2010-05-11</created>
-      </Version>
-    </release>
+			<Version>
+				<name>Version 1.2</name>
+				<revision>1.2</revision>
+				<created>2010-05-13</created>
+			</Version>
+		</release>
 		<release>
-      <Version>
-        <name>Version 1.0</name>
-        <revision>1.0</revision>
-        <created>2010-05-07</created>
-      </Version>
-    </release>
-    <release>
-      <Version>
-        <name>Version 0.6.2</name>
-        <revision>0.6.2</revision>
-        <created>2010-04-26</created>
-      </Version>
-    </release>
+			<Version>
+				<name>Version 1.1</name>
+				<revision>1.1</revision>
+				<created>2010-05-11</created>
+			</Version>
+		</release>
+		<release>
+			<Version>
+				<name>Version 1.0</name>
+				<revision>1.0</revision>
+				<created>2010-05-07</created>
+			</Version>
+		</release>
+		<release>
+			<Version>
+				<name>Version 0.6.2</name>
+				<revision>0.6.2</revision>
+				<created>2010-04-26</created>
+			</Version>
+		</release>
   </Project>
 </rdf:RDF>

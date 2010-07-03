@@ -8,8 +8,8 @@ $arc_config = array(
 
   'db_host' => $host,
   'db_user' => $user,
-  'db_pwd' => $pwd,
-  'db_name' => $name,
+  'db_pwd' => $passwd,
+  'db_name' => $dbname,
   'store_name' => $storename,
   'endpoint_features' => array(
     'ask', 'select', 'describe', 'construct', 'delete'

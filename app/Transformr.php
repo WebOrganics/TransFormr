@@ -2,7 +2,7 @@
 /*
 TransFormr Version: 2.2
 author:   Martin McEvoy
-updated:  Monday, 21st June 2010
+updated:  Saturday, 3rd July 2010
 homepage: http://github.com/WebOrganics/TransFormr
 web-service: http://microform.at/
 licence: see files/gpl-3.0.txt
@@ -10,7 +10,7 @@ licence: see files/gpl-3.0.txt
 class Transformr
 {
 	var $tidy_option = '';
-	var $use_curl = '';
+	var $admin = '';
 	var $use_store = '';
 	var $reset_tables = '';
 	var $store_size = '';
@@ -22,13 +22,14 @@ class Transformr
 		!defined('_Transformr') ? define('_Transformr', true) : '' ;
 		ini_set('display_errors',  0 );
 		$this->path = $this->set_path();
-		$this->version = '2.2';
-		$this->updated = array('Monday, 21st June 2010', '2010-21-07T12:15:28+01:00');
+		$this->version = '2.3';
+		$this->updated = array('Saturday, 3rd July 2010', '2010-07-03T12:00:20+01:00');
 		$this->check_php_version('5.2.0', 'Transformr'); 
 		
+		$this->text = isset($_GET['text']) ? stripslashes($_GET['text']) : '';
 		$this->url = isset($_GET['url']) ? str_replace('%23','#', trim($_GET['url'])) : '' ;
 		$this->type = isset($_GET['type']) ? $_GET['type'] : '';
-		$this->output = isset($_GET['output']) ? $_GET['output'] : 'rdf';
+		$this->output = isset($_GET['output']) ? ( $_GET['output'] == '' ? 'rdf' : $_GET['output']  ) : 'rdf';
 		$this->query = isset($_GET['q']) ? stripslashes($_GET["q"]) : '';
 		$this->template = dirname(__FILE__).'/template/';
 		$this->xsl = dirname(__FILE__).'/xsl/';
@@ -191,6 +192,13 @@ class Transformr
 			include $this->template ."dump.php";
 			include $this->template ."foot.php";
 		break;
+
+		case 'direct':
+			header("Content-Type: text/html; charset=UTF-8");
+			include $this->template ."head.php";
+			include $this->template ."direct.php";
+			include $this->template ."foot.php";
+		break;
 		
 		default:
 			header("Content-Type: text/html; charset=UTF-8");
@@ -201,42 +209,94 @@ class Transformr
 		}
 	}
 	
-	protected function get_file_contents($url)
+	/* default time to live 5min */
+	protected function get_file_contents($url, $ttl = 600) 
 	{
-		if ( $this->use_curl == 1 ) {
+		$cache_path = dirname(__FILE__).DIRECTORY_SEPARATOR.'cache';
 		
-			$cache = curl_init();
-			curl_setopt($cache, CURLOPT_RETURNTRANSFER, true );
-			curl_setopt($cache, CURLOPT_FOLLOWLOCATION, true );
-			curl_setopt($cache, CURLOPT_URL, $url);
-			curl_setopt($cache, CURLOPT_USERAGENT, 'Mozilla/5.0');
-			$result = curl_exec($cache);
+		 /* delete stale cached files over 24hrs old */
+		foreach( glob($cache_path.DIRECTORY_SEPARATOR."*.dat") as $file_name ) {
+			if (filemtime($file_name) <= (time() - 86400)) unlink($file_name);
+		} 
+		
+		$cache = curl_init();
+		curl_setopt($cache, CURLOPT_URL, $url);
+		curl_setopt($cache, CURLOPT_TIMEOUT, 15);
+		curl_setopt($cache, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($cache, CURLOPT_USERAGENT, 'Transformr/'.$this->version.'  ('.$this->path.'; '.$this->admin.')');
+		
+		if( $cache_file = sprintf('%s/%08X.dat', $cache_path, crc32($url))) 
+		{
+			$cache_exists = file_exists($cache_file);
+			
+			if ($ttl && $cache_exists && (filemtime($cache_file) > (time() - $ttl)) ) 
+			{
+				$cached = implode('', file($cache_file));
+				$cached = rtrim($cached, "\r\n") . PHP_EOL;	
+				return $cached;
+			}
+			clearstatcache();
+			touch($cache_file);
+ 
+			if ($cache_exists) 
+			{	
+				curl_setopt($cache, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
+				curl_setopt($cache, CURLOPT_TIMEVALUE, filemtime($cache_file));
+			}
+			$content = curl_exec($cache);
+			
+			// insert fullstop so tidy does not clean empty span or span with just a space
+			$content = trim(preg_replace('/<\s*span(.*?)>\s<\/\s*?span[^>\w]*?>/', 
+				'<span$1>.$2</span>', $content));
+			$content = trim(preg_replace('/<\s*span(.*?)><\/\s*?span[^>\w]*?>/', 
+				'<span$1>.</span>', $content));
+				
+			$status = curl_getinfo($cache, CURLINFO_HTTP_CODE);
 			curl_close($cache);
-			$html = html_convert_entities($result);
+  
+			if ($cache_exists && ($status == 304)) 
+			{ 
+				$cached = implode('', file($cache_file));
+				$cached = rtrim($cached, "\r\n") . PHP_EOL;	
+				return $cached;
+			}
+			else if (!$file_name = @fopen($cache_file, 'w')) {
+				die('Could not open ' . $cache_file);
+			}
+			else { 
+				fwrite($file_name, html_convert_entities($content));
+				@fclose($file_name);
+			}
+			chmod($cache_file, 0644);
+			return $content;
 		}
-		else $html = html_convert_entities(file_get_contents($url));
-
-		// insert fullstop so tidy does not clean empty span or span with just a space
-		$html = trim(preg_replace('/<\s*span(.*?)>\s<\/\s*?span[^>\w]*?>/', 
-			'<span$1>.$2</span>', $html));
-		$html = trim(preg_replace('/<\s*span(.*?)><\/\s*?span[^>\w]*?>/', 
-			'<span$1>.</span>', $html));
-		return $html;
 	}
 	
-	protected function transform_xsl($url, $xsl_filename) 
+	protected function transform_xsl($url, $xsl_filename, $isstring = 0) 
 	{
-	if( strrchr($url, 'http://') ) {
+	if( strrchr($url, 'http://') || $this->text != '' ) {
 		
 		if (strrchr($url, '#')) $fragment = array_pop(explode('#', $url));
 		
-		$html = $this->get_file_contents($url);
+		if( $this->text != '' ) $html = $this->text;
+		
+		else $html = $this->get_file_contents($url);
+		
+		if ( strlen(trim($html)) === 0 ) return $this->error('noURL');
+		
 		$dom = new DOMDocument('1.0');
 		$dom->preserveWhiteSpace = false;
-		@$dom->loadXML($this->tidy_html($html, $url, $this->tidy_option));
+		if( $this->text != '' ) @$dom->loadXML($html);
+		else @$dom->loadXML($this->tidy_html($html, $url, $this->tidy_option));
 		$dom->formatOutput = true;
 		$dom->normalizeDocument();
 		
+		if( $this->text != '' )  {
+			$this->use_store = 0;
+			$title = 'Using direct Input';
+			$url = $this->path.'direct/';
+			$dom = $this->return_html_frag(urldecode($this->text), $title);
+		}
 		$title = $dom->getElementsByTagName('title')->item(0)->nodeValue;
 		
 		if ($this->type == 'rdfa' && !$dom->getElementsByTagName('html')->item(0)->getAttribute('xmlns'))
@@ -257,6 +317,7 @@ class Transformr
 		$xslt = new xsltProcessor;
 		$xslt->setParameter('','transformr', $this->path);
 		$xslt->setParameter('','url', $url);
+		$xslt->setParameter('','request-uri', $_SERVER['REQUEST_URI']);
 		$xslt->setParameter('','base-uri', $url);
 		$xslt->setParameter('','doc-title', $title);
 		$xslt->setParameter('','version', $this->version);
@@ -290,7 +351,7 @@ class Transformr
 		include $this->template ."qrcode.php";
 	}
 	
-	protected function tidy_html($html, $url, $tidy_option, $output ='')
+	private function tidy_html($html, $url, $tidy_option, $output ='')
 	{	
 		$output = $output == '' ? 'output-xhtml' : $output ;
 		
@@ -311,7 +372,7 @@ class Transformr
 				$tidy = new tidy;
 				$tidy->parseString($html, $config, 'utf8');
 				$tidy->cleanRepair();
-				$html = !$tidy ? $this->error('tidyFail') : $tidy;
+				return !$tidy ? $this->error('tidyFail') : $tidy;
 			}
 		} 
 		elseif ($tidy_option == 'dom') 
@@ -322,13 +383,13 @@ class Transformr
 			$newdoc->formatOutput = true;
 			$newdoc->normalizeDocument();
 			$html = $newdoc->saveXML();
-			$html = str_replace(array("\r\n", "\r", "\n", "\t", "&#xD;"), '', $result);
+			return str_replace(array("\r\n", "\r", "\n", "\t", "&#xD;"), '', $result);
 		}
 		elseif ($tidy_option == 'online') 
 		{		
 			$tidyURL = 'http://cgi.w3.org/cgi-bin/tidy?forceXML=on&docAddr='.$url;
 			$tidy = $this->get_file_contents($tidyURL);
-			$html = !$tidy ? $this->error('noW3CTidy') : $tidy;
+			return !$tidy ? $this->error('noW3CTidy') : $tidy;
 		}
 		return $html;	
 	}

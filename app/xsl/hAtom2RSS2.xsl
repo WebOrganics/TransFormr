@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- hAtom to RSS2 Version 0.3 updated 2010-07-02 -->
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
 		xmlns:dc="http://purl.org/dc/elements/1.1/"
 		xmlns:atom="http://www.w3.org/2005/Atom"
@@ -10,8 +11,6 @@
         
 <xsl:import href="uri.xsl" />
 
-<xsl:import href="url-encode.xsl" />
-
 <xsl:strip-space elements="*"/>
 
 <xsl:output method="xml" 
@@ -19,17 +18,17 @@
 		   encoding="UTF-8" 
 		   media-type="application/rss+xml"/>
 
-<!-- base of the current HTML doc set by Processor-->
+<!-- url of the current HTML doc set by Processor -->
 <xsl:param name="base-uri" select="''"/>
 
+<!-- Request uri set by Processor -->
+<xsl:param name="request-uri" select="''"/>
+
+<!-- transformer version -->
 <xsl:param name="version" select="''"/>
 
-<!-- url encoded base of the current HTML doc set by Processor -->
-<xsl:param name="base-encoded">
-	<xsl:call-template name="url-encode">
-		<xsl:with-param name="str" select="$base-uri"/> 
-	</xsl:call-template>
-</xsl:param>
+<!-- url of transformer -->
+<xsl:param name="transformr" select="''"/>
 
 <!-- title of the current HTML doc set by Processor ( for fragment parsing ) -->
 <xsl:param name="doc-title" select="''"/>
@@ -37,10 +36,6 @@
 <xsl:param name="generator">
 	<xsl:text>TransFormr Version </xsl:text>
 	<xsl:value-of select="$version" />
-</xsl:param>
-
-<xsl:param name="parser">
-	<xsl:text>http://microform.at/?type=hatom-rss2&amp;url=</xsl:text>
 </xsl:param>
 
 <xsl:template match="/">
@@ -60,7 +55,7 @@
 
 <rss version="2.0" xml:base="{$base-uri}">
 <channel>
-<atom:link rel="self" href="{$parser}{$base-encoded}" type="application/rss+xml" />
+<atom:link rel="self" href="{$transformr}{substring-after( normalize-space($request-uri),'/' )}" type="application/rss+xml" />
 	<title>
     	<xsl:choose>
         	<xsl:when test="descendant::*[name() = 'title']">

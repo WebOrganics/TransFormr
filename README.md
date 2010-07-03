@@ -1,4 +1,4 @@
-# TransFormr version 2.2
+# TransFormr version 2.3
 
 TransFormr is a simple toolkit that uses PHP and XSLT for extracting and transforming microformats <http://microformats.org/>.
 
@@ -112,10 +112,19 @@ When you extract RDF using Transformr and the arc2 store is enabled, you can que
 
 All graphs are relative to the store, "type" is the type of RDF you extracted e.g hfoaf, rdfa ... etc, and the url of the page you extracted.
 
+### By Direct input.
+
+You can also transform a fragment of html by direct input, this is intended to be used for testing you markup before publishing it live.
+
+## Future releases
+
+Work is in progress supporting the Species Microformat <http://microformats.org/wiki/species-strawman-01>, hProduct <http://microformats.org/wiki/hproduct> + hCard Microformat to Good Relations and Data vocab transformation for Rich Snippets <http://www.google.com/support/webmasters/bin/answer.py?hl=en&answer=99170>. 
+
 ## Notes
 
-* 2.2 Transform processes base@href for all xslt transformations, AR2 RDFTransformrPlugin and EndpointTemplatePlugin support around 350 namespaces, 
-  list is automatically downloaded from <http://prefix.cc/>, improved config.php .
+* 2.3 Transformr is now Faster due to new caching action. Added support for Transforming by direct input, Some XSLT bugs fixed.
+* 2.2 Transform processes base@href for all xslt transformations, AR2 RDFTransformrPlugin and EndpointTemplatPlugin support around 350 namespaces, 
+  list is automaticaly downloaded from <http://prefix.cc/>, improved config.php .
 * 2.1 Endpoint has new template using ARC2_EndpointTemplatPlugin, and DELETE FROM <...> functionality. 
 * 2.0 adds ARC2 storage and hAtom2SIOC transformation. 
 * 1.3 fixes @prefix and @vocab support for RDFa plus one or two minor bugs.

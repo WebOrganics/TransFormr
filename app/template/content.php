@@ -1,6 +1,6 @@
 <form id="form" onsubmit="return Validate(this);" action="" method="get">
 <fieldset>
-<legend><span style="color:#333333">trans</span><span style="color:#838383">form</span> a url</legend>
+<legend><span style="color:#333333">trans</span><span style="color:#838383">form</span> by url or <a href="direct/" title="Transform a Fragment of HTML">direct input</a></legend>
 <p><label for="type">Select type: <select tabindex="1" id="type" name="type">
 <optgroup label="Default">
 	<option selected="selected" value="detect">Detect all</option>

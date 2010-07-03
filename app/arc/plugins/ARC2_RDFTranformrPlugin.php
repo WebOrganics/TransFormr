@@ -40,7 +40,7 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 	
 	function loadPrefixes()
 	{
-		$prefixes = dirname(__FILE__).'/namespaces.txt';
+		$prefixes = dirname(__FILE__).DIRECTORY_SEPARATOR.'namespaces.txt';
 		$lines = file($prefixes, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINE);
 		$ns = array();
 		if ( rand(1, 100) == 1) 
@@ -82,6 +82,7 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 			else { 
 				fwrite($file, $document);
 				@fclose($file);
+				chmod($prefixes, 0644);
 				return true;
 			}
 		}

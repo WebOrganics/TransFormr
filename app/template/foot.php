@@ -3,6 +3,7 @@
 <!-- Licence -->
 <p>Except where otherwise noted <a class="url org fn" href="http://github.com/WebOrganics/TransFormr">Transformr</a> is licensed under a GNU <a rel="license" href="files/gpl-3.0.txt">General Public Licence</a>.</p>
 </div>
+<?php if ( $_SERVER['REQUEST_URI'] == '/') {?>
 <script type="text/javascript">
 <!--
 function bookmarkUrl() 
@@ -63,5 +64,6 @@ function observeEvents()
 window.onload = observeEvents;
 // -->
 </script>
+<?php } ?>
 </body>
 </html>

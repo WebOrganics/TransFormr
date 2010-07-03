@@ -188,3 +188,11 @@ p.hidden {
 }
 .intro { text-align:left;} 
 .pad { padding:5px 0 0 0; }
+
+#text{
+	height:200px;
+	margin-bottom:5px;
+	margin-left:-5px;
+	margin-top:-5px;
+	width:720px;
+}
