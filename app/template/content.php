@@ -39,7 +39,7 @@
 <optgroup label="Default">
 	<option selected="selected" value="">Default Output</option>
 </optgroup>
-<optgroup label="If supported">
+<optgroup label="RDF Types only">
 	<option value="ntriples">NTriples</option>
 	<option value="turtle">Turtle</option>
 	<option value="rdfjson">RDFJSON</option>
