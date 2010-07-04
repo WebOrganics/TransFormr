@@ -1,7 +1,12 @@
 <form id="form" onsubmit="return Validate(this);" action="" method="get">
 <fieldset>
 <legend><span style="color:#333333">trans</span><span style="color:#838383">form</span> by url or <a href="direct/" title="Transform a Fragment of HTML">direct input</a></legend>
-<p><label for="type">Select type: <select tabindex="1" id="type" name="type">
+<p>
+<span id="urlfield">
+	<label for="url" title="Enter a URL"><input tabindex="2" id="url" type="text" name="url" /></label>
+</span>
+</p><p style="text-align: left; padding-left: 5px;">
+<label for="type">Type: <select tabindex="1" id="type" name="type" style="width: 240px;">
 <optgroup label="Default">
 	<option selected="selected" value="detect">Detect all</option>
 </optgroup>
@@ -28,11 +33,21 @@
 	<option value="erdf">eRDF</option>
 	<option value="ogp-rdf">OGP</option>
 </optgroup>
+</select></label>
+<label for="output">Output: 
+<select tabindex="3" id="output" name="output" style="width: 240px;">
+<optgroup label="Default">
+	<option selected="selected" value="">Default Output</option>
+</optgroup>
+<optgroup label="If supported">
+	<option value="ntriples">NTriples</option>
+	<option value="turtle">Turtle</option>
+	<option value="rdfjson">RDFJSON</option>
+	<option value="rdfa">RDFa</option>
+	<option value="html">HTML(Microdata)</option>
+</optgroup>
 </select></label> 
-<span id="urlfield">
-	<label for="url">Url: <input tabindex="2" id="url" type="text" name="url" /></label>
-</span>
-<label for="submit"><button tabindex="3" id="submit" type="submit">Submit</button></label></p>
+<label for="submit"><button tabindex="3" id="submit" type="submit" style="width: 125px;">Submit</button></label></p>
 <p class="pad">Drag this <span id="bookmark"></span>&nbsp;to your favorites.</p>
 <?php include( 'errors.php' ); ?>
 </fieldset>

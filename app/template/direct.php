@@ -13,7 +13,7 @@
    </div>
 </div>')?></textarea></label>
 </p>
-<p style="text-align:left; margin-left:10px"><label for="type">Type: <select tabindex="2" id="type" name="type">
+<p style="text-align:left; padding-left: 5px;"><label for="type">Type: <select tabindex="2" id="type" name="type" style="width: 240px;">
 <optgroup label="Microformats">
 	<option selected="selected" value="hcard">hCard</option>
 	<option value="hcard-rdf">hCard RDF</option>
@@ -35,7 +35,7 @@
 </optgroup>
 </select></label> 
 <label for="output">Output: 
-<select tabindex="3" id="output" name="output">
+<select tabindex="3" id="output" name="output" style="width: 240px;">
 <optgroup label="Default">
 	<option selected="selected" value="">Default Output</option>
 </optgroup>
@@ -47,6 +47,6 @@
 	<option value="html">HTML(Microdata)</option>
 </optgroup>
 </select></label>
-<label for="submit"><button tabindex="4" id="submit" type="submit">Submit</button></label></p>
+<label for="submit"><button tabindex="4" id="submit" type="submit" style="width: 125px;">Submit</button></label></p>
 </fieldset>
 </form>
