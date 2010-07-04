@@ -79,7 +79,7 @@ ol li {
 }
 
 input#url {
-  width:45%;
+  width:720px;
   -moz-box-shadow: inset 0 2px 4px rgba(0,0,0,.4);
   -webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,.4);
   box-shadow: inset 0 2px 4px #000;
