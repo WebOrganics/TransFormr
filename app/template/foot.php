@@ -64,6 +64,38 @@ function observeEvents()
 window.onload = observeEvents;
 // -->
 </script>
-<?php } ?>
+<?php } 
+else {
+?>
+<script type="text/javascript">
+<!--
+
+function textFocus() 
+{
+  document.getElementById('text').setAttribute("class", "Focus");
+}
+
+function textReset() 
+{
+  document.getElementById('text').setAttribute("class", "Reset");
+}
+	
+
+function observeEvents() 
+{
+  var text = document.getElementById('text');
+  
+  text.focus();
+  text.onblur = textReset;
+  text.onclick = textFocus;
+  
+  this.textFocus();
+}
+window.onload = observeEvents;
+// -->
+</script>
+<?php
+}
+?>
 </body>
 </html>

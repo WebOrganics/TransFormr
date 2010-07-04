@@ -172,10 +172,10 @@ input.Valid {
 input.Invalid {
 	background-color: #FF9F9F;
 }
-input.Focus {
+input.Focus, #text.Focus {
 	background-color: #FFFFCC;
 }
-input.Reset {
+input.Reset, #text.Reset {
 	background-color: #FFFFFF;
 }
 p.hidden {
@@ -189,10 +189,13 @@ p.hidden {
 .intro { text-align:left;} 
 .pad { padding:5px 0 0 0; }
 
-#text{
+textarea#text {
 	height:200px;
 	margin-bottom:5px;
 	margin-left:-5px;
 	margin-top:-5px;
 	width:720px;
+    -moz-box-shadow: inset 0 2px 4px rgba(0,0,0,.4);
+    -webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,.4);
+    box-shadow: inset 0 2px 4px #000;
 }
