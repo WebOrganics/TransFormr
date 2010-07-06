@@ -20,7 +20,9 @@ $settings = array(
 	/* location of store dump folder must be writable by webserver */
 	'dump_location' => 'dump/',
 	/* backup type for store dumps, pick one turtle, rdf, ntriples or leave empty for sparql result format (xml)*/
-	'backup_type' => 'turtle'
+	'backup_type' => 'turtle',
+	/* ttl (time to live) How long to cache a webpage on the server in seconds 300 = 5mins. */
+	'ttl' => 300
 );
 
 /*  Transform */

@@ -77,16 +77,6 @@ ol li {
 .subtitle a {
 	color:#679A06;
 }
-
-input#url {
-  width:720px;
-  -moz-box-shadow: inset 0 2px 4px rgba(0,0,0,.4);
-  -webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,.4);
-  box-shadow: inset 0 2px 4px #000;
-
-}
-
-label { margin-left:3px;}
 .errors {
 	border:1px solid #AA0000;
 	margin-bottom:10px;
@@ -173,7 +163,7 @@ input.Invalid {
 	background-color: #FF9F9F;
 }
 input.Focus, #text.Focus {
-	background-color: #FFFFCC;
+	background-color: #FFFFDD;
 }
 input.Reset, #text.Reset {
 	background-color: #FFFFFF;
@@ -192,10 +182,21 @@ p.hidden {
 textarea#text {
 	height:200px;
 	margin-bottom:5px;
-	margin-left:-5px;
 	margin-top:-5px;
-	width:720px;
+	width:710px;
     -moz-box-shadow: inset 0 2px 4px rgba(0,0,0,.4);
     -webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,.4);
     box-shadow: inset 0 2px 4px #000;
+}
+select#type, select#output {
+	width:210px;
+}
+button#submit {width: 100px;}
+
+input#url {
+  width:85%;
+  -moz-box-shadow: inset 0 2px 4px rgba(0,0,0,.4);
+  -webkit-box-shadow: inset 0 2px 4px rgba(0,0,0,.4);
+  box-shadow: inset 0 2px 4px #000;
+
 }

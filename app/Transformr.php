@@ -16,6 +16,7 @@ class Transformr
 	var $store_size = '';
 	var $dump_location = '';
 	var $backup_type = '';
+	var $ttl = '';
 	
 	function __construct() 
 	{
@@ -209,27 +210,20 @@ class Transformr
 		}
 	}
 	
-	/* default time to live 5min */
-	protected function get_file_contents($url, $ttl = 600) 
-	{
+	function get_file_contents($url) 
+	{	
 		$cache_path = dirname(__FILE__).DIRECTORY_SEPARATOR.'cache';
 		
-		 /* delete stale cached files over 24hrs old */
 		foreach( glob($cache_path.DIRECTORY_SEPARATOR."*.dat") as $file_name ) {
-			if (filemtime($file_name) <= (time() - 86400)) unlink($file_name);
-		} 
-		
-		$cache = curl_init();
-		curl_setopt($cache, CURLOPT_URL, $url);
-		curl_setopt($cache, CURLOPT_TIMEOUT, 15);
-		curl_setopt($cache, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($cache, CURLOPT_USERAGENT, 'Transformr/'.$this->version.'  ('.$this->path.'; '.$this->admin.')');
+			if ( (time() - $this->ttl ) > filemtime($file_name) ) 
+			unlink($file_name);
+		}
 		
 		if( $cache_file = sprintf('%s/%08X.dat', $cache_path, crc32($url))) 
 		{
 			$cache_exists = file_exists($cache_file);
 			
-			if ($ttl && $cache_exists && (filemtime($cache_file) > (time() - $ttl)) ) 
+			if ($this->ttl !='' && $cache_exists && (filemtime($cache_file) > (time() - $this->ttl)) ) 
 			{
 				$cached = implode('', file($cache_file));
 				$cached = rtrim($cached, "\r\n") . PHP_EOL;	
@@ -237,7 +231,13 @@ class Transformr
 			}
 			clearstatcache();
 			touch($cache_file);
- 
+			
+			$cache = curl_init();
+			curl_setopt($cache, CURLOPT_URL, $url);
+			curl_setopt($cache, CURLOPT_TIMEOUT, 15);
+			curl_setopt($cache, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($cache, CURLOPT_USERAGENT, 'Transformr/'.$this->version.'  ('.$this->path.'; '.$this->admin.')');
+			
 			if ($cache_exists) 
 			{	
 				curl_setopt($cache, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
@@ -253,7 +253,7 @@ class Transformr
 				
 			$status = curl_getinfo($cache, CURLINFO_HTTP_CODE);
 			curl_close($cache);
-  
+			
 			if ($cache_exists && ($status == 304)) 
 			{ 
 				$cached = implode('', file($cache_file));

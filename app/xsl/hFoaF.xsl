@@ -6,7 +6,7 @@
 	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
 	xmlns:xhtml="http://www.w3.org/1999/xhtml"
 	xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"
-	xmlns:xfn="http://vocab.sindice.com/xfn#"
+	xmlns:xfn="http://gmpg.org/xfn/11#"
 	xmlns:dc="http://purl.org/dc/elements/1.1/"
 	exclude-result-prefixes="xhtml"
     version="1.0">

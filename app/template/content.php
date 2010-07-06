@@ -5,8 +5,9 @@
 <span id="urlfield">
 	<label for="url" title="Enter a URL"><input tabindex="2" id="url" type="text" name="url" /></label>
 </span>
-</p><p style="text-align: left; padding-left: 5px;">
-<label for="type">Type: <select tabindex="1" id="type" name="type" style="width: 240px;">
+</p>
+<p>
+<label for="type">Type: <select tabindex="1" id="type" name="type">
 <optgroup label="Default">
 	<option selected="selected" value="detect">Detect all</option>
 </optgroup>
@@ -35,7 +36,7 @@
 </optgroup>
 </select></label>
 <label for="output">Output: 
-<select tabindex="3" id="output" name="output" style="width: 240px;">
+<select tabindex="3" id="output" name="output">
 <optgroup label="Default">
 	<option selected="selected" value="">Default Output</option>
 </optgroup>
@@ -47,7 +48,7 @@
 	<option value="html">HTML(Microdata)</option>
 </optgroup>
 </select></label> 
-<label for="submit"><button tabindex="3" id="submit" type="submit" style="width: 125px;">Submit</button></label></p>
+<label for="submit"><button tabindex="3" id="submit" type="submit">Submit</button></label></p>
 <p class="pad">Drag this <span id="bookmark"></span>&nbsp;to your favorites.</p>
 <?php include( 'errors.php' ); ?>
 </fieldset>

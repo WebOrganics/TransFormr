@@ -134,21 +134,49 @@
 <!-- bookmark -->
 <xsl:template name="permalink">
 <xsl:param name="bookmark" select="descendant::*[contains(concat(' ',normalize-space(@rel),' '),' bookmark ')]"/>
-	<xsl:if test="$bookmark">
-		<xsl:element name='guid'>
-			<xsl:attribute name="isPermaLink">
-				<xsl:text>true</xsl:text>
-			</xsl:attribute>
+<xsl:element name='guid'>
+	<xsl:attribute name="isPermaLink">
+		<xsl:text>true</xsl:text>
+	</xsl:attribute>
+	<xsl:choose>
+		<xsl:when test="$bookmark">
 			<xsl:call-template name="extract-resource">
 				<xsl:with-param name="resource" select="$bookmark/@href"/>
 			</xsl:call-template>
-		</xsl:element>
-	</xsl:if>
+		</xsl:when>
+		<xsl:when test="self::*[@id]">
+			<xsl:value-of select="$base-uri"/>
+			<xsl:value-of select="'#'"/>
+			<xsl:value-of select="@id"/>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:value-of select="$base-uri"/>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:element>
+<xsl:element name='link'>
+	<xsl:choose>
+		<xsl:when test="$bookmark">
+			<xsl:call-template name="extract-resource">
+				<xsl:with-param name="resource" select="$bookmark/@href"/>
+			</xsl:call-template>
+		</xsl:when>
+		<xsl:when test="self::*[@id]">
+			<xsl:value-of select="$base-uri"/>
+			<xsl:value-of select="'#'"/>
+			<xsl:value-of select="@id"/>
+		</xsl:when>
+		<xsl:otherwise>
+			<xsl:value-of select="$base-uri"/>
+		</xsl:otherwise>
+	</xsl:choose>
+</xsl:element>
 </xsl:template>
 
 <!-- author -->
 <xsl:template name="author-name">
-<xsl:param name="name" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' author ') or contains(concat(' ',normalize-space(@class),' '),' fn ')]"/>
+<xsl:param name="name" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' author ')]|
+							  /*//*[contains(concat(' ',normalize-space(@class),' '),' author ')]/*[contains(concat(' ',normalize-space(@class),' '),' fn ')][1]"/>
 	<xsl:if test="$name">
 		<xsl:element name='dc:creator'>
 			<xsl:value-of select="normalize-space($name)"/>
@@ -158,7 +186,7 @@
 
 <!-- entry-summary -->
 <xsl:template name="entry-summary">
-<xsl:param name="summary" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' entry-summary ')][1]"/>
+<xsl:param name="summary" select="descendant-or-self::*[contains(concat(' ',normalize-space(@class),' '),' entry-summary ')]"/>
 	<xsl:if test="$summary">
 		<xsl:element name='description'>
 			<xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
@@ -172,7 +200,7 @@
 
 <!-- entry-content -->
 <xsl:template name="entry-content">
-<xsl:param name="content" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' entry-content ')][1]"/>
+<xsl:param name="content" select="descendant-or-self::*[contains(concat(' ',normalize-space(@class),' '),' entry-content ')]"/>
 	<xsl:if test="$content">
 		<xsl:element name='description'>
 			<xsl:text disable-output-escaping="yes">&lt;![CDATA[</xsl:text>
