@@ -44,12 +44,11 @@
 <xsl:param name="pos">1</xsl:param>
 
 <xsl:template match="/">
-<xsl:param name="about"/>
 <rdf:RDF>
 <xsl:choose>
     <xsl:when test="$vcard">
 	<xsl:for-each select="$vcard[position() &lt;= $pos]">
-		<PersonalProfileDocument rdf:about="{$about}">
+		<PersonalProfileDocument rdf:about="{$base-uri}">
 			<xsl:if test="$title">
 				<dc:title><xsl:value-of select="$title"/></dc:title>
 			</xsl:if>

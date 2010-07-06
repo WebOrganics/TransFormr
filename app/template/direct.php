@@ -1,4 +1,4 @@
-<form id="form" action="/" method="get">
+<form id="form" action="/" method="post">
 <fieldset>
 <legend><span style="color:#333333">trans</span><span style="color:#838383">form</span> by <a href="/" title="Transform using a url">url</a> or direct input</legend>
 <p id="field">
@@ -12,6 +12,11 @@
      Tel: <span class="tel">206-555-7242</span>
    </div>
 </div>')?></textarea></label>
+</p>
+<p style="text-align: left; margin-left: 50px;">
+Change HTTP method: 
+	<a onclick="javascript:document.getElementById('form').method='get'" href="javascript:;">GET</a> 
+	<a onclick="javascript:document.getElementById('form').method='post'" href="javascript:;">POST</a>
 </p>
 <p><label for="type">Type: <select tabindex="2" id="type" name="type">
 <optgroup label="Microformats">

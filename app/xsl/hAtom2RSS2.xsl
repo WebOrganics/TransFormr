@@ -136,23 +136,11 @@
 <xsl:param name="bookmark" select="descendant::*[contains(concat(' ',normalize-space(@rel),' '),' bookmark ')]"/>
 <xsl:element name='guid'>
 	<xsl:attribute name="isPermaLink">
-		<xsl:text>true</xsl:text>
+		<xsl:text>false</xsl:text>
 	</xsl:attribute>
-	<xsl:choose>
-		<xsl:when test="$bookmark">
-			<xsl:call-template name="extract-resource">
-				<xsl:with-param name="resource" select="$bookmark/@href"/>
-			</xsl:call-template>
-		</xsl:when>
-		<xsl:when test="self::*[@id]">
-			<xsl:value-of select="$base-uri"/>
-			<xsl:value-of select="'#'"/>
-			<xsl:value-of select="@id"/>
-		</xsl:when>
-		<xsl:otherwise>
-			<xsl:value-of select="$base-uri"/>
-		</xsl:otherwise>
-	</xsl:choose>
+		<xsl:value-of select="$base-uri"/>
+		<xsl:value-of select="'#'"/>
+		<xsl:value-of select="generate-id()"/>
 </xsl:element>
 <xsl:element name='link'>
 	<xsl:choose>

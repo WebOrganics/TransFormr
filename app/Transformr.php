@@ -27,11 +27,12 @@ class Transformr
 		$this->updated = array('Saturday, 3rd July 2010', '2010-07-03T12:00:20+01:00');
 		$this->check_php_version('5.2.0', 'Transformr'); 
 		
-		$this->text = isset($_GET['text']) ? stripslashes($_GET['text']) : '';
-		$this->url = isset($_GET['url']) ? str_replace('%23','#', trim($_GET['url'])) : '' ;
-		$this->type = isset($_GET['type']) ? $_GET['type'] : '';
-		$this->output = isset($_GET['output']) ? ( $_GET['output'] == '' ? 'rdf' : $_GET['output']  ) : 'rdf';
-		$this->query = isset($_GET['q']) ? stripslashes($_GET["q"]) : '';
+		$params = array_merge($_GET, $_POST);
+		$this->text = isset($params['text']) ? stripslashes($params['text']) : '';
+		$this->url = isset($params['url']) ? str_replace('%23','#', trim($params['url'])) : '' ;
+		$this->type = isset($params['type']) ? $params['type'] : '';
+		$this->output = isset($params['output']) ? ( $params['output'] == '' ? 'rdf' : $params['output']  ) : 'rdf';
+		$this->query = isset($params['q']) ? stripslashes($params["q"]) : '';
 		$this->template = dirname(__FILE__).'/template/';
 		$this->xsl = dirname(__FILE__).'/xsl/';
 		$this->required = array('arc/ARC2', 'include/class.hqr', 'include/function.encoded');
