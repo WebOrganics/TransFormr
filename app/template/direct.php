@@ -2,7 +2,7 @@
 <fieldset>
 <legend><span style="color:#333333">trans</span><span style="color:#838383">form</span> by <a href="/" title="Transform using a url">url</a> or direct input</legend>
 <p id="field">
-	<label for="text"><textarea title="Input a Well formed Fragment of HTML" name="text" id="text" tabindex="1"><?php if (!isset($_GET['text'])) echo htmlentities('<div class="vcard" id="BusinessEntity">
+	<label for="text"><textarea title="Enter Some X/HTML Here" name="text" id="text" tabindex="1"><?php if (!isset($_GET['text'])) echo htmlentities('<div class="vcard" id="BusinessEntity">
    <a class="url fn org" href="http://pizza.example.com/">L\'Amourita Pizza</a>,  
    <div class="adr">
      <span class="street-address">2040 Any Street</span>

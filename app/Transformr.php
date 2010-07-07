@@ -296,9 +296,10 @@ class Transformr
 			$this->use_store = 0;
 			$title = 'Using direct Input';
 			$url = $this->path.'direct/';
-			$dom = $this->return_html_frag(urldecode($this->text), $title);
+			$stext = $this->tidy_option == 'php' ? $this->tidy_html( urldecode($this->text), $url, $this->tidy_option ) : urldecode($this->text);
+			$dom = @DomDocument::loadHTML($stext);
 		}
-		$title = $dom->getElementsByTagName('title')->item(0)->nodeValue;
+		$title = !isset($title) ? $dom->getElementsByTagName('title')->item(0)->nodeValue : $title;
 		
 		if ($this->type == 'rdfa' && !$dom->getElementsByTagName('html')->item(0)->getAttribute('xmlns'))
 			$dom->getElementsByTagName('html')->item(0)->setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
@@ -352,7 +353,7 @@ class Transformr
 		include $this->template ."qrcode.php";
 	}
 	
-	private function tidy_html($html, $url, $tidy_option, $output ='')
+	private function tidy_html($html, $url, $tidy_option='', $output ='')
 	{	
 		$output = $output == '' ? 'output-xhtml' : $output ;
 		
