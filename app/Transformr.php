@@ -279,8 +279,16 @@ class Transformr
 		
 		if (strrchr($url, '#')) $fragment = array_pop(explode('#', $url));
 		
-		if( $this->text != '' ) $html = $this->text;
-		
+		if( $this->text != '' ) 
+		{ 
+			$this->use_store = 0;
+			$title = 'Using direct Input';
+			$url = $this->path.'direct/';
+			$html = method_exists('tidy','cleanRepair') ? 
+			  $this->tidy_html( urldecode($this->text), '', 'php' ) : 
+			  urldecode($this->text);
+			
+		}
 		else $html = $this->get_file_contents($url);
 		
 		if ( strlen(trim($html)) === 0 ) return $this->error('noURL');
@@ -292,13 +300,6 @@ class Transformr
 		$dom->formatOutput = true;
 		$dom->normalizeDocument();
 		
-		if( $this->text != '' )  {
-			$this->use_store = 0;
-			$title = 'Using direct Input';
-			$url = $this->path.'direct/';
-			$stext = $this->tidy_option == 'php' ? $this->tidy_html( urldecode($this->text), $url, $this->tidy_option ) : urldecode($this->text);
-			$dom = @DomDocument::loadXML($stext);
-		}
 		$title = !isset($title) ? $dom->getElementsByTagName('title')->item(0)->nodeValue : $title;
 		
 		if ($this->type == 'rdfa' && !$dom->getElementsByTagName('html')->item(0)->getAttribute('xmlns'))
@@ -353,7 +354,7 @@ class Transformr
 		include $this->template ."qrcode.php";
 	}
 	
-	private function tidy_html($html, $url, $tidy_option='', $output ='')
+	private function tidy_html($html, $url='', $tidy_option='', $output ='')
 	{	
 		$output = $output == '' ? 'output-xhtml' : $output ;
 		
