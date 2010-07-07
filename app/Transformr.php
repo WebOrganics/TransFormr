@@ -297,7 +297,7 @@ class Transformr
 			$title = 'Using direct Input';
 			$url = $this->path.'direct/';
 			$stext = $this->tidy_option == 'php' ? $this->tidy_html( urldecode($this->text), $url, $this->tidy_option ) : urldecode($this->text);
-			$dom = @DomDocument::loadHTML($stext);
+			$dom = @DomDocument::loadXML($stext);
 		}
 		$title = !isset($title) ? $dom->getElementsByTagName('title')->item(0)->nodeValue : $title;
 		

@@ -23,7 +23,8 @@
 * base URI
 * tags
 -->
-<xsl:param name="Source" />
+<xsl:param name="base-uri" select="''"/>
+<xsl:param name="Source" select='$base-uri'/>
 <xsl:param name="Anchor" />
 
 <xsl:output 
