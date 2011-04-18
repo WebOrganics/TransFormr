@@ -11,6 +11,11 @@
 <link rel="stylesheet"  href="<?php echo $this->path; ?>stylesheets/user.css" media="all" />
 </head>
 <body>
+<div id="fork-me">
+	<a href="http://wiki.github.com/WebOrganics/TransFormr">
+		<img src="/images/github.png" alt="Fork me on github" />	
+	</a>
+</div>
 <div class="butt">
 	<small> 
 		<a href="http://wiki.github.com/WebOrganics/TransFormr" rel="nofollow">Wiki</a> | 

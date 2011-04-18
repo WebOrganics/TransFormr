@@ -5,8 +5,7 @@ defined( '_Transformr' ) or die( 'Restricted access' );
  */
 
 function html_convert_entities($string) {
-  return preg_replace_callback('/([a-zA-Z][a-zA-Z0-9]+);/', 
-                               'convert_entity', $string);
+  return preg_replace_callback('/([a-zA-Z][a-zA-Z0-9]+);/','convert_entity', $string);
 }
 
 /* Swap HTML named entity with its numeric equivalent. If the entity

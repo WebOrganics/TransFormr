@@ -1,7 +1,7 @@
 <?php
 defined( '_Transformr' ) or die( 'Restricted access' );
 /**
-	hQR is a small class to convert hCard to QR-Taggs
+	hQR is a small class to convert hCard to QR-Tags
 	author: Matthias Pfefferle
 	author url: http://notizblog.org
 	script url: http://www.microform.at/hcard2qrcode/

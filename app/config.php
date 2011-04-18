@@ -1,7 +1,7 @@
 <?php
 /* Database configuration for storing RDF */
 
-$host = ''; /*  database host ( usually localhost )  */
+$host = 'localhost'; /*  database host ( usually localhost )  */
 
 $user = ''; /* database username  */
 

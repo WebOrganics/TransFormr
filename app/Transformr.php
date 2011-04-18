@@ -246,11 +246,13 @@ class Transformr
 			}
 			$content = curl_exec($cache);
 			
-			// insert fullstop so tidy does not clean empty span or span with just a space
+			/* insert non breaking space so tidy does not clean empty span or span with just a space, 
+				XSL however is set to strip-space elements="*" so it should not appear in results */
+				
 			$content = trim(preg_replace('/<\s*span(.*?)>\s<\/\s*?span[^>\w]*?>/', 
-				'<span$1>.$2</span>', $content));
+				'<span$1>&nbsp;$2</span>', $content));
 			$content = trim(preg_replace('/<\s*span(.*?)><\/\s*?span[^>\w]*?>/', 
-				'<span$1>.</span>', $content));
+				'<span$1>&nbsp;</span>', $content));
 				
 			$status = curl_getinfo($cache, CURLINFO_HTTP_CODE);
 			curl_close($cache);
@@ -386,7 +388,7 @@ class Transformr
 			$newdoc->formatOutput = true;
 			$newdoc->normalizeDocument();
 			$html = $newdoc->saveXML();
-			return str_replace(array("\r\n", "\r", "\n", "\t", "&#xD;"), '', $result);
+			return str_replace(array("\r\n", "\r", "\n", "\t", "&#xD;"), '', $html);
 		}
 		elseif ($tidy_option == 'online') 
 		{		

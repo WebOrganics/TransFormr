@@ -70,6 +70,11 @@
 <link rel="default-slice" type="application/x-hatom" href="{$transformr}detect/#content"/>
 	</head>
 <body>
+<div id="fork-me">
+	<a href="http://wiki.github.com/WebOrganics/TransFormr">
+		<img src="/images/github.png" alt="Fork me on github" />	
+	</a>
+</div>
 <div class="butt">
 	<small> 
 		<a href="http://wiki.github.com/WebOrganics/TransFormr" rel="nofollow">Wiki</a> | 

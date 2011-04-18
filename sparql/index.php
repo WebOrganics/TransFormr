@@ -22,7 +22,7 @@ $arc_config = array(
 
 /* init */
 $endpoint = ARC2::getComponent('StoreTemplatePlugin', $arc_config);
-
+ $endpoint->setUp();
 if (!$endpoint->isSetUp()) {
   $endpoint->setUp(); /* create  tables */
 }

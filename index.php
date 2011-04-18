@@ -10,7 +10,7 @@ $settings = array(
 	/* pick one. php, online or dom */
 	'tidy_option' => 'php',
 	/* Admin email address ( used in remote access.log and ferror.log if transformr behaves badly when geting a url )  */
-	'admin' => 'admin@weborganics.co.uk',
+	'admin' => 'admin@email.com',
 	/* 0 to disable ARC2 store */
 	'use_store' => 1,
 	/* 1 to reset ARC2 database tables ( stores only the last result ) */

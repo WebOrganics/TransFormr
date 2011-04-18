@@ -175,7 +175,13 @@ class ARC2_StoreTemplatePlugin extends ARC2_StoreEndpoint {
 	}
   
 	function getHTMLHeader() {
-		$header = '<div class="butt">
+		$header = '
+		<div id="fork-me">
+			<a href="http://wiki.github.com/WebOrganics/TransFormr">
+				<img src="/images/github.png" alt="Fork me on github" />	
+			</a>
+		</div>		
+		<div class="butt">
 			<small><a rel="nofollow" href="http://wiki.github.com/WebOrganics/TransFormr">Wiki</a> | 
 			<a rel="nofollow" href="http://github.com/WebOrganics/TransFormr">Source</a> | 
 			<a rel="nofollow" href="http://github.com/WebOrganics/TransFormr/issues">Issues</a> | 
