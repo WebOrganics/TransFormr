@@ -296,7 +296,7 @@ class Transformr
 		if ( strlen(trim($html)) === 0 ) return $this->error('noURL');
 		
 		$dom = new DOMDocument('1.0');
-		$dom->preserveWhiteSpace = false;
+		$dom->preserveWhiteSpace = true;
 		if( $this->text != '' ) @$dom->loadXML($html);
 		else @$dom->loadXML($this->tidy_html($html, $url, $this->tidy_option));
 		$dom->formatOutput = true;
@@ -383,7 +383,7 @@ class Transformr
 		elseif ($tidy_option == 'dom') 
 		{
 			$newdoc = new DOMDocument();
-			$newdoc->preserveWhiteSpace = false;
+			$newdoc->preserveWhiteSpace = true;
 			!$newdoc->loadXML($html) ? @$newdoc->loadHTML($html) : @$newdoc->loadXML($html) ;
 			$newdoc->formatOutput = true;
 			$newdoc->normalizeDocument();

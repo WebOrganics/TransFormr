@@ -178,7 +178,7 @@ class ARC2_StoreTemplatePlugin extends ARC2_StoreEndpoint {
 		$header = '
 		<div id="fork-me">
 			<a href="http://wiki.github.com/WebOrganics/TransFormr">
-				<img src="/images/github.png" alt="Fork me on github" />	
+				<img src="../images/github.png" alt="Fork me on github" />	
 			</a>
 		</div>		
 		<div class="butt">
