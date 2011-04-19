@@ -1,6 +1,6 @@
 <form id="form" onsubmit="return Validate(this);" action="" method="get">
 <fieldset>
-<legend><span style="color:#333333">trans</span><span style="color:#838383">form</span> by url or <a href="direct/" title="Transform a Fragment of HTML">direct input</a></legend>
+<legend><span style="color:#333333">trans</span><span style="color:#838383">form</span> by url or <a href="direct" title="Transform a Fragment of HTML">direct input</a></legend>
 <p>
 <span id="urlfield">
 	<label for="url" title="Enter a URL"><input tabindex="2" id="url" type="text" name="url" /></label>
