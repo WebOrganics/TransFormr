@@ -5,9 +5,9 @@ $host = 'localhost'; /*  database host ( usually localhost )  */
 
 $user = ''; /* database username  */
 
-$pwd = ''; /* database password */
+$passwd = ''; /* database password */
 
-$name = ''; /* database name */
+$dbname = ''; /* database name */
 
 $writekey =''; /* store write key for endpoint delete's ( make it hard to guess ) */
 

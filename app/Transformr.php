@@ -372,7 +372,7 @@ class Transformr
 					'logical-emphasis'            => true,
 					"$output"                     => true,
 					'wrap'                        => 200,
-					'clean'						  =>true
+					'clean'						  		=>true
 				);
 				$tidy = new tidy;
 				$tidy->parseString($html, $config, 'utf8');
