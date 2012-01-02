@@ -1,7 +1,7 @@
 <?php
 /* Database configuration for storing RDF */
 
-$host = 'tunnel.pagodabox.com'; /*  database host ( usually localhost )  */
+$host = 'tunnel.pagodabox.com:3306'; /*  database host ( usually localhost )  */
 
 $user = 'janie'; /* database username  */
 
