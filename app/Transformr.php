@@ -1,6 +1,6 @@
 <?php
 /*
-TransFormr Version: 2.2
+TransFormr Version: 2.3
 author:   Martin McEvoy
 updated:  Saturday, 3rd July 2010
 homepage: http://github.com/WebOrganics/TransFormr
@@ -23,8 +23,8 @@ class Transformr
 		!defined('_Transformr') ? define('_Transformr', true) : '' ;
 		ini_set('display_errors',  0 );
 		$this->path = $this->set_path();
-		$this->version = '2.3';
-		$this->updated = array('Saturday, 3rd July 2010', '2010-07-03T12:00:20+01:00');
+		$this->version = '2.4';
+		$this->updated = array('Monday, 2nd January 2012', '2012-01-02T12:00:20+01:00');
 		$this->check_php_version('5.2.0', 'Transformr'); 
 		
 		$params = array_merge($_GET, $_POST);
@@ -117,7 +117,7 @@ class Transformr
 
 		case 'hcalendar':
 			$file = $this->rand_filename('ics');
-			header("Content-type: text/x-vcalendar");
+			header("Content-type: text/calendar");
 			header('Content-Disposition: attachment; filename="'.$file.'"');
 			$xsl_filename = $this->xsl ."xhtml2vcal.xsl";
 			return $this->transform_xsl($this->url, $xsl_filename);
@@ -246,9 +246,7 @@ class Transformr
 			}
 			$content = curl_exec($cache);
 			
-			/* insert non breaking space so tidy does not clean empty span or span with just a space, 
-				XSL however is set to strip-space elements="*" so it should not appear in results */
-				
+			// insert nbsp so tidy does not clean empty span or span with just a space
 			$content = trim(preg_replace('/<\s*span(.*?)>\s<\/\s*?span[^>\w]*?>/', 
 				'<span$1>&nbsp;$2</span>', $content));
 			$content = trim(preg_replace('/<\s*span(.*?)><\/\s*?span[^>\w]*?>/', 
@@ -289,7 +287,6 @@ class Transformr
 			$html = method_exists('tidy','cleanRepair') ? 
 			  $this->tidy_html( urldecode($this->text), '', 'php' ) : 
 			  urldecode($this->text);
-			
 		}
 		else $html = $this->get_file_contents($url);
 		
@@ -303,8 +300,8 @@ class Transformr
 		$dom->normalizeDocument();
 		
 		$title = !isset($title) ? $dom->getElementsByTagName('title')->item(0)->nodeValue : $title;
-		
-		if ($this->type == 'rdfa' && !$dom->getElementsByTagName('html')->item(0)->getAttribute('xmlns'))
+		$xmlns = $dom->getElementsByTagName('html')->item(0)->getAttribute('xmlns');
+		if ($this->type == 'rdfa' && !$xmlns)
 			$dom->getElementsByTagName('html')->item(0)->setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
 		
 		if (isset($fragment)) 
@@ -321,8 +318,8 @@ class Transformr
 		
 		$xslt = new xsltProcessor;
 		$xslt->setParameter('','transformr', $this->path);
-		$xslt->setParameter('','url', $url);
 		$xslt->setParameter('','request-uri', $_SERVER['REQUEST_URI']);
+		$xslt->setParameter('','url', $url);
 		$xslt->setParameter('','base-uri', $url);
 		$xslt->setParameter('','doc-title', $title);
 		$xslt->setParameter('','version', $this->version);
@@ -372,7 +369,7 @@ class Transformr
 					'logical-emphasis'            => true,
 					"$output"                     => true,
 					'wrap'                        => 200,
-					'clean'						  		=>true
+					'clean'						  =>true
 				);
 				$tidy = new tidy;
 				$tidy->parseString($html, $config, 'utf8');
@@ -383,12 +380,12 @@ class Transformr
 		elseif ($tidy_option == 'dom') 
 		{
 			$newdoc = new DOMDocument();
-			$newdoc->preserveWhiteSpace = true;
+			$newdoc->preserveWhiteSpace = false;
 			!$newdoc->loadXML($html) ? @$newdoc->loadHTML($html) : @$newdoc->loadXML($html) ;
 			$newdoc->formatOutput = true;
 			$newdoc->normalizeDocument();
 			$html = $newdoc->saveXML();
-			return str_replace(array("\r\n", "\r", "\n", "\t", "&#xD;"), '', $html);
+			return str_replace(array("\r\n", "\r", "\n", "\t", "&#xD;"), '', $result);
 		}
 		elseif ($tidy_option == 'online') 
 		{		
@@ -410,9 +407,13 @@ class Transformr
 	
 	if ($this->backup_type !='') 
 	{
-		if ($this->backup_type == 'rdf') $ext = 'rdf';
-		elseif ($this->backup_type == 'ntriples') $ext = 'nt';
-		else $ext = 'ttl';
+		if ($this->backup_type == 'rdf') :
+			$ext = 'rdf';
+		elseif ($this->backup_type == 'ntriples') :
+			$ext = 'nt';
+		else:
+			$ext = 'ttl';
+		endif;
 	} 
 	else $ext = 'xml';
 	
