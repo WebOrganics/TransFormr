@@ -286,6 +286,15 @@
 				</xsl:call-template>
 			</xsl:when>
 			
+			<!-- check for child attributes that might have value-title elements AFTER value -->
+			<xsl:when test=".//*[contains(concat(' ', normalize-space(@class), ' '),' value-title ')]">
+				<xsl:for-each select=".//*[contains(concat(' ', normalize-space(@class), ' '),' value-title ')]">
+				<xsl:call-template name="datetime:utc-time-converter">
+					<xsl:with-param name="time-string"><xsl:value-of select="normalize-space(@title)"/></xsl:with-param>
+				</xsl:call-template>			
+				</xsl:for-each>
+			</xsl:when>
+			
 			<!-- should there be a look in for class="value"? -->
 				
 			<xsl:otherwise>
@@ -554,6 +563,9 @@
 									<xsl:when test='@content'>
 										<xsl:value-of select="normalize-space(@content)"/>
 									</xsl:when>
+									<xsl:when test='@datetime'>
+										<xsl:value-of select="normalize-space(@datetime)"/>
+									</xsl:when>
 									<!-- if the property is on an INPUT element check for @type=text -->
 									<xsl:when test='local-name(.) = "input" and @type = "text" and @value'>
 										<xsl:value-of select="normalize-space(@value)"/>
@@ -570,6 +582,12 @@
 										<xsl:value-of select="normalize-space(.)"/>
 									</xsl:otherwise>
 								</xsl:choose>
+							</xsl:for-each>
+						</xsl:when>
+						<!-- check for child attributes that might have value-title elements AFTER value -->
+						<xsl:when test=".//*[contains(concat(' ', normalize-space(@class), ' '),' value-title ')]">
+							<xsl:for-each select=".//*[contains(concat(' ', normalize-space(@class), ' '),' value-title ')]">
+								<xsl:value-of select="normalize-space(@title)"/>					
 							</xsl:for-each>
 						</xsl:when>
 						<xsl:when test=".//*[contains(concat(' ', normalize-space(@class), ' '),' type ')]">
@@ -635,6 +653,12 @@
 							<xsl:value-of select="normalize-space(.)"/>
 						</xsl:otherwise>
 					</xsl:choose>					
+				</xsl:for-each>
+			</xsl:when>
+			<!-- check for child attributes that might have value-title elements AFTER value -->
+			<xsl:when test=".//*[contains(concat(' ', normalize-space(@class), ' '),' value-title ')]">
+				<xsl:for-each select=".//*[contains(concat(' ', normalize-space(@class), ' '),' value-title ')]">
+					<xsl:value-of select="normalize-space(@title)"/>					
 				</xsl:for-each>
 			</xsl:when>
 			<xsl:when test=".//*[contains(concat(' ', normalize-space(@class), ' '),' type ')]">
@@ -899,6 +923,14 @@
 					<xsl:if test="contains(translate(concat(' ', translate(@title,',',' '), ' '),$ucase,$lcase), concat(' ', $value, ' ')) = true()">
 						<xsl:value-of select="normalize-space($value)"/>
 					</xsl:if>
+				</xsl:when>
+				<!-- check for child attributes that might have value-title elements -->
+				<xsl:when test=".//*[contains(concat(' ', normalize-space(@class), ' '),' value-title ')]">
+					<xsl:for-each select=".//*[contains(concat(' ', normalize-space(@class), ' '),' value-title ')]">
+						<xsl:if test="contains(translate(concat(' ', translate(@title,',',' '), ' '),$ucase,$lcase), concat(' ', $value, ' ')) = true()">
+							<xsl:value-of select="normalize-space($value)"/>
+						</xsl:if>
+					</xsl:for-each>
 				</xsl:when>
 			</xsl:choose>
 		</xsl:for-each>

@@ -367,6 +367,11 @@ http://creativecommons.org/licenses/by-sa/1.0/
       
   <xsl:variable name="when">
 	<xsl:choose>
+		<xsl:when test=".//*[contains(concat(' ', normalize-space(@class), ' '),' value-title ')]">
+			<xsl:for-each select=".//*[contains(concat(' ', normalize-space(@class), ' '),' value-title ')]">
+				<xsl:value-of select="normalize-space(@title)"/>					
+			</xsl:for-each>
+		</xsl:when>
 	  <xsl:when test="@title">
 	    <xsl:value-of select="@title">
 	    </xsl:value-of>
