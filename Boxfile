@@ -3,7 +3,7 @@ web1:
   document_root: /
   name: "Transformr"
   shared_writable_dirs:
-		- /app/cache
+    - /app/cache
   php_extensions: 
     - curl
     - xsl
