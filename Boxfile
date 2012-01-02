@@ -7,4 +7,5 @@ web1:
   php_extensions: 
     - curl
     - xsl
+    - tidy
   php_version: "5.3.8"
