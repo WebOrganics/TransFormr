@@ -1,7 +1,7 @@
 --- 
 web1: 
-  document_root: /dataset
-  name: "Dataset Parser"
+  document_root: /
+  name: "Transformr"
   php_extensions: 
     - curl
     - xsl
