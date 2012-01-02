@@ -9,4 +9,7 @@ web1:
     - curl
     - xsl
     - tidy
+  db1:
+    name: transformr
+    type: mysql
   php_version: "5.3.8"
