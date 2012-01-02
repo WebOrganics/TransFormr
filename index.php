@@ -16,7 +16,7 @@ $settings = array(
 	/* 1 to reset ARC2 database tables ( stores only the last result ) */
 	'reset_tables' => 0, 
 	/* set store size (in MB) to schedule data dumps */
-	'store_size' => '99.00',  
+	'store_size' => '05.00',  
 	/* location of store dump folder must be writable by webserver */
 	'dump_location' => 'dump/',
 	/* backup type for store dumps, pick one turtle, rdf, ntriples or leave empty for sparql result format (xml)*/

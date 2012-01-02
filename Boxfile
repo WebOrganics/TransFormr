@@ -4,6 +4,7 @@ web1:
   name: "Transformr"
   shared_writable_dirs:
     - /app/cache
+    - /dumps
   php_extensions: 
     - curl
     - xsl

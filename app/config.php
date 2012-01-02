@@ -1,13 +1,13 @@
 <?php
 /* Database configuration for storing RDF */
 
-$host = 'localhost'; /*  database host ( usually localhost )  */
+$host = 'tunnel.pagodabox.com:3306'; /*  database host ( usually localhost )  */
 
-$user = ''; /* database username  */
+$user = 'janie'; /* database username  */
 
-$passwd = ''; /* database password */
+$passwd = '9RfjEFPK'; /* database password */
 
-$dbname = ''; /* database name */
+$dbname = 'transformr'; /* database name */
 
 $writekey =''; /* store write key for endpoint delete's ( make it hard to guess ) */
 
