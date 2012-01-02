@@ -9,7 +9,7 @@ $passwd = '9RfjEFPK'; /* database password */
 
 $dbname = 'transformr'; /* database name */
 
-$writekey =''; /* store write key for endpoint delete's ( make it hard to guess ) */
+$writekey ='yzhgFF/l.xxp'; /* store write key for endpoint delete's ( make it hard to guess ) */
 
 $storename ='transformr'; /* store name also used as table prefix */
 
