@@ -1,9 +1,10 @@
 <?php
+
 define('_Transformr', true);
 
 include_once('../app/config.php');
 include_once('../app/arc/ARC2.php');
-
+ini_set('display_errors', 0);
 $arc_config = array(
 
   'db_host' => $host,
