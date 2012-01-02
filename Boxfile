@@ -5,7 +5,9 @@ web1:
   shared_writable_dirs:
     - /app/cache
     - /dumps
-  php_extensions: 
+  php_extensions:
+    - php_mysqli
+    - php_mysql
     - curl
     - xsl
     - tidy
