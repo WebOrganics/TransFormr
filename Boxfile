@@ -6,13 +6,16 @@ web1:
     - /app/cache
     - /dumps
   php_extensions:
-    - mysqli
     - mysql
-    - curl
     - xsl
     - tidy
+    - simplexml
     - gd
+    - dom
+    - iconv
+    - curl
     - mbstring
+    - json
   db1:
     name: transformr
     type: mysql
