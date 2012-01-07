@@ -2,8 +2,8 @@
 
 /* ------ setting area ------ */
 
-$path="/app/include/QRCode/data";           /* You must set path to data files. */
-$image_path="/app/include/QRCode/image";    /* You must set path to QRcode frame images. */
+$path=dirname(__FILE__)."/data";           /* You must set path to data files. */
+$image_path=dirname(__FILE__)."/image";    /* You must set path to QRcode frame images. */
 $version_ul = 40;         /* upper limit for version  */  
 
 /* ------ setting area end ------ */
