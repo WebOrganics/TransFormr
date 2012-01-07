@@ -1,4 +1,5 @@
 <?php
+header("Access-Control-Allow-Origin: *");
 /* require Transformr class */
 require_once 'app/Transformr.php';
 

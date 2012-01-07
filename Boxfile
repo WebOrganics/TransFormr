@@ -11,6 +11,8 @@ web1:
     - curl
     - xsl
     - tidy
+    - gd
+    - mbstring
   db1:
     name: transformr
     type: mysql
