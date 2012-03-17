@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html prefix="og: http://ogp.me/ns#
+              dc: http://purl.org/dc/elements/1.1/
+              profile: http://ogp.me/ns/profile#"
+      version="HTML+RDFa 1.1">
+<head>
+  <meta charset="utf-8" />
+  <title>Matthias Pfefferle - Webworker, Blogger und Podcaster</title>
+  
+  <base href="http://pfefferle.org/">
+  <link rel="profile" href="http://microformats.org/profile/specs" />
+  <link rel="profile" href="http://microformats.org/profile/hatom" />
+  <link rel="icon favicon shortcut" sizes="16x16" href="favicon.ico" />
+  <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+
+  <link rel="stylesheet" type="text/css" href="static/css/style.css" />
+
+    <link rel="me author canonical shortlink" href="http://pfefferle.org/" />
+  <link rel="me author blog" href="http://notizblog.org/" />
+
+  <link rel="pavatar avatar photo" class="photo" href="http://www.gravatar.com/avatar/b36983a5651df2c413e264ad4d5cc1a1.jpg" />
+
+  <link rel="openid2.provider" href="http://www.myopenid.com/server" /> 
+  <link rel="openid2.local_id" href="http://pfefferle.myopenid.com/" /> 
+  <link rel="openid.server" href="http://www.myopenid.com/server" /> 
+  <link rel="openid.delegate" href="http://pfefferle.myopenid.com/" />
+
+  <meta content='mailto+http:sha1:fa5236a05d3303c5797a9b0fa034ad3e54a78753' name='microid'  />
+  <meta content='acct+http:sha1:bc6e0c148e345aed43a69840416a7f1aad6be201' name='microid'  />
+  <meta content='acct+http:sha1:c54da31a36f040c0f98b29ac5bf03e7f9a6a5099' name='microid'  />
+  <meta content='mailto+http:sha1:811f192cf63f62fe96cb8382883b03bacaa12059' name='microid'  />
+  <meta content='mailto+http:sha1:92bf11a6d621796e710d4388bd2ac73e63fa0d4d' name='microid'  />
+  
+  <meta name="viewport" content="width=device-width">
+  <meta property="og:site_name" content="Profil von Matthias Pfefferle" />
+  <meta property="og:title dc:title dc:publisher dc:creator" content="Matthias Pfefferle" />
+  <meta property="og:type" content="website profile" />
+  <meta property="og:url dc:identifier" content="http://pfefferle.org/" />
+  <meta property="og:image" content="http://www.gravatar.com/avatar/b36983a5651df2c413e264ad4d5cc1a1.jpg" />
+  <meta property="og:locale" content="de_DE" />
+  <meta property="og:description" name="description" content="Ich bin Webworker und arbeite als CTO für die ekaabo GmbH an dem Projekt Spread.ly" >
+  <meta property="profile:first_name" content="Matthias" />
+  <meta property="profile:last_name" content="Pfefferle" />
+  <meta property="profile:username" content="pfefferle" />
+  <meta property="profile:gender" content="male">
+  
+  <script type="text/javascript" src="static/js/js.js"></script>
+</head>
+<body class="hresume hfeed hatom">
+  <div class="background"><img src="static/img/big.jpg" /></div>
+  
+  <div id="container" class="hentry hslice">
+    <div class="author contact vcard"
+         itemscope itemtype="http://schema.org/Person"
+         vocab="http://schema.org/"
+         typeof="Person"
+         about="#matthias-pfefferle"
+         id="main">
+      <h1 class="entry-title">Mein Name ist <strong class="fn" itemprop="name" property="name">Matthias Pfefferle</strong></h1>
+<div class="entry-content">
+  <meta name="photo avatar" itemprop="image" property="image" content="http://www.gravatar.com/avatar/b36983a5651df2c413e264ad4d5cc1a1.jpg">
+  <p id="summary" class="note summary" itemprop="description" property="description">Ich bin <strong>Webworker</strong> und arbeite als <abbr title="Chief Technical Officer" class="role" itemprop="jobTitle" property="jobTitle"><strong>CTO</strong></abbr> für die <span class="org" itemprop="worksFor" property="worksFor">ekaabo GmbH</span> an dem Projekt <em><a href="http://spreadly.com/">Spread.ly</a></em>.</p>
+  <p id="skills" class="skills">
+    Nebenher <a href="http://notizblog.org/" class="url blog openid" itemprop="url" rel="me author url" title="notizBlog">blogge</a>
+    und <a href="http://openwebpodcast.de/" class="url blog" itemprop="url" rel="me author url" title="OpenWeb-Podcast">podcaste</a>
+    ich über das 
+    <data class="skill" value="openweb">open</data>,
+    <data class="skill" value="dataportability">portable</data>,
+    <data class="skill" value="social web">social</data>,
+    <data class="skill" value="synaptic web">synaptic</data>,
+    <data class="skill" value="semantic web">semantic</data>,
+    <data class="skill" value="structured web">structured</data>,
+    <data class="skill" value="distributed social networks">distributed</data>,
+    <data class="skill" value="decentralized social networks">decentralized</data>,
+    <data class="skill" value="microformats">microformatted</data> und 
+    <data class="skill" value="federated social web">federated social Web</data>.
+  </p>
+  <p id="reputation" class="reputation">
+    Ich bin außerdem Mitglied der <strong>OpenID</strong>-Foundation, ein 
+    <strong><a href="http://microformats.org/wiki/microformateers" class="url" itemprop="url" rel="url">Microformateer</a></strong>
+    und schreibe die 
+    <strong><a href="http://notizblog.org/2009/09/27/pfefferles-openweb/" class="url publications" itemprop="url" rel="url">
+      <cite>OpenWeb-Kolumne</cite></a></strong> für das Webstandards-Magazin.
+  </p>
+</div>
+    </div>
+  </div>
+</body>
+</html>

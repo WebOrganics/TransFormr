@@ -45,6 +45,7 @@
 <xsl:param name="vevent" select="descendant::*[contains(concat(' ',normalize-space(@class),' '),' vevent ')]"/>
 <xsl:param name="rdfa" select="descendant::*/attribute::about|descendant::*/attribute::property"/>
 <xsl:param name="xfn" select="descendant::*[contains(concat(' ',normalize-space(@profile),' '),' http://gmpg.org/xfn/11 ') or contains(concat(' ',normalize-space(@profile),' '),' http://gmpg.org/xfn/1 ')]"/>
+<xsl:param name="microdata" select="//*[@itemscope] and //*[@itemprop]"/>
 <xsl:param name="erdf" select="descendant::*[contains(concat(' ',normalize-space(@profile),' '),' http://purl.org/NET/erdf/profile ')]"/>
 <xsl:output 
     doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
@@ -152,6 +153,9 @@
 </xsl:if>
 <xsl:if test="$erdf">
 	<li><p>eRDF <a href="{$transformr}?type=erdf&amp;url={$base-encoded}">RDF</a></p></li>
+</xsl:if>
+<xsl:if test="$microdata">
+	<li><p>Microdata <a href="{$transformr}?type=microdata&amp;url={$base-encoded}">JSON</a></p></li>
 </xsl:if>
 </ul>
 </xsl:template>
