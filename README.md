@@ -124,7 +124,7 @@ Work is in progress supporting the Species Microformat <http://microformats.org/
 
 ## Notes
 
-* 2.3 Added microdata to JSON transformation.
+* 2.5 Added microdata to JSON transformation.
 * 2.4 Added value-title parsing for all microformats.
 * 2.3 Transformr is now Faster due to new caching action. Added support for Transforming by direct input, Some XSLT bugs fixed.
 * 2.2 Transform processes base@href for all xslt transformations, AR2 RDFTransformrPlugin and EndpointTemplatPlugin support around 350 namespaces, 
