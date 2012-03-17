@@ -2,26 +2,21 @@
 /**
  * ARC2 RDF/XML Serializer
  *
- * @author Benjamin Nowack
- * @license <http://arc.semsol.org/license>
- * @homepage <http://arc.semsol.org/>
- * @package ARC2
- * @version 2010-01-30
- * 
+ * @author    Benjamin Nowack
+ * @license   <http://arc.semsol.org/license>
+ * @homepage  <http://arc.semsol.org/>
+ * @package   ARC2
+ * @version   2010-11-16
 */
 
 ARC2::inc('RDFSerializer');
 
 class ARC2_RDFXMLSerializer extends ARC2_RDFSerializer {
 
-  function __construct($a = '', &$caller) {
+  function __construct($a, &$caller) {
     parent::__construct($a, $caller);
   }
   
-  function ARC2_RDFXMLSerializer($a = '', &$caller) {
-    $this->__construct($a, $caller);
-  }
-
   function __init() {
     parent::__init();
     $this->content_header = 'application/rdf+xml';
@@ -41,10 +36,8 @@ class ARC2_RDFXMLSerializer extends ARC2_RDFSerializer {
         return ' rdf:about="' . htmlspecialchars($v) . '"';
       }
       if ($type == 'p') {
-        if ($pn = $this->getPName($v)) {
-          return $pn;
-        }
-        return 0;
+        $pn = $this->getPName($v);
+        return $pn ? $pn : 0;
       }
       if ($type == 'o') {
         $v = $this->expandPName($v);
@@ -59,7 +52,7 @@ class ARC2_RDFXMLSerializer extends ARC2_RDFSerializer {
         return ' xml:lang="' . htmlspecialchars($v) . '"';
       }
     }
-    if ($v['type'] != 'literal') {
+    if ($this->v('type', '', $v) != 'literal') {
       return $this->getTerm($v['value'], 'o');
     }
     /* literal */
@@ -74,7 +67,7 @@ class ARC2_RDFXMLSerializer extends ARC2_RDFSerializer {
     elseif ($lang) {
       return $this->getTerm($lang, 'lang') . '>' . htmlspecialchars($v['value']);
     }
-    return '>' . htmlspecialchars($v['value']);
+    return '>' . htmlspecialchars($this->v('value', '', $v));
   }
 
   function getPName($v, $connector = ':') {
@@ -93,7 +86,11 @@ class ARC2_RDFXMLSerializer extends ARC2_RDFSerializer {
     $first_ns = 1;
     foreach ($this->used_ns as $v) {
       $r .= $first_ns ? ' ' : $nl . '  ';
-      $r .= 'xmlns:' . $this->nsp[$v] . '="' .$v. '"';
+      foreach ($this->ns as $prefix => $ns) {
+        if ($ns != $v) continue;
+        $r .= 'xmlns:' . $prefix . '="' .$v. '"';
+        break;
+      }
       $first_ns = 0;
     }
     if ($this->default_ns) {
@@ -129,7 +126,8 @@ class ARC2_RDFXMLSerializer extends ARC2_RDFSerializer {
       $first_p = 1;
       foreach ($ps as $p => $os) {
         if (!$os) continue;
-        if ($p = $this->getTerm($p, 'p')) {
+        $p = $this->getTerm($p, 'p');
+        if ($p) {
           $r .= $nl . str_pad('', 4);
           $first_o = 1;
           if (!is_array($os)) {/* single literal o */

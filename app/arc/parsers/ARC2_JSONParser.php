@@ -7,21 +7,17 @@
  * @license http://arc.semsol.org/license
  * @homepage <http://arc.semsol.org/>
  * @package ARC2
- * @version 2010-03-24
+ * @version 2010-11-16
 */
 
 ARC2::inc('RDFParser');
 
 class ARC2_JSONParser extends ARC2_RDFParser {
 
-  function __construct($a = '', &$caller) {
+  function __construct($a, &$caller) {
     parent::__construct($a, $caller);
   }
   
-  function ARC2_JSONParser($a = '', &$caller) {
-    $this->__construct($a, $caller);
-  }
-
   function __init() {
     parent::__init();
   }
@@ -41,7 +37,7 @@ class ARC2_JSONParser extends ARC2_RDFParser {
     /* reader */
     if (!$this->v('reader')) {
       ARC2::inc('Reader');
-      $this->reader = & new ARC2_Reader($this->a, $this);
+      $this->reader = new ARC2_Reader($this->a, $this);
     }
     $this->reader->setAcceptHeader('Accept: application/json; q=0.9, */*; q=0.1');
     $this->reader->activate($path, $data);
@@ -147,6 +143,7 @@ class ARC2_JSONParser extends ARC2_RDFParser {
   }
 
   function addT($s = '', $p = '', $o = '', $s_type = '', $o_type = '', $o_dt = '', $o_lang = '') {
+    $o = $this->toUTF8($o);
     //echo str_replace($this->base, '', "-----\n adding $s / $p / $o\n-----\n");
     $t = array('s' => $s, 'p' => $p, 'o' => $o, 's_type' => $s_type, 'o_type' => $o_type, 'o_datatype' => $o_dt, 'o_lang' => $o_lang);
     if ($this->skip_dupes) {

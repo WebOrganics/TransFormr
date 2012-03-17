@@ -9,6 +9,66 @@
 <link rel="icon" href="<?php echo $this->path;?>favicon.ico" type="image/x-icon"/>
 <link rel="shortcut icon" href="<?php echo $this->path;?>favicon.ico" type="image/x-icon" />
 <link rel="stylesheet"  href="<?php echo $this->path; ?>stylesheets/user.css" media="all" />
+<script type="text/javascript">
+<!--
+function bookmarkUrl() 
+{	
+  var transformer = "<?php echo $this->path; ?>";	
+  var type = document.getElementById('type').value;
+  var bookmarklet = "javascript:void(location.href='"+transformer+"?type="+type+"&amp;url='+escape(location.href))";
+  document.getElementById('bookmark').innerHTML = '<a href="'+bookmarklet+'">'+type+' bookmarklet</a>';
+}
+
+function Validate(form) 
+{
+  var expression = new RegExp();
+  expression.compile("^[A-Za-z]+://[A-Za-z0-9-_]+\\.[A-Za-z0-9-_%&\#\?\/.=]+$");
+	
+  if (!expression.test(form["url"].value)) 
+  {
+	form["url"].setAttribute("class", "Invalid");
+	return false;
+  }
+  else
+  {
+	form["url"].setAttribute("class", "Valid");
+	return true;
+  }
+}
+
+function urlFocus() 
+{
+  document.getElementById('url').setAttribute("class", "Focus");
+}
+
+function urlReset() 
+{
+  document.getElementById('url').setAttribute("class", "Reset");
+}
+
+function hideThis()
+{
+  document.getElementById('error').setAttribute('class', 'hidden');
+}	
+
+function observeEvents() 
+{
+  var url = document.getElementById('url');
+  var type = document.getElementById('type');
+  
+  url.focus();
+  url.onblur = urlReset;
+  url.onclick = urlFocus;
+  
+  type.onblur = bookmarkUrl;
+  type.onclick = bookmarkUrl;
+  
+  this.urlFocus();
+  this.bookmarkUrl();
+}
+window.onload = observeEvents;
+// -->
+</script>
 </head>
 <body>
 <div id="fork-me">

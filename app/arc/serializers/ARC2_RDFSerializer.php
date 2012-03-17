@@ -6,21 +6,17 @@
  * @license <http://arc.semsol.org/license>
  * @homepage <http://arc.semsol.org/>
  * @package ARC2
- * @version 2009-11-09
+ * @version 2010-11-16
 */
 
 ARC2::inc('Class');
 
 class ARC2_RDFSerializer extends ARC2_Class {
 
-  function __construct($a = '', &$caller) {
+  function __construct($a, &$caller) {
     parent::__construct($a, $caller);
   }
   
-  function ARC2_RDFSerializer($a = '', &$caller) {/* ns */
-    $this->__construct($a, $caller);
-  }
-
   function __init() {
     parent::__init();
     foreach ($this->ns as $k => $v) {
@@ -48,7 +44,7 @@ class ARC2_RDFSerializer extends ARC2_Class {
     return $this->getSerializedIndex($index, $raw);
   }
   
-  function getSerializedIndex() {
+  function getSerializedIndex($index, $raw = 0) {
     return '';
   }
   

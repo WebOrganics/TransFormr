@@ -5,21 +5,17 @@ license:  http://arc.semsol.org/license
 
 class:    ARC2 Legaxy XML Parser
 author:   Benjamin Nowack
-version:  2008-10-04 (Fix: nsDecl led to warnings when uri was an array.)
+version:  2010-11-16
 */
 
 ARC2::inc('Class');
 
 class ARC2_LegacyXMLParser extends ARC2_Class {
 
-  function __construct($a = '', &$caller) {
+  function __construct($a, &$caller) {
     parent::__construct($a, $caller);
   }
   
-  function ARC2_LegacyXMLParser($a = '', &$caller) {
-    $this->__construct($a, $caller);
-  }
-
   function __init() {/* reader */
     parent::__init();
     $this->encoding = $this->v('encoding', false, $this->a);
@@ -36,7 +32,7 @@ class ARC2_LegacyXMLParser extends ARC2_Class {
   /*  */
 
   function setReader(&$reader) {
-    $this->reader =& $reader;
+    $this->reader = $reader;
   }
 
   function parse($path, $data = '', $iso_fallback = false) {
@@ -46,7 +42,7 @@ class ARC2_LegacyXMLParser extends ARC2_Class {
     /* reader */
     if (!$this->v('reader')) {
       ARC2::inc('Reader');
-      $this->reader = & new ARC2_Reader($this->a, $this);
+      $this->reader = new ARC2_Reader($this->a, $this);
     }
     $this->reader->setAcceptHeader('Accept: application/xml; q=0.9, */*; q=0.1');
     $this->reader->activate($path, $data);
@@ -208,7 +204,7 @@ class ARC2_LegacyXMLParser extends ARC2_Class {
       xml_set_character_data_handler($parser, 'cData');
       xml_set_start_namespace_decl_handler($parser, 'nsDecl');
       xml_set_object($parser, $this);
-      $this->xml_parser =& $parser;
+      $this->xml_parser = $parser;
     }
   }
 

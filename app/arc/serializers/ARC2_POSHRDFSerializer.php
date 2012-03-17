@@ -5,21 +5,17 @@ license:  http://arc.semsol.org/license
 
 class:    ARC2 POSH RDF Serializer
 author:   Benjamin Nowack
-version:  2008-11-18 (Tweak: Updated to poshRDF spec draft)
+version:  2010-11-16
 */
 
 ARC2::inc('RDFSerializer');
 
 class ARC2_POSHRDFSerializer extends ARC2_RDFSerializer {
 
-  function __construct($a = '', &$caller) {
+  function __construct($a, &$caller) {
     parent::__construct($a, $caller);
   }
   
-  function ARC2_POSHRDFSerializer($a = '', &$caller) {/* ns */
-    $this->__construct($a, $caller);
-  }
-
   function __init() {
     parent::__init();
     $this->content_header = 'text/html';

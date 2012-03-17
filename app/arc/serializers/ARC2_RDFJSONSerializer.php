@@ -6,21 +6,16 @@
  * @license http://arc.semsol.org/license
  * @homepage <http://arc.semsol.org/>
  * @package ARC2
- * @version 2010-03-10
 */
 
 ARC2::inc('RDFSerializer');
 
 class ARC2_RDFJSONSerializer extends ARC2_RDFSerializer {
 
-  function __construct($a = '', &$caller) {
+  function __construct($a, &$caller) {
     parent::__construct($a, $caller);
   }
   
-  function ARC2_RDFJSONSerializer($a = '', &$caller) {
-    $this->__construct($a, $caller);
-  }
-
   function __init() {
     parent::__init();
     $this->content_header = 'application/json';
@@ -53,13 +48,15 @@ class ARC2_RDFJSONSerializer extends ARC2_RDFSerializer {
   }
 
   function jsonEscape($v) {
-    if (function_exists('json_encode')) return trim(json_encode($v), '"');
+    if (function_exists('json_encode')) {
+        return preg_replace('/^"(.*)"$/', '\\1', json_encode($v));
+    }
     $from = array("\\", "\r", "\t", "\n", '"', "\b", "\f", "/");
     $to = array('\\\\', '\r', '\t', '\n', '\"', '\b', '\f', '\/');
     return str_replace($from, $to, $v);
   }
     
-  function getSerializedIndex($index) {
+  function getSerializedIndex($index, $raw = 0) {
     $r = '';
     $nl = "\n";
     foreach ($index as $s => $ps) {

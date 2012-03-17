@@ -5,21 +5,17 @@ license:  http://arc.semsol.org/license
 
 class:    ARC2 foaf:openid Extractor
 author:   Benjamin Nowack
-version:  2007-10-08
+version:  2010-11-16
 */
 
 ARC2::inc('RDFExtractor');
 
 class ARC2_OpenidExtractor extends ARC2_RDFExtractor {
 
-  function __construct($a = '', &$caller) {
+  function __construct($a, &$caller) {
     parent::__construct($a, $caller);
   }
   
-  function ARC2_OpenidExtractor($a = '', &$caller) {
-    $this->__construct($a, $caller);
-  }
-
   function __init() {
     parent::__init();
     $this->a['ns']['foaf'] = 'http://xmlns.com/foaf/0.1/';

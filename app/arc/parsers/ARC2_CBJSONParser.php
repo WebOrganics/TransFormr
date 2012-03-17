@@ -6,21 +6,17 @@
  * @license http://arc.semsol.org/license
  * @homepage <http://arc.semsol.org/>
  * @package ARC2
- * @version 2010-03-25
+ * @version 2010-11-16
 */
 
 ARC2::inc('JSONParser');
 
 class ARC2_CBJSONParser extends ARC2_JSONParser {
 
-  function __construct($a = '', &$caller) {
+  function __construct($a, &$caller) {
     parent::__construct($a, $caller);
   }
   
-  function ARC2_CBJSONParser($a = '', &$caller) {
-    $this->__construct($a, $caller);
-  }
-
   function __init() {/* reader */
     parent::__init();
     $this->base = 'http://cb.semsol.org/';
@@ -153,7 +149,7 @@ class ARC2_CBJSONParser extends ARC2_JSONParser {
   
   function extractTagListRDF($s, $s_type,  $v) {
     if (!$v) return 0;
-    $tags = split(', ', $v);
+    $tags = preg_split('/\, /', $v);
     foreach ($tags as $tag) {
       if (!trim($tag)) continue;
       $this->addT($s, $this->getPropertyURI('tag'), $tag, $s_type, 'literal');

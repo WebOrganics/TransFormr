@@ -6,26 +6,23 @@
  * @license <http://arc.semsol.org/license>
  * @homepage <http://arc.semsol.org/>
  * @package ARC2
- * @version 2010-04-11
+ * @version 2010-11-16
 */
 
 ARC2::inc('Store');
 
 class ARC2_StoreEndpoint extends ARC2_Store {
 
-  function __construct($a = '', &$caller) {
+  function __construct($a, &$caller) {
     parent::__construct($a, $caller);
   }
   
-  function ARC2_StoreEndpoint($a = '', &$caller) {
-    $this->__construct($a, $caller);
-  }
-
   function __init() {
     parent::__init();
     $this->headers = array('http' => 'HTTP/1.1 200 OK', 'vary' => 'Vary: Accept');
     $this->read_key = $this->v('endpoint_read_key', '', $this->a);
     $this->write_key = $this->v('endpoint_write_key', '', $this->a);
+    $this->timeout = $this->v('endpoint_timeout', 0, $this->a);
     $this->a['store_allow_extension_functions'] = $this->v('store_allow_extension_functions', 0, $this->a);    
     $this->allow_sql = $this->v('endpoint_enable_sql_output', 0, $this->a);
     $this->result = '';
@@ -96,10 +93,10 @@ class ARC2_StoreEndpoint extends ARC2_Store {
         $this->result = 'Missing configuration or the endpoint store was not set up yet.';
       }
     }
-    elseif ($img = $this->p('img')) {
+    elseif (($img = $this->p('img'))) {
       $this->handleImgRequest($img);
     }
-    elseif ($q = $this->p('query')) {
+    elseif (($q = $this->p('query'))) {
       $this->checkProcesses();
       $this->handleQueryRequest($q);
       if ($this->p('show_inline')) {
@@ -108,7 +105,7 @@ class ARC2_StoreEndpoint extends ARC2_Store {
             ' . ($this->p('output') != 'htmltab' ? '<pre>' . htmlspecialchars($this->getResult()) . '</pre>' : $this->getResult()) . '
           </div>
         ';
-        $this->handleEmptyRequest();
+        $this->handleEmptyRequest(1);
       }
     }
     else {
@@ -137,12 +134,12 @@ class ARC2_StoreEndpoint extends ARC2_Store {
   
   /*  */
   
-  function handleEmptyRequest() {
+  function handleEmptyRequest($force = 0) {
     /* service description */
     $formats = array(
       'rdfxml' => 'RDFXML', 'rdf+xml' => 'RDFXML', 'html' => 'HTML'
     );
-    if ($this->getResultFormat($formats, 'html') != 'HTML') {
+    if (!$force && $this->getResultFormat($formats, 'html') != 'HTML') {
       $this->handleServiceDescriptionRequest();
     }
     else {
@@ -172,6 +169,9 @@ class ARC2_StoreEndpoint extends ARC2_Store {
     if (method_exists($this->caller, 'checkSPARQLEndpointProcesses')) {
       $sub_r = $this->caller->checkSPARQLEndpointProcesses();
     }
+    elseif ($this->timeout) {
+      $this->killDBProcesses('', $this->timeout);
+    }
   }
   
   /*  */
@@ -183,7 +183,7 @@ class ARC2_StoreEndpoint extends ARC2_Store {
     }
     else {
       ARC2::inc('SPARQLPlusParser');
-      $p = & new ARC2_SPARQLPlusParser($this->a, $this);
+      $p = new ARC2_SPARQLPlusParser($this->a, $this);
       $p->parse($q);
       $infos = $p->getQueryInfos();
     }
@@ -296,7 +296,8 @@ class ARC2_StoreEndpoint extends ARC2_Store {
       $prefs[] = $v;
     }
     /* accept header */
-    if ($vals = explode(',', $_SERVER['HTTP_ACCEPT'])) {
+    $vals = explode(',', $_SERVER['HTTP_ACCEPT']);
+    if ($vals) {
       $o_vals = array();
       foreach ($vals as $val) {
         if (preg_match('/(rdf\+n3|x\-turtle|rdf\+xml|sparql\-results\+xml|sparql\-results\+json|json)/', $val, $m)) {

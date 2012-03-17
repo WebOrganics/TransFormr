@@ -1,4 +1,4 @@
-<form id="form" action="/" method="post">
+<form id="form" action="" method="post">
 <fieldset>
 <legend><span style="color:#333333">trans</span><span style="color:#838383">form</span> by <a href="/" title="Transform using a url">url</a> or direct input</legend>
 <p id="field">
@@ -37,6 +37,7 @@ Change HTTP method:
 <optgroup label="Non-Microformats">
 	<option value="rdfa">RDFa</option>
 	<option value="ogp-rdf">OGP</option>
+	<option value="microdata">Microdata</option>
 </optgroup>
 </select></label> 
 <label for="output">Output: 

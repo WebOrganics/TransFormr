@@ -1,25 +1,21 @@
 <?php
-/*
-homepage: ARC or plugin homepage
-license:  http://arc.semsol.org/license
-
-class:    ARC2 SPARQLScript Processor
-author:   
-version:  2009-07-09 (Tweak: improved PREFIX injection)
+/**
+ * ARC2 SPARQLScript Processor
+ *
+ * @author Benjamin Nowack <bnowack@semsol.com>
+ * @license http://arc.semsol.org/license
+ * @package ARC2
+ * @version 2010-11-16
 */
 
 ARC2::inc('Class');
 
 class ARC2_SPARQLScriptProcessor extends ARC2_Class {
 
-  function __construct($a = '', &$caller) {
+  function __construct($a, &$caller) {
     parent::__construct($a, $caller);
   }
   
-  function ARC2_SPARQLScriptProcessor ($a = '', &$caller) {
-    $this->__construct($a, $caller);
-  }
-
   function __init() {
     parent::__init();
     $this->max_operations = $this->v('sparqlscript_max_operations', 0, $this->a);
@@ -248,6 +244,7 @@ class ARC2_SPARQLScriptProcessor extends ARC2_Class {
     if ($v_type == 'string') return $v;
     /* simple array (e.g. from SELECT) */
     if ($v_type == 'array') {
+      return join(', ', $v);
       $m = method_exists($this, 'toLegacy' . $pf) ? 'toLegacy' . $pf : 'toLegacyXML';
     }
     /* rdf */
@@ -512,11 +509,25 @@ class ARC2_SPARQLScriptProcessor extends ARC2_Class {
     if (preg_match('/^(get|post)$/i', $fnc_name, $m)) {
       return $this->processHTTPCall($block, strtoupper($m[1]));
     }
+    if ($fnc_name == 'eval') {
+      return $this->processEvalCall($block);
+    }
+  }
+
+  function processEvalCall($block) {
+    if (!$block['args']) return 0;
+    $arg = $block['args'][0];
+    $script = '';
+    if ($arg['type'] == 'placeholder') $script = $this->getPlaceholderValue($arg['value']);
+    if ($arg['type'] == 'literal') $script = $arg['value'];
+    if ($arg['type'] == 'var') $script = $this->getVarValue($arg['value']);
+    //echo "\n" . $script . $arg['type'];
+    $this->processScript($script);
   }
   
   function processHTTPCall($block, $mthd = 'GET') {
     ARC2::inc('Reader');
-    $reader =& new ARC2_Reader($this->a, $this);
+    $reader = new ARC2_Reader($this->a, $this);
     $url = $this->replacePlaceholders($block['args'][0]['value'], 'function_call');
     if ($mthd != 'GET') {
       $reader->setHTTPMethod($mthd);

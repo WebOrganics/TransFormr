@@ -6,24 +6,20 @@
  * @license <http://arc.semsol.org/license>
  * @homepage <http://arc.semsol.org/>
  * @package ARC2
- * @version 2009-12-15
+ * @version 2010-11-16
 */
 
 ARC2::inc('StoreSelectQueryHandler');
 
 class ARC2_StoreAskQueryHandler extends ARC2_StoreSelectQueryHandler {
 
-  function __construct($a = '', &$caller) {/* caller has to be a store */
+  function __construct($a, &$caller) {/* caller has to be a store */
     parent::__construct($a, $caller);
   }
   
-  function ARC2_StoreAskQueryHandler($a = '', &$caller) {
-    $this->__construct($a, $caller);
-  }
-
   function __init() {/* db_con */
     parent::__init();
-    $this->store =& $this->caller;
+    $this->store = $this->caller;
   }
 
   /*  */

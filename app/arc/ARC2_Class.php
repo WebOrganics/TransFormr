@@ -6,47 +6,37 @@
  * @license <http://arc.semsol.org/license>
  * @homepage <http://arc.semsol.org/>
  * @package ARC2
- * @version 2010-04-23
-*/
+ */
 
 class ARC2_Class {
   
-  /*  */
-
-  function __construct($a = '', &$caller) {
-    $a = is_array($a) ? $a : array();
-    $this->a = $a;
-    $this->caller = &$caller;
+  function __construct($a, &$caller) {
+    $this->a = is_array($a) ? $a : array();
+    $this->caller = $caller;
     $this->__init();
   }
   
-  function ARC2_Class($a = '', &$caller) {
-    $this->__construct($a, $caller);
-  }
-
-  function __destruct() {
-    //echo "\ndestructing " . get_class($this);
-  }
-
   function __init() {/* base, time_limit */
     if (!$_POST && isset($GLOBALS['HTTP_RAW_POST_DATA'])) parse_str($GLOBALS['HTTP_RAW_POST_DATA'], $_POST); /* php5 bug */
     $this->inc_path = ARC2::getIncPath();
     $this->ns_count = 0;
-    $this->nsp = array('http://www.w3.org/1999/02/22-rdf-syntax-ns#' => 'rdf');
-    $this->used_ns = array('http://www.w3.org/1999/02/22-rdf-syntax-ns#');
-    $this->ns = $this->v('ns', array(), $this->a);
+    $rdf = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
+    $this->nsp = array($rdf => 'rdf');
+    $this->used_ns = array($rdf);
+    $this->ns = array_merge(array('rdf' => $rdf), $this->v('ns', array(), $this->a));
 
     $this->base = $this->v('base', ARC2::getRequestURI(), $this->a);
     $this->errors = array();
     $this->warnings = array();
     $this->adjust_utf8 = $this->v('adjust_utf8', 0, $this->a);
     $this->max_errors = $this->v('max_errors', 25, $this->a);
+    $this->has_pcre_unicode = @preg_match('/\pL/u', 'test');/* \pL = block/point which is a Letter */
   }
 
   /*  */
   
   function v($name, $default = false, $o = false) {/* value if set */
-    if ($o === false) $o =& $this;
+    if ($o === false) $o = $this;
     if (is_array($o)) {
       return isset($o[$name]) ? $o[$name] : $default;
     }
@@ -54,7 +44,7 @@ class ARC2_Class {
   }
   
   function v1($name, $default = false, $o = false) {/* value if 1 (= not empty) */
-    if ($o === false) $o =& $this;
+    if ($o === false) $o = $this;
     if (is_array($o)) {
       return (isset($o[$name]) && $o[$name]) ? $o[$name] : $default;
     }
@@ -62,18 +52,25 @@ class ARC2_Class {
   }
   
   function m($name, $a = false, $default = false, $o = false) {/* call method */
-    if ($o === false) $o =& $this;
+    if ($o === false) $o = $this;
     return method_exists($o, $name) ? $o->$name($a) : $default;
   }
 
   /*  */
 
-  function camelCase($v, $lc_first = 0) {
+  function camelCase($v, $lc_first = 0, $keep_boundaries = 0) {
     $r = ucfirst($v);
     while (preg_match('/^(.*)[^a-z0-9](.*)$/si', $r, $m)) {
+      /* don't fuse 2 upper-case chars */
+      if ($keep_boundaries && $m[1]) {
+        $boundary = substr($m[1], -1);
+        if (strtoupper($boundary) == $boundary) $m[1] .= 'CAMELCASEBOUNDARY';
+      }
       $r = $m[1] . ucfirst($m[2]);
     }
-    return $r && $lc_first && !preg_match('/[A-Z]/', $r[1]) ? strtolower($r[0]) . substr($r, 1) : $r;
+    $r = str_replace('CAMELCASEBOUNDARY', '_', $r);
+    if ((strlen($r) > 1) && $lc_first && !preg_match('/[A-Z]/', $r[1])) $r = strtolower($r[0]) . substr($r, 1);
+    return $r;
   }
 
   function deCamelCase($v, $uc_first = 0) {
@@ -82,15 +79,40 @@ class ARC2_Class {
     return $uc_first ? ucfirst($r) : $r;
   }
 
+  /**
+   * Tries to extract a somewhat human-readable label from a URI.
+   */
+
   function extractTermLabel($uri, $loops = 0) {
     list($ns, $r) = $this->splitURI($uri);
-    $r = $this->deCamelCase($this->camelCase($r, 1));
+    /* encode apostrophe + s */
+    $r = str_replace('%27s', '_apostrophes_', $r);
+    /* normalize */
+    $r = $this->deCamelCase($this->camelCase($r, 1, 1));
+    /* decode apostrophe + s */
+    $r = str_replace(' apostrophes ', "'s ", $r);
+    /* typical RDF non-info URI */
     if (($loops < 1) && preg_match('/^(self|it|this|me)$/i', $r)) {
       return $this->extractTermLabel(preg_replace('/\#.+$/', '', $uri), $loops + 1);
     }
+    /* trailing hash or slash */
     if ($uri && !$r && ($loops < 2)) {
       return $this->extractTermLabel(preg_replace('/[\#\/]$/', '', $uri), $loops + 1);
     }
+    /* a de-camel-cased URL (will look like "www example com") */
+    if (preg_match('/^www (.+ [a-z]{2,4})$/', $r, $m)) {
+      return $this->getPrettyURL($uri);
+    }
+    return $r;
+  }
+
+  /**
+   * Generates a less ugly in-your-face URL.
+   */
+
+  function getPrettyURL($r) {
+    $r = rtrim($r, '/');
+    $r = preg_replace('/^https?\:\/\/(www\.)?/', '', $r);
     return $r;
   }
 
@@ -135,12 +157,14 @@ class ARC2_Class {
 
   function getPName($v, $connector = ':') {
     /* is already a pname */
-    if ($ns = $this->getPNameNamespace($v, $connector)) {
+    $ns = $this->getPNameNamespace($v, $connector);
+    if ($ns) {
       if (!in_array($ns, $this->used_ns)) $this->used_ns[] = $ns;
       return $v;
     }
     /* new pname */
-    if ($parts = $this->splitURI($v)) {
+    $parts = $this->splitURI($v);
+    if ($parts) {
       /* known prefix */
       foreach ($this->ns as $prefix => $ns) {
         if ($parts[0] == $ns) {
@@ -180,9 +204,9 @@ class ARC2_Class {
   function expandPName($v, $connector = ':') {
     $re = '/^([a-z0-9\_\-]+)\:([a-z0-9\_\-\.\%]+)$/i';
     if ($connector != ':') {
-      $connectors = array('\:', '\-', '\_', '\.');
-      $chars = join('', array_diff($connectors, array($connector)));
-      $re = '/^([a-z0-9' . $chars . ']+)\\' . $connector . '([a-z0-9\_\-\.\%]+)$/i';
+      $connectors = array(':', '-', '_', '.');
+      $chars = '\\' . join('\\', array_diff($connectors, array($connector)));
+      $re = '/^([a-z0-9' . $chars . ']+)\\' . $connector . '([a-z0-9\_\-\.\%]+)$/Ui';
     }
     if (preg_match($re, $v, $m) && isset($this->ns[$m[1]])) {
       return $this->ns[$m[1]] . $m[2];
@@ -376,10 +400,12 @@ class ARC2_Class {
     return $ser->getSerializedArray($v);
   }
 
-  function toHTML($v, $ns = '') {
+  function toHTML($v, $ns = '', $label_store = '') {
     ARC2::inc('MicroRDFSerializer');
     if (!$ns) $ns = isset($this->a['ns']) ? $this->a['ns'] : array();
-    $ser = new ARC2_MicroRDFSerializer(array_merge($this->a, array('ns' => $ns)), $this);
+    $conf = array_merge($this->a, array('ns' => $ns));
+    if ($label_store) $conf['label_store'] = $label_store;
+    $ser = new ARC2_MicroRDFSerializer($conf, $this);
     return (isset($v[0]) && isset($v[0]['s'])) ? $ser->getSerializedTriples($v) : $ser->getSerializedIndex($v);
   }
 
@@ -446,6 +472,56 @@ class ARC2_Class {
     return $this->getMicrodataAttrs($id, $type);
   }
 
-  /*  */
+  /* central DB query hook */
+
+  function queryDB($sql, $con, $log_errors = 0) {
+    $t1 = ARC2::mtime();
+    $r = mysql_query($sql, $con);
+    if (0) {
+      $t2 = ARC2::mtime() - $t1;
+      $call_obj = $this;
+      $call_path = '';
+      while ($call_obj) {
+        $call_path = get_class($call_obj) . ' / ' . $call_path;
+        $call_obj = isset($call_obj->caller) ? $call_obj->caller : false;
+      }
+      echo "\n" . $call_path . " needed " . $t2 . ' secs for ' . str_replace("\n" , ' ', $sql);;
+    }
+    if ($log_errors && ($er = mysql_error($con))) $this->addError($er);
+    return $r;
+  }
+
+  /**
+   * Shortcut method to create an RDF/XML backup dump from an RDF Store object.
+   */
+  function backupStoreData($store, $target_path, $offset = 0) {
+    $limit = 10;
+    $q = '
+      SELECT DISTINCT ?s WHERE {
+        ?s ?p ?o .
+      }
+      ORDER BY ?s
+      LIMIT ' . $limit . '
+      ' . ($offset ? 'OFFSET ' . $offset : '') . '
+    ';
+    $rows = $store->query($q, 'rows');
+    $tc = count($rows);
+    $full_tc = $tc + $offset;
+    $mode = $offset ? 'ab' : 'wb';
+    $fp = fopen($target_path, $mode);
+    foreach ($rows as $row) {
+      $index = $store->query('DESCRIBE <' . $row['s'] . '>', 'raw');
+      if ($index) {
+        $doc = $this->toRDFXML($index);
+        fwrite($fp, $doc . "\n\n");
+      }
+    }
+    fclose($fp);
+    if ($tc == 10) {
+      set_time_limit(300);
+      $this->backupStoreData($store, $target_path, $offset + $limit);
+    }
+    return $full_tc;
+  }
 
 }

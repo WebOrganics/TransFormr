@@ -5,21 +5,17 @@ license:  http://arc.semsol.org/license
 
 class:    ARC2 Atom Parser
 author:   Benjamin Nowack
-version:  2009-04-21 (Addition: support for link types)
+version:  2010-11-16
 */
 
 ARC2::inc('LegacyXMLParser');
 
 class ARC2_AtomParser extends ARC2_LegacyXMLParser {
 
-  function __construct($a = '', &$caller) {
+  function __construct($a, &$caller) {
     parent::__construct($a, $caller);
   }
   
-  function ARC2_AtomParser($a = '', &$caller) {
-    $this->__construct($a, $caller);
-  }
-
   function __init() {/* reader */
     parent::__init();
     $this->triples = array();
@@ -42,7 +38,7 @@ class ARC2_AtomParser extends ARC2_LegacyXMLParser {
   /*  */
   
   function setReader(&$reader) {
-    $this->reader =& $reader;
+    $this->reader = $reader;
   }
   
   function createBnodeID(){
@@ -239,7 +235,7 @@ class ARC2_AtomParser extends ARC2_LegacyXMLParser {
       xml_set_character_data_handler($parser, 'cData');
       xml_set_start_namespace_decl_handler($parser, 'nsDecl');
       xml_set_object($parser, $this);
-      $this->xml_parser =& $parser;
+      $this->xml_parser = $parser;
     }
   }
 
