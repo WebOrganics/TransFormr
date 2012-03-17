@@ -1,4 +1,4 @@
-# TransFormr version 2.4
+# TransFormr version 2.5
 
 TransFormr is a simple toolkit that uses PHP and XSLT for extracting and transforming microformats <http://microformats.org/>.
 
@@ -22,6 +22,7 @@ Non microformats supported by this transformer are:
 * RDFa 1.0 + 1.1 @prefix @vocab <http://rdfa.info/>
 * eRDF <http://research.talis.com/2005/erdf/wiki/Main/RdfInHtml>
 * OGP ( Open Graph Protocol ) <http://opengraphprotocol.org/>
+* Microdata <http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html>
 	
 ## Installation 
 
@@ -59,6 +60,7 @@ Other non microformat conversions
 * OGP ( Facebook Open Graph Protocol ) => RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.
 * RDFa => RDF, rdfjson, ntriples, turtle, or html ( microdata ).
 * eRDF => RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.
+* Microdata => JSON.
 
 ## Transformr Conversion urls
 
@@ -122,6 +124,7 @@ Work is in progress supporting the Species Microformat <http://microformats.org/
 
 ## Notes
 
+* 2.3 Added microdata to JSON transformation.
 * 2.4 Added value-title parsing for all microformats.
 * 2.3 Transformr is now Faster due to new caching action. Added support for Transforming by direct input, Some XSLT bugs fixed.
 * 2.2 Transform processes base@href for all xslt transformations, AR2 RDFTransformrPlugin and EndpointTemplatPlugin support around 350 namespaces, 
@@ -142,7 +145,8 @@ Work is in progress supporting the Species Microformat <http://microformats.org/
 ### Many thanks to:
 
 * Matthias Pfefferle ( <http://microform.at/> ) 
-* Fabien Gandon ( OGPGRDDL.xsl and RDFa2RDFXML.xsl, <http://fabien.info/>)
 * Ben Ward ( X2V, <http://github.com/BenWard/x2v> )
 * Benjamin Nowack ( ARC2, <http://arc.semsol.org/> )
+* Lin Clark (MicrodataPHP, <https://github.com/linclark/MicrodataPHP>)
+* Fabien Gandon ( OGPGRDDL.xsl and RDFa2RDFXML.xsl, <http://fabien.info/>)
 * Richard Cyganiak ( <http://prefix.cc/>)

@@ -33,6 +33,7 @@
 	<option value="rdfa">RDFa</option>
 	<option value="erdf">eRDF</option>
 	<option value="ogp-rdf">OGP</option>
+	<option value="microdata">Microdata</option>
 </optgroup>
 </select></label>
 <label for="output">Output: 

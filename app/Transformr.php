@@ -1,8 +1,8 @@
 <?php
 /*
-TransFormr Version: 2.3
+TransFormr Version: 2.5
 author:   Martin McEvoy
-updated:  Saturday, 3rd July 2010
+updated:  Saturday, 17th March 2012
 homepage: http://github.com/WebOrganics/TransFormr
 web-service: http://microform.at/
 licence: see files/gpl-3.0.txt
@@ -23,8 +23,8 @@ class Transformr
 		!defined('_Transformr') ? define('_Transformr', true) : '' ;
 		ini_set('display_errors',  0 );
 		$this->path = $this->set_path();
-		$this->version = '2.4';
-		$this->updated = array('Monday, 2nd January 2012', '2012-01-02T12:00:20+01:00');
+		$this->version = '2.5';
+		$this->updated = array('Saturday, 3rd March 2012', '2012-03-17T08:00:00+01:00');
 		$this->check_php_version('5.2.0', 'Transformr'); 
 		
 		$params = array_merge($_GET, $_POST);
@@ -35,7 +35,7 @@ class Transformr
 		$this->query = isset($params['q']) ? stripslashes($params["q"]) : '';
 		$this->template = dirname(__FILE__).'/template/';
 		$this->xsl = dirname(__FILE__).'/xsl/';
-		$this->required = array('arc/ARC2', 'include/class.hqr', 'include/function.encoded');
+		$this->required = array('arc/ARC2', 'include/class.hqr', 'include/function.encoded', 'include/MicrodataPHP');
 		header("X-Application: Transformr ".$this->version );
 	}
 	
@@ -186,6 +186,11 @@ class Transformr
 		
 		case 'hcard2qrcode':
 			return $this->return_qrcode($this->url);
+		break;
+		
+		case 'microdata':
+		  header("Content-type: application/json");
+			return $this->return_microdata($this->url);
 		break;
 		
 		case 'dump':
@@ -351,6 +356,12 @@ class Transformr
 		$hqr = new hQR;
 		include $this->template ."head.php";
 		include $this->template ."qrcode.php";
+	}
+	
+	private function return_microdata($url)
+	{
+		$md = new MicrodataPhp($url);
+		return $md->json();
 	}
 	
 	private function tidy_html($html, $url='', $tidy_option='', $output ='')
