@@ -31,8 +31,11 @@ class MicrodataPhp {
     $dom->registerNodeClass('DOMDocument', 'MicrodataPhpDOMDocument');
     $dom->registerNodeClass('DOMElement', 'MicrodataPhpDOMElement');
     $dom->preserveWhiteSpace = false;
-    @$dom->loadHTMLFile($url);
-
+	if(!$this->validURL($url)) {
+		@$dom->loadHTML($url);
+	} else {
+		@$dom->loadHTMLFile($url);
+	}
     $this->dom = $dom;
   }
 
@@ -115,6 +118,10 @@ class MicrodataPhp {
     }
 
     return $result;
+  }
+  
+  private function validURL($url) {
+	return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);
   }
 
 }

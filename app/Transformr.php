@@ -21,10 +21,10 @@ class Transformr
 	function __construct() 
 	{
 		!defined('_Transformr') ? define('_Transformr', true) : '' ;
-		ini_set('display_errors',  0 );
+		ini_set('display_errors',  1 );
 		$this->path = $this->set_path();
-		$this->version = '2.5';
-		$this->updated = array('Saturday, 3rd March 2012', '2012-03-17T08:00:00+01:00');
+		$this->version = '2.6';
+		$this->updated = array('Sunday, 18th March 2012', '2012-03-18T13:30:00+01:00');
 		$this->check_php_version('5.2.0', 'Transformr'); 
 		
 		$params = array_merge($_GET, $_POST);
@@ -35,7 +35,7 @@ class Transformr
 		$this->query = isset($params['q']) ? stripslashes($params["q"]) : '';
 		$this->template = dirname(__FILE__).'/template/';
 		$this->xsl = dirname(__FILE__).'/xsl/';
-		$this->required = array('arc/ARC2', 'include/class.hqr', 'include/function.encoded', 'include/MicrodataPHP');
+		$this->required = array('arc/ARC2', 'include/class.hqr', 'include/function.encoded', 'include/MicrodataPHP', 'include/HTML5/Parser');
 		header("X-Application: Transformr ".$this->version );
 	}
 	
@@ -45,6 +45,7 @@ class Transformr
 		$this->a = $this->config_ns();
 		foreach ( $this->required as $require ) require_once(dirname(__FILE__).DIRECTORY_SEPARATOR.$require.'.php');
 		$this->ARC2 = ARC2::getComponent('RDFTranformrPlugin', $this->a);
+		$this->HTML5 = new HTML5_Parser;
 		return ( $this->query !='' ? $this->json_query($this->query) : $this->transformr_types() );
 	}
 	
@@ -360,8 +361,25 @@ class Transformr
 	
 	private function return_microdata($url)
 	{
+		if($this->text !='') {
+			$url = $this->parseHTML5($this->text, true);
+		}
 		$md = new MicrodataPhp($url);
 		return $md->json();
+	}
+	
+	private function parseHTML5($text, $fragment = null) 
+	{
+		if(is_null($fragment)) $file = $this->HTML5->Parse($text);
+		else $file = $this->HTML5->ParseFragment($text);
+		$newDom = new DOMDocument('utf-8');
+		$root = $newDom->createElement('html');
+		$root = $newDom->appendChild($root);
+		foreach ($file as $domElement){
+			$domNode = $newDom->importNode($domElement, true);
+			$root->appendChild($domNode);
+		}
+		return $newDom->saveHTML();
 	}
 	
 	private function tidy_html($html, $url='', $tidy_option='', $output ='')
@@ -380,7 +398,7 @@ class Transformr
 					'logical-emphasis'            => true,
 					"$output"                     => true,
 					'wrap'                        => 200,
-					'clean'						  =>true
+					'clean'						  =>true,
 				);
 				$tidy = new tidy;
 				$tidy->parseString($html, $config, 'utf8');

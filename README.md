@@ -1,4 +1,4 @@
-# TransFormr version 2.5
+# TransFormr version 2.6
 
 TransFormr is a simple toolkit that uses PHP and XSLT for extracting and transforming microformats <http://microformats.org/>.
 
@@ -124,6 +124,7 @@ Work is in progress supporting the Species Microformat <http://microformats.org/
 
 ## Notes
 
+* 2.6 Added HTML5 Parser and parsing microdata by direct input.
 * 2.5 Added microdata to JSON transformation.
 * 2.4 Added value-title parsing for all microformats.
 * 2.3 Transformr is now Faster due to new caching action. Added support for Transforming by direct input, Some XSLT bugs fixed.
