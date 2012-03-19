@@ -41,7 +41,7 @@ class ARC2_RDFTranformrPlugin extends ARC2_Class {
 	function loadPrefixes()
 	{
 		$prefixes = dirname(__FILE__).DIRECTORY_SEPARATOR.'namespaces.txt';
-		$lines = file($prefixes, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINE);
+		$lines = file($prefixes, FILE_IGNORE_NEW_LINES);
 		$ns = array();
 		if ( rand(1, 100) == 1) 
 		{
