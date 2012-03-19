@@ -21,7 +21,7 @@ class Transformr
 	function __construct() 
 	{
 		!defined('_Transformr') ? define('_Transformr', true) : '' ;
-		ini_set('display_errors',  1 );
+		ini_set('display_errors',  0 );
 		$this->path = $this->set_path();
 		$this->version = '2.6';
 		$this->updated = array('Sunday, 18th March 2012', '2012-03-18T13:30:00+01:00');
