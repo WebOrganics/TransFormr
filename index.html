@@ -1,0 +1,208 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Transformr by WebOrganics</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Transformr</h1>
+        <p class="header">The Microformat Transformer Toolkit </p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/WebOrganics/TransFormr/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/WebOrganics/TransFormr/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/WebOrganics/TransFormr">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/WebOrganics">WebOrganics</a></p>
+
+
+      </header>
+      <section>
+        <h1>TransFormr version 2.6</h1>
+
+<p>TransFormr is a simple toolkit that uses PHP and XSLT for extracting and transforming microformats <a href="http://microformats.org/">http://microformats.org/</a>.</p>
+
+<p>Microformats that are supported by this transformer are:</p>
+
+<ul>
+<li>hCard <a href="http://microformats.org/wiki/hcard">http://microformats.org/wiki/hcard</a>.</li>
+<li>hCalendar <a href="http://microformats.org/wiki/hcalendar">http://microformats.org/wiki/hcalendar</a>.</li>
+<li>hReview <a href="http://microformats.org/wiki/hreview">http://microformats.org/wiki/hreview</a>.</li>
+<li>hAtom <a href="http://microformats.org/wiki/hatom">http://microformats.org/wiki/hatom</a>.</li>
+<li>geo <a href="http://microformats.org/wiki/geo">http://microformats.org/wiki/geo</a>.</li>
+<li>hAudio <a href="http://microformats.org/wiki/haudio">http://microformats.org/wiki/haudio</a>.</li>
+</ul><p>Microformats that are supported by this transformr but are classed as <em>Experimental</em> and should not be used in a production environment because they may be removed or updated at any time are:</p>
+
+<ul>
+<li>hMedia <a href="http://microformats.org/wiki/hmedia">http://microformats.org/wiki/hmedia</a>.</li>
+<li>XFN <a href="http://gmpg.org/xfn/">http://gmpg.org/xfn/</a>
+</li>
+<li>rel-enclosure <a href="http://microformats.org/wiki/rel-enclosure">http://microformats.org/wiki/rel-enclosure</a>
+</li>
+</ul><p>Non microformats supported by this transformer are:</p>
+
+<ul>
+<li>RDFa 1.0 + 1.1 <a href="https://github.com/PreFix" class="user-mention">@PreFix</a> <a href="https://github.com/vocab" class="user-mention">@vocab</a> <a href="http://rdfa.info/">http://rdfa.info/</a>
+</li>
+<li>eRDF <a href="http://research.talis.com/2005/erdf/wiki/Main/RdfInHtml">http://research.talis.com/2005/erdf/wiki/Main/RdfInHtml</a>
+</li>
+<li>OGP ( Open Graph Protocol ) <a href="http://opengraphprotocol.org/">http://opengraphprotocol.org/</a>
+</li>
+<li>Microdata <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html">http://www.whatwg.org/specs/web-apps/current-work/multipage/microdata.html</a>
+</li>
+</ul><h2>Installation</h2>
+
+<p>You must have PHP version 5.2.0 or higher with XSLT enabled to run TransFormr.</p>
+
+<ul>
+<li>Download the latest version of Transformr from <a href="http://github.com/WebOrganics/TransFormr">http://github.com/WebOrganics/TransFormr</a>.</li>
+<li>Unpack the entire contents of the file called WebOrganics-TransFormr-XXXXX to your webserver either into its own directory or the the root of your directory (dedicated transformers only). </li>
+<li>Take a look at the settings in index.php and change to suit (everything should work fine without altering anything).</li>
+<li>If you plan to use the ARC2 store, enter your database, user, pass and hosts settings in /app/config.php  and check that the dump folder is writable by the webserver.</li>
+<li>Surf your way to wherever you unpacked your file eg: <a href="http://example.com/transformr/">http://example.com/transformr/</a> .</li>
+<li>Enter a url, Have fun transforming some microformats ;)</li>
+</ul><h2>Conversions</h2>
+
+<p>Main conversions are:</p>
+
+<ul>
+<li>Detect =&gt; Detect all.</li>
+<li>hCard =&gt; vCard (.vcf), RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.</li>
+<li>hCalendar =&gt; iCal (.ics), RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.</li>
+<li>hAtom =&gt; Atom.</li>
+<li>hAtom + rel-enclosure =&gt; RSS2.</li>
+<li>hReview =&gt; RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.</li>
+<li>Geo =&gt; KML.</li>
+<li>hAudio =&gt; RSS2.</li>
+</ul><p>Experimental conversions are:</p>
+
+<ul>
+<li>hAudio =&gt; XSPF.</li>
+<li>hAudio =&gt; MO (Music Ontology).</li>
+<li>hAtom  =&gt; SIOC, rdfjson, ntriples, turtle, html ( microdata )  or RDFa. </li>
+<li>hCard + XFN =&gt; FOAF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.</li>
+</ul><p>Other non microformat conversions</p>
+
+<ul>
+<li>OGP ( Facebook Open Graph Protocol ) =&gt; RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.</li>
+<li>RDFa =&gt; RDF, rdfjson, ntriples, turtle, or html ( microdata ).</li>
+<li>eRDF =&gt; RDF, rdfjson, ntriples, turtle, html ( microdata )  or RDFa.</li>
+<li>Microdata =&gt; JSON.</li>
+</ul><h2>Transformr Conversion urls</h2>
+
+<h3>RDF output Options:</h3>
+
+<pre><code>ntriples, rdfa, turtle, rdfjson, and html (microdata)
+</code></pre>
+
+<h3>Transformation Types are :</h3>
+
+<p>detect, hcard, hcard-rdf, hatom, hatom-rss2, geo, hcalendar, hcalendar-rdf, hreview, haudio-rss, mo-haudio, haudio-xspf, hfoaf, mrss, ogp-rdf, erdf, rdfa, hcard2qrcode and hatom-sioc.</p>
+
+<h4>Non RDF conversions,</h4>
+
+<ul>
+<li>index.php?type=(type)&amp;url=http://(your page)</li>
+</ul><h4>For all RDF conversions</h4>
+
+<ul>
+<li>index.php?type=(type)&amp;output=(ntriples|rdfa|turtle|rdfjson|html)&amp;url=http://(your page)</li>
+</ul><h3>Apache Clean URLs</h3>
+
+<h4>Non RDF conversions,</h4>
+
+<ul>
+<li>http://[transformr]/[type]/http://<a href="transforms%20a%20whole%20page">your page</a>
+</li>
+<li>http://[transformr]/[type]/referer ( transforms from refering url )</li>
+<li>http://[transformr]/[type]/<a href="transforms%20from%20refering%20html%20id">your fragment</a>
+</li>
+</ul><h4>For all RDF conversions</h4>
+
+<ul>
+<li>http://[transformr]/[type]/(ntriples|rdfa|turtle|rdfjson|html)/http://[your page]</li>
+</ul><h3>By JSON Query.</h3>
+
+<p>Queries are formed using three properties, url (url of the webpage ) , type ( conversion type ) and output (output type), example </p>
+
+<ul>
+<li>index.php?q={ "url" : "<a href="http://somewebsite.com/">http://somewebsite.com/</a>", "type" : "hcard-rdf", "output" : "ntriples" } </li>
+</ul><p>The output property is optional and may be omitted from a Query, example</p>
+
+<ul>
+<li>index.php?q={ "url" : "<a href="http://somewebsite.com/">http://somewebsite.com/</a>", "type" : "hcard" }</li>
+</ul><p>You can also use describe queries on the ARC2 store ( if enabled ), this will return a document already extracted to the store, example</p>
+
+<ul>
+<li>index.php?q={"describe": {"url": "<a href="http://somewebsite.com/%22,%22type%22:">http://somewebsite.com/","type":</a> "hatom-sioc","output": "ntriples"}}<br>
+</li>
+</ul><h3>By SPARQL Query.</h3>
+
+<p>When you extract RDF using Transformr and the arc2 store is enabled, you can query the Transformr using the sparql endpoint, example</p>
+
+<ul>
+<li>sparql/endpoint?query=CONSTRUCT { ?s ?p ?o } WHERE { GRAPH  { ?s ?p ?o } }</li>
+</ul><p>All graphs are relative to the store, "type" is the type of RDF you extracted e.g hfoaf, rdfa ... etc, and the url of the page you extracted.</p>
+
+<h3>By Direct input.</h3>
+
+<p>You can also transform a fragment of html by direct input, this is intended to be used for testing you markup before publishing it live.</p>
+
+<h2>Future releases</h2>
+
+<p>Work is in progress supporting the Species Microformat <a href="http://microformats.org/wiki/species-strawman-01">http://microformats.org/wiki/species-strawman-01</a>, hProduct <a href="http://microformats.org/wiki/hproduct">http://microformats.org/wiki/hproduct</a> + hCard Microformat to Good Relations and Data vocab transformation for Rich Snippets <a href="http://www.google.com/support/webmasters/bin/answer.py?hl=en&amp;answer=99170">http://www.google.com/support/webmasters/bin/answer.py?hl=en&amp;answer=99170</a>. </p>
+
+<h2>Notes</h2>
+
+<ul>
+<li>2.6 Added HTML5 Parser and parsing microdata by direct input.</li>
+<li>2.5 Added microdata to JSON transformation.</li>
+<li>2.4 Added value-title parsing for all microformats.</li>
+<li>2.3 Transformr is now Faster due to new caching action. Added support for Transforming by direct input, Some XSLT bugs fixed.</li>
+<li>2.2 Transform processes base@href for all xslt transformations, AR2 RDFTransformrPlugin and EndpointTemplatPlugin support around 350 namespaces, 
+list is automaticaly downloaded from <a href="http://prefix.cc/">http://prefix.cc/</a>, improved config.php .</li>
+<li>2.1 Endpoint has new template using ARC2_EndpointTemplatPlugin, and DELETE FROM &lt;...&gt; functionality. </li>
+<li>2.0 adds ARC2 storage and hAtom2SIOC transformation. </li>
+<li>1.3 fixes <a href="https://github.com/PreFix" class="user-mention">@PreFix</a> and <a href="https://github.com/vocab" class="user-mention">@vocab</a> support for RDFa plus one or two minor bugs.</li>
+<li>1.2.1 Adds <a href="https://github.com/PreFix" class="user-mention">@PreFix</a> and <a href="https://github.com/vocab" class="user-mention">@vocab</a> support to RDFa2RDFXML.xsl.</li>
+<li>1.2 Implements JSON Query.</li>
+<li>1.1 some bugs fixed, new hcard 2 qrcode api</li>
+<li>1.0 New code, added some configurations, ogp-rdf transformation added, xoxo-opml transformation added, updated version of ARC2 2010-04-26</li>
+<li>0.6.2 updated ARC2_Transformr, incudes a non-hacked version of ARC2.<br>
+</li>
+<li>0.6.1 Most RDF including RDFa conversions are parsed by ARC2 ( included ) <a href="http://arc.semsol.org/">http://arc.semsol.org/</a>
+</li>
+<li>0.5.1 Transformr also supports Fragment parsing for individual microformats.</li>
+</ul><h2>Credits</h2>
+
+<h3>Many thanks to:</h3>
+
+<ul>
+<li>Matthias Pfefferle ( <a href="http://microform.at/">http://microform.at/</a> ) </li>
+<li>Ben Ward ( X2V, <a href="http://github.com/BenWard/x2v">http://github.com/BenWard/x2v</a> )</li>
+<li>Benjamin Nowack ( ARC2, <a href="http://arc.semsol.org/">http://arc.semsol.org/</a> )</li>
+<li>Lin Clark (MicrodataPHP, <a href="https://github.com/linclark/MicrodataPHP">https://github.com/linclark/MicrodataPHP</a>)</li>
+<li>Fabien Gandon ( OGPGRDDL.xsl and RDFa2RDFXML.xsl, <a href="http://fabien.info/">http://fabien.info/</a>)</li>
+<li>Richard Cyganiak ( <a href="http://prefix.cc/">http://prefix.cc/</a>)</li>
+</ul>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
