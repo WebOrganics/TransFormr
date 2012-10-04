@@ -35,7 +35,7 @@ class Transformr
 		$this->query = isset($params['q']) ? stripslashes($params["q"]) : '';
 		$this->template = dirname(__FILE__).'/template/';
 		$this->xsl = dirname(__FILE__).'/xsl/';
-		$this->required = array('arc/ARC2', 'include/class.hqr', 'include/function.encoded', 'include/MicrodataPHP', 'include/HTML5/Parser');
+		$this->required = array('arc/ARC2', 'include/class.hqr', 'include/function.encoded', 'include/MicrodataPhp', 'include/HTML5/Parser');
 		header("X-Application: Transformr ".$this->version );
 	}
 	
